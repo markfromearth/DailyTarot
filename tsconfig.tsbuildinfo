@@ -1,0 +1,1 @@
+{"root":["./src/app.tsx","./src/main.tsx","./src/components/cardback.tsx","./src/components/deckexperience.tsx","./src/components/tarotcardview.tsx","./src/data/cards.ts","./src/engine/deck.test.ts","./src/engine/deck.ts","./src/hooks/usereading.ts","./src/store/persistence.ts","./src/types/tarot.ts"],"version":"5.9.3"}
