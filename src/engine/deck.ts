@@ -93,8 +93,6 @@ export class DeckEngine {
    * Useful for mapping stable DOM nodes.
    */
   public getInitialDeckOrder(): TarotCard[] {
-    // We can reconstruct the order by combining available and drawn cards,
-    // but it's easier to just store the shuffled order.
     return this.initialShuffledDeck ? [...this.initialShuffledDeck] : [...this.availableCards];
   }
   
@@ -102,5 +100,31 @@ export class DeckEngine {
 
   public getDrawnCards(): DrawnCard[] {
     return [...this.drawnCards];
+  }
+
+  /**
+   * Restores the engine to a previously saved state.
+   */
+  public restoreState(
+    availableCardIds: string[], 
+    drawnCardsData: { id: string; orientation: Orientation }[],
+    initialShuffledDeckIds: string[]
+  ): void {
+    // Re-map IDs to actual cards to ensure data freshness
+    this.availableCards = availableCardIds
+      .map(id => TAROT_DECK.find(c => c.id === id))
+      .filter((c): c is TarotCard => c !== undefined);
+
+    this.drawnCards = drawnCardsData
+      .map(data => {
+        const card = TAROT_DECK.find(c => c.id === data.id);
+        if (!card) return null;
+        return { card, orientation: data.orientation };
+      })
+      .filter((d): d is DrawnCard => d !== null);
+
+    this.initialShuffledDeck = initialShuffledDeckIds
+      .map(id => TAROT_DECK.find(c => c.id === id))
+      .filter((c): c is TarotCard => c !== undefined);
   }
 }

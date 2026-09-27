@@ -1,6 +1,9 @@
+import { ShuffleControl } from "./ShuffleControl";
+import { ReadingGuidance } from "./ReadingGuidance";
+import { ReadingSlots } from "./ReadingSlots";
 import React, { useState, useEffect } from 'react';
 import { TarotCardView } from './TarotCardView';
-import { ReadingPhase } from '../hooks/useReading';
+import { ReadingPhase } from '../types/tarot';
 import { TarotCard, PositionedCard } from '../types/tarot';
 
 interface DeckExperienceProps {
@@ -156,71 +159,18 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
     <div className="relative w-full h-[700px] flex flex-col items-center justify-center overflow-hidden">
       
       {/* Placed Cards Guidance */}
-      {(phase === 'fan' || phase === 'place') && selectedCards.length < 3 && (
-        <div className="absolute top-8 text-center z-50 drop-shadow-lg transition-opacity duration-700">
-          <p className="text-white/60 tracking-[0.2em] text-xs uppercase mb-2" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.9)' }}>
-            {['Choose your first card', 'Choose your second card', 'Choose your third card'][selectedCards.length]}
-          </p>
-          <p className="text-white/90 tracking-[0.3em] text-sm uppercase" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.9)' }}>
-            {['PAST', 'PRESENT', 'FUTURE'][selectedCards.length]}
-          </p>
-        </div>
-      )}
-
+      <ReadingGuidance phase={phase} selectedCount={selectedCards.length} />
 
       {/* The Deck Container */}
       <div className="relative w-24 h-36 md:w-32 md:h-48 perspective-1000 mt-40">
         
         {/* Spread Slots matched to absolute math */}
-        {(phase === 'fan' || phase === 'place' || phase === 'read') && [
-          { title: 'PAST', index: 0 },
-          { title: 'PRESENT', index: 1 },
-          { title: 'FUTURE', index: 2 }
-        ].map((slot) => {
-          const cardWidth = viewportWidth < 768 ? 96 : 128;
-          const spacing = viewportWidth < 768 ? 10 : 20;
-          const totalWidth = (cardWidth * 3) + (spacing * 2);
-          const startX = -(totalWidth / 2) + (cardWidth / 2);
-          const xPos = startX + (slot.index * (cardWidth + spacing));
-          const yPos = viewportWidth < 768 ? -220 : -280; // slightly higher
-          
-          return (
-            <div 
-              key={slot.index}
-              className="absolute top-0 left-0 w-full h-full flex flex-col items-center pointer-events-none"
-              style={{
-                transform: `translate(${xPos}px, ${yPos}px)`,
-                zIndex: 10
-              }}
-            >
-              <div className="absolute -top-8 text-center w-32 drop-shadow-md">
-                <p className="text-white/40 tracking-[0.3em] text-[10px] uppercase" style={{ textShadow: '0 1px 2px rgba(0,0,0,0.9)' }}>{slot.title}</p>
-              </div>
-              
-              <div className="w-full h-full border border-white/10 rounded-xl flex items-center justify-center transition-colors duration-1000">
-                {/* Empty slot marker */}
-              </div>
-
-              <div className="absolute top-[105%] text-center w-56 drop-shadow-md z-50">
-                {(() => {
-                  const positionedCard = selectedCards[slot.index];
-                  if (positionedCard?.isRevealed) {
-                    const isReversed = positionedCard.orientation === 'reversed';
-                    const meaning = isReversed ? positionedCard.card.reversedMeaning : positionedCard.card.uprightMeaning;
-                    return (
-                      <div className="animate-in fade-in duration-1000 pointer-events-auto mt-2">
-                        <p className="text-white/90 font-serif text-sm leading-tight mb-1" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.9)' }}>{positionedCard.card.name}</p>
-                        {isReversed && <p className="text-white/50 text-[9px] uppercase tracking-[0.2em] mb-2 font-bold" style={{ textShadow: '0 1px 2px rgba(0,0,0,0.9)' }}>Reversed</p>}
-                        <p className="text-white/70 text-xs leading-relaxed mt-2 max-w-[200px] mx-auto" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.9)' }}>{meaning}</p>
-                      </div>
-                    );
-                  }
-                  return null;
-                })()}
-              </div>
-            </div>
-          );
-        })}
+        <ReadingSlots 
+          phase={phase} 
+          selectedCards={selectedCards} 
+          viewportWidth={viewportWidth} 
+        />
+        
         {initialDeckOrder.map((card, index) => {
           const selectedCard = selectedCards.find(c => c.card.id === card.id);
           const isSelected = !!selectedCard;
@@ -270,35 +220,7 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
       </div>
 
       {/* Controls */}
-      {phase === 'intro' && (
-        <button 
-          onClick={onStartShuffle}
-          className="absolute bottom-16 px-8 py-3 bg-transparent text-white/80 rounded-full tracking-[0.2em] uppercase text-xs border border-white/20 hover:border-white/50 hover:text-white transition-all duration-500 z-50 backdrop-blur-sm"
-        >
-          Shuffle the deck
-        </button>
-      )}
-      
-      {phase === 'shuffling' && (
-        <div className="absolute bottom-16 text-white/50 tracking-[0.3em] text-[10px] uppercase animate-pulse z-50" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.9)' }}>
-          Focus your intention
-        </div>
-      )}
-
-      {/* Completion state */}
-      {selectedCards.length === 3 && phase !== 'read' && (
-        <div 
-          className="absolute bottom-12 flex flex-col items-center z-50 transition-opacity duration-1000 delay-1000"
-          style={{ animation: 'fadeIn 1s ease-out 0.8s forwards', opacity: 0 }}
-        >
-          <p className="text-white/60 tracking-[0.2em] text-xs uppercase mb-1" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.9)' }}>
-            Your three cards have been chosen
-          </p>
-          <p className="text-white/90 tracking-[0.3em] text-sm uppercase" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.9)' }}>
-            Tap a card to reveal
-          </p>
-        </div>
-      )}
+      <ShuffleControl phase={phase} onStartShuffle={onStartShuffle} />
     </div>
   );
 };
