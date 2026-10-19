@@ -183,14 +183,15 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
         if (shuffleStartTimeRef.current !== null) {
           const elapsed = now - shuffleStartTimeRef.current;
           const p = Math.min(1, Math.max(0, elapsed / 3000));
-          // Velocity peaks in the tight vortex (p ~ 0.5) and decelerates as it blooms back out
-          if (p < 0.55) {
-            targetSpin = spinDirectionRef.current * (0.10 + p * 0.14);
+          // Steady, majestic orbital spin during the weave, softly decelerating as it blooms into the spread
+          if (p < 0.65) {
+            targetSpin = spinDirectionRef.current * 0.13;
           } else {
-            targetSpin = spinDirectionRef.current * Math.max(0.025, 0.17 - (p - 0.55) * 0.28);
+            const decelT = (p - 0.65) / 0.35;
+            targetSpin = spinDirectionRef.current * Math.max(0.02, 0.13 - decelT * 0.11);
           }
         }
-        orbitVelocityRef.current = lerp(orbitVelocityRef.current, targetSpin, 0.045);
+        orbitVelocityRef.current = lerp(orbitVelocityRef.current, targetSpin, 0.04);
         orbitAngleRef.current += orbitVelocityRef.current;
       } else {
         orbitVelocityRef.current = lerp(orbitVelocityRef.current, -0.0012, 0.025);
@@ -211,32 +212,34 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
       const cosTilt = Math.cos(TILT_RAD);
       const sinTilt = Math.sin(TILT_RAD);
 
-      // During shuffling (3000ms total, extended by 100%):
-      // 0ms - 550ms: Ring spins at full radius
-      // 550ms - 1700ms: Ring contracts into a tighter, spinning central vortex (goes smaller down to 0.30)
-      // 1700ms - 3000ms: Ring blooms back out into an expansive ring (goes larger up to 1.06) before fanning out
+      // Celestial Ribbon Weave (Option 1):
+      // Ring stays expansive (radius >= 0.88), never collapsing into itself.
+      // Cards split into two undulating 3D ribbons weaving over and under each other in depth.
       let mergeFactor = 1;
-      let shuffleWobbleAmp = 0;
+      let weaveEnvelope = 0;
+
       if (currentPhase === 'shuffling' && shuffleStartTimeRef.current !== null) {
         const elapsed = now - shuffleStartTimeRef.current;
         const p = Math.min(1, Math.max(0, elapsed / 3000));
 
-        if (p < 0.18) {
-          // Spin initiation
-          mergeFactor = 1.0;
-          shuffleWobbleAmp = (p / 0.18) * 0.16;
-        } else if (p < 0.55) {
-          // Contract into smaller ring (t goes 0 to 1)
-          const t = (p - 0.18) / 0.37;
-          const smoothContract = 0.5 - 0.5 * Math.cos(t * Math.PI);
-          mergeFactor = 1.0 - smoothContract * 0.70; // down to 0.30
-          shuffleWobbleAmp = 0.16 + smoothContract * 0.14; // peaks to 0.30 wobble in vortex
+        // Smooth radius breathing: 1.0 -> gentle dip to 0.88 -> bloom to 1.06
+        if (p < 0.30) {
+          const t = p / 0.30;
+          const easeIn = 0.5 - 0.5 * Math.cos(t * Math.PI);
+          mergeFactor = 1.0 - easeIn * 0.12; // 1.0 -> 0.88
+        } else if (p < 0.70) {
+          // Hover at generous spacious radius during the weave
+          mergeFactor = 0.88;
         } else {
-          // Expand back out to larger ring (t goes 0 to 1)
-          const t = (p - 0.55) / 0.45;
-          const smoothExpand = 0.5 - 0.5 * Math.cos(t * Math.PI);
-          mergeFactor = 0.30 + smoothExpand * 0.76; // blooms up to 1.06
-          shuffleWobbleAmp = 0.30 * (1 - smoothExpand * 0.65);
+          const t = (p - 0.70) / 0.30;
+          const easeOut = 0.5 - 0.5 * Math.cos(t * Math.PI);
+          mergeFactor = 0.88 + easeOut * 0.18; // 0.88 -> 1.06
+        }
+
+        // Weave envelope: smoothly rises to 1.0 during the middle phase, then unifies back to 0
+        if (p >= 0.10 && p <= 0.90) {
+          const u = (p - 0.10) / 0.80;
+          weaveEnvelope = Math.sin(u * Math.PI);
         }
       }
 
@@ -472,41 +475,50 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
               orbitZIndex = Math.round(85000 - Math.abs(deltaFromApex) * 15000) + index;
             }
 
-            // Multi-harmonic organic wobble so the ring ripples like a living celestial formation instead of staying in a rigid circle
-            const baseWobble = 0.05; // subtle organic ripple in intro
-            const totalWobbleAmp = baseWobble + shuffleWobbleAmp;
-            const wobbleR =
-              Math.sin(theta * 3 + timeSec * 2.2) * totalWobbleAmp +
-              Math.cos(theta * 2 - timeSec * 1.6) * (totalWobbleAmp * 0.65);
-            const wobblyRadius = 1 + wobbleR;
+            // Ribbon A (even index) vs Ribbon B (odd index) alternating wave
+            const ribbonSign = (index % 2 === 0) ? 1 : -1;
 
-            // Un-tilted ellipse coordinates with organic radial ripple
-            const lx = Math.cos(theta) * rx * mergeFactor * wobblyRadius;
-            const ly = Math.sin(theta) * ry * mergeFactor * (1 - wobbleR * 0.45);
+            // Celestial Ribbon Weave 3D dimensional offsets
+            const ribbonZ = ribbonSign * (isMobile ? 32 : 55) * weaveEnvelope;
+            const ribbonRotX = ribbonSign * 11 * weaveEnvelope;
+            const ribbonRadiusMod = 1 - ribbonSign * 0.045 * weaveEnvelope;
 
-            // Apply -21deg diagonal banking rotation to the entire ring with 3D wave ripples
-            const zWobble = Math.sin(theta * 2.5 + timeSec * 2.0) * (totalWobbleAmp * (isMobile ? 38 : 65));
-            const yWobble = Math.cos(theta * 3 - timeSec * 1.8) * (totalWobbleAmp * (isMobile ? 18 : 32));
+            // Harmonic undulating ripple waves around the orbital track
+            const trackRippleZ = Math.sin(theta * 3 + timeSec * 2.2) * (isMobile ? 16 : 28) * weaveEnvelope;
+            const trackRippleRotZ = Math.cos(theta * 2 + timeSec * 1.8) * 12 * weaveEnvelope;
+            const subtleBreathingY = Math.sin(timeSec * 0.7 + theta * 0.5) * 1.6;
 
+            // Un-tilted ellipse coordinates with generous radius preserved
+            const lx = Math.cos(theta) * rx * mergeFactor * ribbonRadiusMod;
+            const ly = Math.sin(theta) * ry * mergeFactor * ribbonRadiusMod;
+
+            // Apply -21deg diagonal banking rotation to the entire ring with 3D weave
             targetX = (lx * cosTilt - ly * sinTilt) - (isMobile ? 10 : 35) * mergeFactor;
-            targetY = (lx * sinTilt + ly * cosTilt) + yWobble;
-            targetZ = Math.sin(theta) * rz * mergeFactor + zWobble;
+            targetY = (lx * sinTilt + ly * cosTilt) + subtleBreathingY;
+            targetZ = Math.sin(theta) * rz * mergeFactor + ribbonZ + trackRippleZ;
 
             // Depth norm: +1 at closest foreground (bottom-right), -1 at furthest background (top-left)
             const depthNorm = Math.sin(theta);
 
-            // Tangential 3D card orientation along the banked ring with dynamic undulating tilt
-            const rotWobbleZ = Math.sin(theta * 3 + timeSec * 2.4) * (totalWobbleAmp * 32);
-            const rotWobbleX = Math.cos(theta * 2 + timeSec * 1.9) * (totalWobbleAmp * 16);
+            // Tangential 3D card orientation along the banked ring with dimensional ribbon weave
             targetRotY = -Math.cos(theta) * 26 * mergeFactor;
-            targetRotX = (8 - depthNorm * 6) * mergeFactor + rotWobbleX;
-            targetRotZ = (-18 + Math.cos(theta) * 14) * mergeFactor + rotWobbleZ;
+            targetRotX = (8 - depthNorm * 6) * mergeFactor + ribbonRotX;
+            targetRotZ = (-18 + Math.cos(theta) * 14) * mergeFactor + trackRippleRotZ;
 
             // Perspective scale & optical depth-of-field dimming on back-half cards
-            targetScale = 0.72 + (depthNorm + 1) * 0.24 * mergeFactor;
-            if (depthNorm < -0.15) {
-              blurPx = Math.abs(depthNorm + 0.15) * 1.8 * mergeFactor;
-              brightness = 0.65 + (depthNorm + 1) * 0.3;
+            targetScale = 0.72 + (depthNorm + 1) * 0.24 * mergeFactor + (ribbonSign * 0.04 * weaveEnvelope);
+            if (depthNorm < -0.15 || (ribbonSign < 0 && weaveEnvelope > 0.3)) {
+              const bgBlur = depthNorm < -0.15 ? Math.abs(depthNorm + 0.15) * 1.8 * mergeFactor : 0;
+              const ribbonBlur = ribbonSign < 0 ? weaveEnvelope * 0.45 : 0;
+              blurPx = Math.max(bgBlur, ribbonBlur);
+              brightness = (0.65 + (depthNorm + 1) * 0.3) + (ribbonSign * 0.10 * weaveEnvelope);
+            } else {
+              brightness = 1.0 + (ribbonSign > 0 ? 0.12 * weaveEnvelope : 0);
+            }
+
+            // Layering during the weave so front ribbon cards cleanly overlap back ribbon cards
+            if (currentPhase === 'shuffling' && weaveEnvelope > 0.05) {
+              orbitZIndex += ribbonSign * Math.round(18000 * weaveEnvelope);
             }
 
             // If this card is tapped (or hovered) in the ring, make it rise gracefully from the ring
