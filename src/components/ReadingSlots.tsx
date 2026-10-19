@@ -66,7 +66,7 @@ export const ReadingSlots: React.FC<ReadingSlotsProps> = ({
               {positionedCard?.isRevealed && (
                 <div 
                   onClick={() => onCardClick?.(positionedCard.card.id)}
-                  className="animate-fade-in pointer-events-auto mt-2 cursor-pointer group p-1.5 rounded-xl bg-black/40 hover:bg-black/70 border border-white/5 hover:border-amber-400/30 transition-all hover:scale-105 active:scale-95 backdrop-blur-xs"
+                  className="animate-fade-in pointer-events-auto mt-2 cursor-pointer group p-1.5 rounded-xl bg-black/40 hover:bg-black/70 border border-white/5 hover:border-amber-400/30 transition-all duration-300 backdrop-blur-xs"
                   title="Click to enlarge card and read full meaning"
                 >
                   <p className="text-white/95 group-hover:text-amber-200 font-serif text-xs md:text-sm leading-tight mb-1 transition-colors font-medium truncate" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.9)' }}>

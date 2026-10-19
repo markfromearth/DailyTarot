@@ -31,14 +31,11 @@ interface CardPhysicsBody {
   scale: number;
 }
 
-const FLOAT_STRENGTH = 0.5;
-const HOVER_DAMPING = 0.9;
-const ROTATION_SLERP_SPEED = 0.15;
-const DRAG_SPEED = 0.22;
+const ROTATION_SLERP_SPEED = 0.075;
 const SWIPE_DISTANCE_THRESHOLD = 45; // Single swipe distance in px to spin the ring and trigger shuffle
 const VISIBLE_ORBIT_CARDS = 50; // 50 visible cards orbiting in the 3D ring
 const TILT_RAD = -21 * (Math.PI / 180); // 21-degree diagonal banking angle
-const IDLE_ORBIT_VELOCITY = -0.0026; // Gentle, meditative counter-clockwise orbital drift
+const IDLE_ORBIT_VELOCITY = -0.0016; // Calm, meditative counter-clockwise orbital drift
 
 function lerp(a: number, b: number, t: number): number {
   return a + (b - a) * t;
@@ -180,13 +177,13 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
       // Update orbital carousel velocity & angle
       if (currentPhase === 'intro') {
         orbitAngleRef.current += orbitVelocityRef.current;
-        orbitVelocityRef.current = lerp(orbitVelocityRef.current, IDLE_ORBIT_VELOCITY, 0.03);
+        orbitVelocityRef.current = lerp(orbitVelocityRef.current, IDLE_ORBIT_VELOCITY, 0.02);
       } else if (currentPhase === 'shuffling') {
-        // First spin the full ring rapidly, then contract into the shuffle cascade
-        orbitVelocityRef.current = lerp(orbitVelocityRef.current, spinDirectionRef.current * 0.18, 0.08);
+        // Spin the ring smoothly and elegantly, then contract into the shuffle cascade
+        orbitVelocityRef.current = lerp(orbitVelocityRef.current, spinDirectionRef.current * 0.11, 0.035);
         orbitAngleRef.current += orbitVelocityRef.current;
       } else {
-        orbitVelocityRef.current = lerp(orbitVelocityRef.current, -0.002, 0.05);
+        orbitVelocityRef.current = lerp(orbitVelocityRef.current, -0.0012, 0.025);
         orbitAngleRef.current += orbitVelocityRef.current;
       }
 
@@ -273,15 +270,15 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
               targetX = 0;
               // Subtly enlarge card when hovered while lifting upward to protect content clearance below
               const baseScale = isMobile ? 1.35 : 1.52;
-              targetScale = isHovered ? baseScale + 0.08 : baseScale;
+              targetScale = isHovered ? baseScale + 0.045 : baseScale;
               const baseY = isMobile ? -78 : -100;
-              targetY = isHovered ? baseY - 6 : baseY;
-              targetZ = isHovered ? 185 : 165;
+              targetY = isHovered ? baseY - 3 : baseY;
+              targetZ = isHovered ? 178 : 165;
               targetRotX = 0;
               targetRotY = 0;
               targetRotZ = 0;
               blurPx = 0;
-              brightness = isHovered ? 1.2 : 1.15;
+              brightness = isHovered ? 1.18 : 1.15;
             } else {
               // Two companion cards fanned out behind
               const focusedSlotIndex = currentSelected.findIndex(c => c.card.id === inspectedId);
@@ -453,7 +450,8 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
             const ly = Math.sin(theta) * ry * mergeFactor;
 
             // Apply -21deg diagonal banking rotation to the entire ring
-            const bobbing = Math.sin(timeSec * 1.9 + index * 0.7) * FLOAT_STRENGTH * 9 * mergeFactor;
+            // Gentle, collective harmonic wave across the ring instead of independent card jitter
+            const bobbing = Math.sin(timeSec * 0.7 + theta * 0.5) * 1.6 * mergeFactor;
             targetX = (lx * cosTilt - ly * sinTilt) - (isMobile ? 10 : 35) * mergeFactor;
             targetY = (lx * sinTilt + ly * cosTilt) + bobbing;
             targetZ = Math.sin(theta) * rz * mergeFactor;
@@ -480,19 +478,19 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
             ) {
               const isTapped = tappedOrbitCardIdRef.current === card.id;
               if (isTapped) {
-                targetY -= isMobile ? 85 : 110;
-                targetZ = 95;
+                targetY -= isMobile ? 65 : 85;
+                targetZ = 80;
                 targetRotX = 0;
                 targetRotY = 0;
                 targetRotZ = 0;
-                targetScale = isMobile ? 1.25 : 1.38;
+                targetScale = isMobile ? 1.18 : 1.28;
                 blurPx = 0;
                 brightness = 1.15;
               } else {
-                targetY -= 34;
-                targetScale += 0.08;
+                targetY -= 16;
+                targetScale += 0.04;
                 blurPx = 0;
-                brightness = 1.15;
+                brightness = 1.12;
               }
             }
           }
@@ -515,11 +513,11 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
             const cardWidth = isMobile ? 96 : 128;
             const maxOffset = spreadWidth / 2 - cardWidth / 2;
 
-            const bobbing = Math.sin(timeSec * 1.6 + fanStackIndex * 0.4) * FLOAT_STRENGTH * 10;
+            const bobbing = Math.sin(timeSec * 0.6) * 1.4;
             targetX = (normalized * 2 - 1) * maxOffset;
-            targetY = Math.abs(normalized - 0.5) * (isMobile ? 48 : 72) + bobbing + 50;
-            targetZ = (1 - Math.abs(normalized - 0.5) * 2) * 35;
-            targetRotZ = (normalized * 2 - 1) * (isMobile ? 18 : 26);
+            targetY = Math.abs(normalized - 0.5) * (isMobile ? 42 : 62) + bobbing + 50;
+            targetZ = (1 - Math.abs(normalized - 0.5) * 2) * 28;
+            targetRotZ = (normalized * 2 - 1) * (isMobile ? 14 : 20);
 
             if (heldCardIdRef.current) {
               const activeFanIndex = unselectedCards.findIndex(
@@ -561,12 +559,12 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
                 const cursorFanIndex = hoverNorm * (totalUnselected - 1);
                 const dist = fanStackIndex - cursorFanIndex;
 
-                if (Math.abs(dist) < 7.5) {
-                  const sigma = 2.4;
+                if (Math.abs(dist) < 6.5) {
+                  const sigma = 2.6;
                   const wave =
                     (dist / sigma) * Math.exp(0.5 - (dist * dist) / (2 * sigma * sigma));
-                  // Cards to the right (dist > 0) overlap on top of the card under the cursor, so push them further right to uncover it
-                  const spreadStrength = dist > 0 ? (isMobile ? 22 : 30) : isMobile ? 10 : 14;
+                  // Smooth, whisper-soft parting of cards
+                  const spreadStrength = dist > 0 ? (isMobile ? 10 : 14) : isMobile ? 5 : 7;
                   targetX += wave * spreadStrength * hoverWeight;
                 }
               }
@@ -575,36 +573,30 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
         }
 
         if (isBeingHeld && opacity > 0) {
-          const pullX = pointerPosRef.current.x - body.x;
-          const pullY = pointerPosRef.current.y - body.y;
-          body.vx = pullX * DRAG_SPEED;
-          body.vy = pullY * DRAG_SPEED;
-          body.x += body.vx;
-          body.y += body.vy;
-          body.z = lerp(body.z, 120, 0.2);
+          // Gentle telekinetic levitation following the pointer like an ethereal extension of mind
+          body.x = lerp(body.x, pointerPosRef.current.x, 0.12);
+          body.y = lerp(body.y, pointerPosRef.current.y, 0.12);
+          body.z = lerp(body.z, 90, 0.08);
 
-          const tiltX = Math.max(-20, Math.min(20, body.vy * 1.2));
-          const tiltY = Math.max(-20, Math.min(20, -body.vx * 1.2));
+          const tiltX = Math.max(-5, Math.min(5, (pointerPosRef.current.y - body.y) * 0.15));
+          const tiltY = Math.max(-5, Math.min(5, -(pointerPosRef.current.x - body.x) * 0.15));
           body.rotX = lerp(body.rotX, tiltX, ROTATION_SLERP_SPEED);
           body.rotY = lerp(body.rotY, tiltY, ROTATION_SLERP_SPEED);
-          body.rotZ = lerp(body.rotZ, -12, ROTATION_SLERP_SPEED);
-          body.scale = lerp(body.scale, 1.15, 0.2);
+          body.rotZ = lerp(body.rotZ, -3, ROTATION_SLERP_SPEED);
+          body.scale = lerp(body.scale, 1.08, 0.08);
           blurPx = 0;
-          brightness = 1.1;
+          brightness = 1.08;
         } else {
-          const springFactor = isSelected ? 0.14 : 0.12;
-          body.vx = (body.vx + (targetX - body.x) * springFactor) * HOVER_DAMPING;
-          body.vy = (body.vy + (targetY - body.y) * springFactor) * HOVER_DAMPING;
-          body.vz = (body.vz + (targetZ - body.z) * springFactor) * HOVER_DAMPING;
-
-          body.x += body.vx * 0.38;
-          body.y += body.vy * 0.38;
-          body.z += body.vz * 0.38;
+          // Fluid, telekinetic smoothing: pure serene drift towards target with zero bounce or oscillation
+          const posEase = isSelected ? 0.085 : 0.072;
+          body.x = lerp(body.x, targetX, posEase);
+          body.y = lerp(body.y, targetY, posEase);
+          body.z = lerp(body.z, targetZ, posEase);
 
           body.rotX = lerp(body.rotX, targetRotX, ROTATION_SLERP_SPEED);
           body.rotY = lerp(body.rotY, targetRotY, ROTATION_SLERP_SPEED);
           body.rotZ = lerp(body.rotZ, targetRotZ, ROTATION_SLERP_SPEED);
-          body.scale = lerp(body.scale, targetScale, 0.16);
+          body.scale = lerp(body.scale, targetScale, 0.08);
         }
 
         const isTappedInOrbit = currentPhase === 'intro' && tappedOrbitCardIdRef.current === card.id;
@@ -677,8 +669,8 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
       if (lightboxCardId) {
         if (cardId === lightboxCardId) {
           const isHovered = hoveredId === cardId;
-          const scale = isHovered ? (isMobile ? 1.43 : 1.60) : (isMobile ? 1.35 : 1.52);
-          const y = isHovered ? (isMobile ? -84 : -106) : (isMobile ? -78 : -100);
+          const scale = isHovered ? (isMobile ? 1.395 : 1.565) : (isMobile ? 1.35 : 1.52);
+          const y = isHovered ? (isMobile ? -81 : -103) : (isMobile ? -78 : -100);
           return {
             transform: `translate(0px, ${y}px) scale(${scale})`,
             zIndex: 200000,
@@ -860,8 +852,8 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
 
         if (Math.abs(deltaAngle) < 0.8 && Math.abs(deltaAngle) > 0.001) {
           spinDirectionRef.current = deltaAngle >= 0 ? 1 : -1;
-          orbitVelocityRef.current += deltaAngle * 0.35;
-          orbitVelocityRef.current = Math.max(-0.24, Math.min(0.24, orbitVelocityRef.current));
+          orbitVelocityRef.current += deltaAngle * 0.16;
+          orbitVelocityRef.current = Math.max(-0.12, Math.min(0.12, orbitVelocityRef.current));
         }
       }
       prevPointerAngleRef.current = currentAngle;

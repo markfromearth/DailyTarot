@@ -29,7 +29,7 @@ export const TarotCardView: React.FC<TarotCardViewProps> = ({
       onClick={onClick}
     >
       <div 
-        className={`w-full h-full relative transition-transform duration-700 transform-style-3d ${isFlipped ? 'rotate-y-180' : ''}`}
+        className={`w-full h-full relative transition-transform duration-[850ms] [transition-timing-function:cubic-bezier(0.16,1,0.3,1)] transform-style-3d ${isFlipped ? 'rotate-y-180' : ''}`}
       >
         {/* Card Back (Face Down) */}
         <div className="absolute inset-0 w-full h-full backface-hidden rounded-xl overflow-hidden tarot-card-shell">
@@ -40,7 +40,7 @@ export const TarotCardView: React.FC<TarotCardViewProps> = ({
 
         {/* Card Front (Face Up — Eyvind Earle Style) */}
         <div className="absolute inset-0 w-full h-full backface-hidden rotate-y-180 rounded-xl overflow-hidden tarot-card-shell">
-          <div className={`w-full h-full rounded-[10px] overflow-hidden bg-[#060919] transition-transform duration-500 ${isReversed ? 'rotate-180' : ''}`}>
+          <div className={`w-full h-full rounded-[10px] overflow-hidden bg-[#060919] transition-transform duration-[700ms] [transition-timing-function:cubic-bezier(0.16,1,0.3,1)] ${isReversed ? 'rotate-180' : ''}`}>
             {imageUrl && !imageError ? (
               <div className="w-full h-full relative">
                 <img 

@@ -100,10 +100,10 @@ export const CardDetailLightbox: React.FC<CardDetailLightboxProps> = ({
           type="button"
           onClick={onClose}
           aria-label="Close card detail view"
-          className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/[0.08] hover:bg-white/20 border border-white/10 text-white/80 hover:text-white transition-all text-xs tracking-wider uppercase group shadow-lg cursor-pointer"
+          className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/[0.08] hover:bg-white/20 border border-white/10 text-white/80 hover:text-white transition-colors duration-300 text-xs tracking-wider uppercase group shadow-lg cursor-pointer"
         >
           <span>Return to Spread</span>
-          <span className="text-sm leading-none group-hover:scale-110 transition-transform">✕</span>
+          <span className="text-sm leading-none group-hover:text-amber-200 transition-colors">✕</span>
         </button>
       </header>
 
@@ -195,10 +195,10 @@ export const CardDetailLightbox: React.FC<CardDetailLightboxProps> = ({
                   <button
                     type="button"
                     onClick={() => onFlipCard(positionedCard.card.id)}
-                    className="px-5 py-2 rounded-full bg-amber-400/20 hover:bg-amber-400/30 active:scale-95 border border-amber-400/40 text-amber-200 text-xs sm:text-sm tracking-widest uppercase font-medium transition-all shadow-lg hover:shadow-amber-500/20 cursor-pointer flex items-center gap-2 group"
+                    className="px-5 py-2 rounded-full bg-amber-400/20 hover:bg-amber-400/30 border border-amber-400/40 text-amber-200 text-xs sm:text-sm tracking-widest uppercase font-medium transition-all duration-300 shadow-lg hover:shadow-amber-500/20 cursor-pointer flex items-center gap-2 group"
                   >
                     <span>Turn Over Card</span>
-                    <span className="text-amber-400 text-sm group-hover:rotate-45 transition-transform duration-300">✦</span>
+                    <span className="text-amber-400 text-sm group-hover:rotate-45 transition-transform duration-500">✦</span>
                   </button>
                 )}
               </div>

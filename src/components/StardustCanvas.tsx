@@ -38,15 +38,15 @@ export const StardustCanvas: React.FC<StardustCanvasProps> = ({ emitterRef }) =>
       spawnBurst: (x: number, y: number, vx = 0, vy = 0, count = 4) => {
         for (let i = 0; i < count; i++) {
           const angle = Math.random() * Math.PI * 2;
-          const speed = Math.random() * 1.5 + 0.25;
+          const speed = Math.random() * 0.6 + 0.1;
           particlesRef.current.push({
-            x: x + (Math.random() - 0.5) * 10,
-            y: y + (Math.random() - 0.5) * 10,
-            vx: vx * 0.14 + Math.cos(angle) * speed,
-            vy: vy * 0.14 + Math.sin(angle) * speed - 0.2,
-            size: Math.random() * 2.1 + 0.6,
-            alpha: Math.random() * 0.6 + 0.4,
-            decay: Math.random() * 0.016 + 0.008,
+            x: x + (Math.random() - 0.5) * 8,
+            y: y + (Math.random() - 0.5) * 8,
+            vx: vx * 0.08 + Math.cos(angle) * speed,
+            vy: vy * 0.08 + Math.sin(angle) * speed - 0.1,
+            size: Math.random() * 1.8 + 0.5,
+            alpha: Math.random() * 0.5 + 0.35,
+            decay: Math.random() * 0.011 + 0.005,
             isGold: Math.random() > 0.25,
             twinklePhase: Math.random() * Math.PI * 2
           });
