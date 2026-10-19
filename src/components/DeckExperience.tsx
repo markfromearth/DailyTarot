@@ -3,6 +3,7 @@ import { ShuffleControl } from './ShuffleControl';
 import { ReadingGuidance } from './ReadingGuidance';
 import { ReadingSlots } from './ReadingSlots';
 import { TarotCardView } from './TarotCardView';
+import { CardDetailLightbox } from './CardDetailLightbox';
 import { StardustCanvas, StardustEmitterHandle } from './StardustCanvas';
 import { ReadingPhase, TarotCard, PositionedCard } from '../types/tarot';
 import { ritualAudio } from '../engine/sound';
@@ -65,6 +66,7 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [tappedOrbitCardId, setTappedOrbitCardId] = useState<string | null>(null);
   const [swirlProgress, setSwirlProgress] = useState(0);
+  const [lightboxCardId, setLightboxCardId] = useState<string | null>(null);
 
   const containerRef = useRef<HTMLDivElement | null>(null);
   const cardNodeRefs = useRef<Map<string, HTMLDivElement>>(new Map());
@@ -122,6 +124,7 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
       setHoveredId(null);
       setTappedOrbitCardId(null);
       setSwirlProgress(0);
+      setLightboxCardId(null);
     } else if (phase === 'shuffling') {
       shuffleStartTimeRef.current = performance.now();
       orbitVelocityRef.current = spinDirectionRef.current * 0.14;
@@ -131,9 +134,13 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
       hoveredIdRef.current = null;
       setHoveredId(null);
       setTappedOrbitCardId(null);
+      setLightboxCardId(null);
       ritualAudio.playShuffleChime();
     } else {
       setTappedOrbitCardId(null);
+      if (phase === 'fan') {
+        setLightboxCardId(null);
+      }
     }
   }, [phase]);
 
@@ -742,9 +749,12 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
     } else if (phase === 'place' || phase === 'read') {
       const isSelected = selectedIds.has(cardId);
       const card = selectedCards.find(c => c.card.id === cardId);
-      if (isSelected && card && !card.isRevealed) {
+      if (isSelected && card) {
         ritualAudio.playCardSelect();
-        onFlipCard(cardId);
+        if (!card.isRevealed) {
+          onFlipCard(cardId);
+        }
+        setLightboxCardId(cardId);
       }
     }
   };
@@ -774,6 +784,7 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
           phase={phase}
           selectedCards={selectedCards}
           viewportWidth={viewportWidth}
+          onCardClick={handleCardClick}
         />
 
         {initialDeckOrder.map((card, index) => {
@@ -785,7 +796,7 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
             isInteractable = true;
           } else if ((phase === 'fan' || phase === 'place') && !isSelected && selectedCards.length < 3) {
             isInteractable = true;
-          } else if ((phase === 'place' || phase === 'read') && isSelected && !selectedCard?.isRevealed) {
+          } else if ((phase === 'place' || phase === 'read') && isSelected) {
             isInteractable = true;
           }
 
@@ -860,7 +871,7 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
                 imageUrl={card.imageUrl}
                 orientation={selectedCard?.orientation || 'upright'}
                 isFlipped={(phase === 'intro' && tappedOrbitCardId === card.id) || (selectedCard?.isRevealed || false)}
-                className={isInteractable ? 'cursor-grab active:cursor-grabbing pointer-events-none' : 'pointer-events-none'}
+                className={isInteractable ? (isSelected ? 'cursor-pointer pointer-events-none' : 'cursor-grab active:cursor-grabbing pointer-events-none') : 'pointer-events-none'}
               />
             </div>
           );
@@ -874,6 +885,33 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
         onResetReading={onResetReading}
         swirlProgress={swirlProgress}
       />
+
+      {/* Lightbox Focus View when a placed card is revealed or clicked */}
+      {(() => {
+        if (!lightboxCardId) return null;
+        const activeCard = selectedCards.find(c => c.card.id === lightboxCardId);
+        const slotIdx = selectedCards.findIndex(c => c.card.id === lightboxCardId);
+        if (!activeCard || slotIdx === -1) return null;
+
+        return (
+          <CardDetailLightbox
+            positionedCard={activeCard}
+            slotIndex={slotIdx}
+            allSelectedCards={selectedCards}
+            onSelectSlot={idx => {
+              const target = selectedCards[idx];
+              if (target) {
+                ritualAudio.playCardSelect();
+                if (!target.isRevealed) {
+                  onFlipCard(target.card.id);
+                }
+                setLightboxCardId(target.card.id);
+              }
+            }}
+            onClose={() => setLightboxCardId(null)}
+          />
+        );
+      })()}
     </div>
   );
 };

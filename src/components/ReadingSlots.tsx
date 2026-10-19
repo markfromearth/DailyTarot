@@ -5,9 +5,15 @@ interface ReadingSlotsProps {
   phase: ReadingPhase;
   selectedCards: PositionedCard[];
   viewportWidth: number;
+  onCardClick?: (cardId: string) => void;
 }
 
-export const ReadingSlots: React.FC<ReadingSlotsProps> = ({ phase, selectedCards, viewportWidth }) => {
+export const ReadingSlots: React.FC<ReadingSlotsProps> = ({
+  phase,
+  selectedCards,
+  viewportWidth,
+  onCardClick,
+}) => {
   if (phase === 'intro' || phase === 'shuffling') return null;
 
   const slots = [
@@ -49,8 +55,12 @@ export const ReadingSlots: React.FC<ReadingSlotsProps> = ({ phase, selectedCards
 
             <div className={`absolute top-[105%] text-center drop-shadow-md z-50 ${viewportWidth < 768 ? 'w-24' : 'w-56'}`}>
               {positionedCard?.isRevealed && (
-                <div className="animate-fade-in pointer-events-auto mt-2">
-                  <p className="text-white/90 font-serif text-xs md:text-sm leading-tight mb-1" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.9)' }}>
+                <div 
+                  onClick={() => onCardClick?.(positionedCard.card.id)}
+                  className="animate-fade-in pointer-events-auto mt-2 cursor-pointer group p-1 rounded-lg transition-transform hover:scale-105 active:scale-95"
+                  title="Click to enlarge and view details"
+                >
+                  <p className="text-white/90 group-hover:text-amber-200 font-serif text-xs md:text-sm leading-tight mb-1 transition-colors" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.9)' }}>
                     {positionedCard.card.name}
                   </p>
                   {positionedCard.orientation === 'reversed' && (
@@ -58,9 +68,12 @@ export const ReadingSlots: React.FC<ReadingSlotsProps> = ({ phase, selectedCards
                       Reversed
                     </p>
                   )}
-                  <p className="text-white/70 text-[10px] md:text-xs leading-relaxed mt-1 md:mt-2 max-w-[92px] md:max-w-[200px] mx-auto" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.9)' }}>
+                  <p className="text-white/70 group-hover:text-white/90 text-[10px] md:text-xs leading-relaxed mt-1 md:mt-2 max-w-[92px] md:max-w-[200px] mx-auto line-clamp-3 transition-colors" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.9)' }}>
                     {positionedCard.orientation === 'reversed' ? positionedCard.card.reversedMeaning : positionedCard.card.uprightMeaning}
                   </p>
+                  <span className="inline-block mt-1 text-[9px] tracking-wider text-amber-300/60 group-hover:text-amber-300 uppercase opacity-0 group-hover:opacity-100 transition-opacity">
+                    View Card ↗
+                  </span>
                 </div>
               )}
             </div>
