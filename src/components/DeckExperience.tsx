@@ -107,6 +107,8 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
   hoveredIdRef.current = hoveredId;
   const tappedOrbitCardIdRef = useRef(tappedOrbitCardId);
   tappedOrbitCardIdRef.current = tappedOrbitCardId;
+  const lightboxCardIdRef = useRef(lightboxCardId);
+  lightboxCardIdRef.current = lightboxCardId;
 
   useEffect(() => {
     fanDeckOrderRef.current = [...initialDeckOrder];
@@ -259,19 +261,118 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
         let tuckRotY = 0;
         let tuckRotZ = 0;
 
-        if (isSelected) {
-          // Placed slot position at the top
-          const cardWidth = isMobile ? 96 : 128;
-          const spacing = isMobile ? 14 : 38;
-          const totalWidth = cardWidth * 3 + spacing * 2;
-          const startX = -(totalWidth / 2) + cardWidth / 2;
+        const isInspecting = !!lightboxCardIdRef.current;
+        const inspectedId = lightboxCardIdRef.current;
+        const isFocusedCard = isInspecting && card.id === inspectedId;
 
-          targetX = startX + selectedIndex * (cardWidth + spacing);
-          targetY = isMobile ? -145 : -170;
-          targetZ = 60;
-          targetRotX = 0;
-          targetRotY = 0;
-          targetRotZ = 0;
+        if (isSelected) {
+          if (isInspecting) {
+            // Inspect Focus Mode: Selected card lifts forward; other two cards fan out behind
+            if (isFocusedCard) {
+              targetX = 0;
+              targetY = isMobile ? -78 : -100;
+              targetZ = 165;
+              targetScale = isMobile ? 1.35 : 1.52;
+              targetRotX = 0;
+              targetRotY = 0;
+              targetRotZ = 0;
+              blurPx = 0;
+              brightness = 1.15;
+            } else {
+              // Two companion cards fanned out behind
+              const focusedSlotIndex = currentSelected.findIndex(c => c.card.id === inspectedId);
+
+              if (focusedSlotIndex === 0) {
+                // Focused card is PAST (slot 0)
+                if (selectedIndex === 1) {
+                  // PRESENT fans out slightly to the right
+                  targetX = isMobile ? 52 : 68;
+                  targetY = isMobile ? -88 : -112;
+                  targetZ = 75;
+                  targetRotZ = 7.5;
+                  targetRotY = -5;
+                  targetRotX = 2;
+                  targetScale = isMobile ? 1.05 : 1.16;
+                  brightness = 0.78;
+                  blurPx = 0.3;
+                } else {
+                  // FUTURE fans out further to the right
+                  targetX = isMobile ? 98 : 130;
+                  targetY = isMobile ? -98 : -124;
+                  targetZ = 45;
+                  targetRotZ = 14;
+                  targetRotY = -9;
+                  targetRotX = 4;
+                  targetScale = isMobile ? 0.98 : 1.08;
+                  brightness = 0.68;
+                  blurPx = 0.5;
+                }
+              } else if (focusedSlotIndex === 1) {
+                // Focused card is PRESENT (slot 1)
+                if (selectedIndex === 0) {
+                  // PAST fans out to the left
+                  targetX = isMobile ? -56 : -74;
+                  targetY = isMobile ? -90 : -114;
+                  targetZ = 65;
+                  targetRotZ = -8.5;
+                  targetRotY = 6;
+                  targetRotX = 2;
+                  targetScale = isMobile ? 1.05 : 1.16;
+                  brightness = 0.76;
+                  blurPx = 0.3;
+                } else {
+                  // FUTURE fans out to the right
+                  targetX = isMobile ? 56 : 74;
+                  targetY = isMobile ? -90 : -114;
+                  targetZ = 65;
+                  targetRotZ = 8.5;
+                  targetRotY = -6;
+                  targetRotX = 2;
+                  targetScale = isMobile ? 1.05 : 1.16;
+                  brightness = 0.76;
+                  blurPx = 0.3;
+                }
+              } else {
+                // Focused card is FUTURE (slot 2)
+                if (selectedIndex === 1) {
+                  // PRESENT fans out slightly to the left
+                  targetX = isMobile ? -52 : -68;
+                  targetY = isMobile ? -88 : -112;
+                  targetZ = 75;
+                  targetRotZ = -7.5;
+                  targetRotY = 5;
+                  targetRotX = 2;
+                  targetScale = isMobile ? 1.05 : 1.16;
+                  brightness = 0.78;
+                  blurPx = 0.3;
+                } else {
+                  // PAST fans out further to the left
+                  targetX = isMobile ? -98 : -130;
+                  targetY = isMobile ? -98 : -124;
+                  targetZ = 45;
+                  targetRotZ = -14;
+                  targetRotY = 9;
+                  targetRotX = 4;
+                  targetScale = isMobile ? 0.98 : 1.08;
+                  brightness = 0.68;
+                  blurPx = 0.5;
+                }
+              }
+            }
+          } else {
+            // Standard 3-card spread positions
+            const cardWidth = isMobile ? 96 : 128;
+            const spacing = isMobile ? 14 : 38;
+            const totalWidth = cardWidth * 3 + spacing * 2;
+            const startX = -(totalWidth / 2) + cardWidth / 2;
+
+            targetX = startX + selectedIndex * (cardWidth + spacing);
+            targetY = isMobile ? -145 : -170;
+            targetZ = 60;
+            targetRotX = 0;
+            targetRotY = 0;
+            targetRotZ = 0;
+          }
         } else if (currentPhase === 'intro' || currentPhase === 'shuffling') {
           if (index >= VISIBLE_ORBIT_CARDS) {
             opacity = 0;
@@ -502,7 +603,11 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
           : isTappedInOrbit
           ? 180000
           : isSelected
-          ? 150000 + selectedIndex
+          ? isInspecting
+            ? isFocusedCard
+              ? 200000
+              : 175000 + selectedIndex
+            : 150000 + selectedIndex
           : currentPhase === 'fan' || currentPhase === 'place'
           ? 10000 + fanStackIndex
           : orbitZIndex;
@@ -540,12 +645,43 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
     const isSelected = selectedIndex !== -1;
 
     if (isSelected) {
-      const cardWidth = viewportWidth < 768 ? 96 : 128;
-      const spacing = viewportWidth < 768 ? 14 : 38;
+      const isMobile = viewportWidth < 768;
+      if (lightboxCardId) {
+        if (cardId === lightboxCardId) {
+          return {
+            transform: `translate(0px, ${isMobile ? -78 : -100}px) scale(${isMobile ? 1.35 : 1.52})`,
+            zIndex: 200000,
+          };
+        } else {
+          const focusedSlotIndex = selectedCards.findIndex(c => c.card.id === lightboxCardId);
+          let fx = 0;
+          let fy = isMobile ? -88 : -112;
+          let frot = 0;
+          let fscale = isMobile ? 1.05 : 1.16;
+          if (focusedSlotIndex === 0) {
+            fx = selectedIndex === 1 ? (isMobile ? 52 : 68) : (isMobile ? 98 : 130);
+            frot = selectedIndex === 1 ? 7.5 : 14;
+          } else if (focusedSlotIndex === 1) {
+            fx = selectedIndex === 0 ? (isMobile ? -56 : -74) : (isMobile ? 56 : 74);
+            frot = selectedIndex === 0 ? -8.5 : 8.5;
+          } else {
+            fx = selectedIndex === 1 ? (isMobile ? -52 : -68) : (isMobile ? -98 : -130);
+            frot = selectedIndex === 1 ? -7.5 : -14;
+          }
+          return {
+            transform: `translate(${fx}px, ${fy}px) rotate(${frot}deg) scale(${fscale})`,
+            zIndex: 175000 + selectedIndex,
+            filter: 'brightness(0.76)',
+          };
+        }
+      }
+
+      const cardWidth = isMobile ? 96 : 128;
+      const spacing = isMobile ? 14 : 38;
       const totalWidth = cardWidth * 3 + spacing * 2;
       const startX = -(totalWidth / 2) + cardWidth / 2;
       const xPos = startX + selectedIndex * (cardWidth + spacing);
-      const yPos = viewportWidth < 768 ? -145 : -170;
+      const yPos = isMobile ? -145 : -170;
 
       return {
         transform: `translate(${xPos}px, ${yPos}px)`,
@@ -781,13 +917,14 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
       <ReadingGuidance phase={phase} selectedCount={selectedCards.length} />
 
       {/* The 3D Antigravity Deck Container */}
-      <div className="relative w-24 h-36 md:w-32 md:h-48 perspective-1000 z-30">
+      <div className={`relative w-24 h-36 md:w-32 md:h-48 perspective-1000 ${lightboxCardId ? 'z-[160000]' : 'z-30'}`}>
         {/* Spread Slots matched to absolute math */}
         <ReadingSlots
           phase={phase}
           selectedCards={selectedCards}
           viewportWidth={viewportWidth}
           onCardClick={handleCardClick}
+          isInspecting={!!lightboxCardId}
         />
 
         {initialDeckOrder.map((card, index) => {

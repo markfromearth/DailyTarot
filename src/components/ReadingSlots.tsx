@@ -7,6 +7,7 @@ interface ReadingSlotsProps {
   selectedCards: PositionedCard[];
   viewportWidth: number;
   onCardClick?: (cardId: string) => void;
+  isInspecting?: boolean;
 }
 
 export const ReadingSlots: React.FC<ReadingSlotsProps> = ({
@@ -14,6 +15,7 @@ export const ReadingSlots: React.FC<ReadingSlotsProps> = ({
   selectedCards,
   viewportWidth,
   onCardClick,
+  isInspecting = false,
 }) => {
   if (phase === 'intro' || phase === 'shuffling') return null;
 
@@ -40,7 +42,9 @@ export const ReadingSlots: React.FC<ReadingSlotsProps> = ({
         return (
           <div 
             key={slot.index}
-            className="absolute top-0 left-0 w-full h-full flex flex-col items-center pointer-events-none"
+            className={`absolute top-0 left-0 w-full h-full flex flex-col items-center pointer-events-none transition-opacity duration-400 ${
+              isInspecting ? 'opacity-0 pointer-events-none' : 'opacity-100'
+            }`}
             style={{
               transform: `translate(${xPos}px, ${yPos}px)`,
               zIndex: 10
