@@ -26,9 +26,13 @@ export const CardDetailLightbox: React.FC<CardDetailLightboxProps> = ({
       if (e.key === 'Escape') {
         onClose();
       } else if (e.key === 'ArrowRight' && slotIndex < 2) {
-        onSelectSlot(slotIndex + 1);
+        if (allSelectedCards[slotIndex + 1]?.isRevealed) {
+          onSelectSlot(slotIndex + 1);
+        }
       } else if (e.key === 'ArrowLeft' && slotIndex > 0) {
-        onSelectSlot(slotIndex - 1);
+        if (allSelectedCards[slotIndex - 1]?.isRevealed) {
+          onSelectSlot(slotIndex - 1);
+        }
       }
     };
 
@@ -68,7 +72,7 @@ export const CardDetailLightbox: React.FC<CardDetailLightboxProps> = ({
             {SLOT_TITLES.map((title, idx) => {
               const cardAtSlot = allSelectedCards[idx];
               const isActive = idx === slotIndex;
-              const hasCard = !!cardAtSlot;
+              const hasCard = !!cardAtSlot && cardAtSlot.isRevealed;
 
               return (
                 <button

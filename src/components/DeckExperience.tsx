@@ -752,9 +752,12 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
       if (isSelected && card) {
         ritualAudio.playCardSelect();
         if (!card.isRevealed) {
+          // First tap: Turn the card over right in the 3-card spread
           onFlipCard(cardId);
+        } else {
+          // Second tap: Open the single-card focus view
+          setLightboxCardId(cardId);
         }
-        setLightboxCardId(cardId);
       }
     }
   };
@@ -900,11 +903,8 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
             allSelectedCards={selectedCards}
             onSelectSlot={idx => {
               const target = selectedCards[idx];
-              if (target) {
+              if (target && target.isRevealed) {
                 ritualAudio.playCardSelect();
-                if (!target.isRevealed) {
-                  onFlipCard(target.card.id);
-                }
                 setLightboxCardId(target.card.id);
               }
             }}
