@@ -33,7 +33,7 @@ interface CardPhysicsBody {
 
 const ROTATION_SLERP_SPEED = 0.075;
 const SWIPE_DISTANCE_THRESHOLD = 45; // Single swipe distance in px to spin the ring and trigger shuffle
-const VISIBLE_ORBIT_CARDS = 50; // 50 visible cards orbiting in the 3D ring
+const VISIBLE_ORBIT_CARDS = 30; // 30 visible cards orbiting in the 3D ring (splits into dual 15-card weaving ribbons)
 const TILT_RAD = -21 * (Math.PI / 180); // 21-degree diagonal banking angle
 const IDLE_ORBIT_VELOCITY = -0.0016; // Calm, meditative counter-clockwise orbital drift
 
@@ -213,8 +213,8 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
       const sinTilt = Math.sin(TILT_RAD);
 
       // Celestial Ribbon Weave (Option 1):
-      // Ring stays expansive (radius >= 0.88), never collapsing into itself.
-      // Cards split into two undulating 3D ribbons weaving over and under each other in depth.
+      // Ring stays spacious and expansive, blooming outward rather than collapsing inward.
+      // Cards split into two undulating 3D armillary ribbons weaving over and under each other.
       let mergeFactor = 1;
       let weaveEnvelope = 0;
 
@@ -222,24 +222,28 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
         const elapsed = now - shuffleStartTimeRef.current;
         const p = Math.min(1, Math.max(0, elapsed / 3000));
 
-        // Smooth radius breathing: 1.0 -> gentle dip to 0.88 -> bloom to 1.06
-        if (p < 0.30) {
-          const t = p / 0.30;
+        // Smooth radius expansion: 1.0 -> 1.08 during the weave -> radiant bloom to 1.14
+        if (p < 0.25) {
+          const t = p / 0.25;
           const easeIn = 0.5 - 0.5 * Math.cos(t * Math.PI);
-          mergeFactor = 1.0 - easeIn * 0.12; // 1.0 -> 0.88
-        } else if (p < 0.70) {
-          // Hover at generous spacious radius during the weave
-          mergeFactor = 0.88;
+          mergeFactor = 1.0 + easeIn * 0.08; // 1.0 -> 1.08
+        } else if (p < 0.73) {
+          mergeFactor = 1.08;
         } else {
-          const t = (p - 0.70) / 0.30;
-          const easeOut = 0.5 - 0.5 * Math.cos(t * Math.PI);
-          mergeFactor = 0.88 + easeOut * 0.18; // 0.88 -> 1.06
+          const t = (p - 0.73) / 0.27;
+          const easeBloom = 0.5 - 0.5 * Math.cos(t * Math.PI);
+          mergeFactor = 1.08 + easeBloom * 0.06; // 1.08 -> 1.14
         }
 
-        // Weave envelope: smoothly rises to 1.0 during the middle phase, then unifies back to 0
-        if (p >= 0.10 && p <= 0.90) {
-          const u = (p - 0.10) / 0.80;
-          weaveEnvelope = Math.sin(u * Math.PI);
+        // Weave envelope: smoothly rises to 1.0, stays in full dance, then re-unifies to 0
+        if (p < 0.20) {
+          const t = p / 0.20;
+          weaveEnvelope = 0.5 - 0.5 * Math.cos(t * Math.PI);
+        } else if (p < 0.73) {
+          weaveEnvelope = 1.0;
+        } else {
+          const t = (p - 0.73) / 0.27;
+          weaveEnvelope = 0.5 + 0.5 * Math.cos(t * Math.PI);
         }
       }
 
@@ -443,83 +447,92 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
             const backRetreatBell = smoothTuckBell(deltaFromBack, -0.5 * stepAngle);
             const backUpcomingBell = smoothTuckBell(deltaFromBack, 0.5 * stepAngle);
 
+            const tuckFade = Math.max(0, 1 - weaveEnvelope);
             if (frontRetreatBell > 0 || frontUpcomingBell > 0) {
               const sweepDist =
                 ((isMobile ? 65 : 78) * frontRetreatBell -
                   (isMobile ? 49 : 58) * frontUpcomingBell) *
-                mergeFactor;
+                mergeFactor * tuckFade;
               tuckX = sweepDist * cosTilt;
               tuckY = sweepDist * sinTilt;
-              tuckRotY = (-12 * frontRetreatBell + 9 * frontUpcomingBell) * mergeFactor;
-              tuckRotZ = (-3.9 * frontRetreatBell - 2.1 * frontUpcomingBell) * mergeFactor;
+              tuckRotY = (-12 * frontRetreatBell + 9 * frontUpcomingBell) * mergeFactor * tuckFade;
+              tuckRotZ = (-3.9 * frontRetreatBell - 2.1 * frontUpcomingBell) * mergeFactor * tuckFade;
             } else if (backRetreatBell > 0 || backUpcomingBell > 0) {
               const sweepDistBack =
                 (-(isMobile ? 36 : 38) * backRetreatBell +
                   (isMobile ? 26 : 28) * backUpcomingBell) *
-                mergeFactor;
+                mergeFactor * tuckFade;
               tuckX = sweepDistBack * cosTilt;
               tuckY = sweepDistBack * sinTilt;
-              tuckRotY = (8 * backRetreatBell - 6 * backUpcomingBell) * mergeFactor;
-              tuckRotZ = (-2.1 * backRetreatBell - 3.9 * backUpcomingBell) * mergeFactor;
+              tuckRotY = (8 * backRetreatBell - 6 * backUpcomingBell) * mergeFactor * tuckFade;
+              tuckRotZ = (-2.1 * backRetreatBell - 3.9 * backUpcomingBell) * mergeFactor * tuckFade;
             }
 
-            if (deltaFromApex >= -stepAngle && deltaFromApex < 0) {
-              orbitZIndex = deltaFromApex > -0.5 * stepAngle ? 95000 : 88500;
-            } else if (deltaFromApex >= 0 && deltaFromApex < stepAngle) {
-              orbitZIndex = 90000;
-            } else if (deltaFromBack >= -stepAngle && deltaFromBack < 0) {
-              orbitZIndex = deltaFromBack > -0.5 * stepAngle ? 36000 : 38500;
-            } else if (deltaFromBack >= 0 && deltaFromBack < stepAngle) {
-              orbitZIndex = 37500;
-            } else {
-              orbitZIndex = Math.round(85000 - Math.abs(deltaFromApex) * 15000) + index;
-            }
+            // Dual Braided Ribbon Weave (Stream A: even index, Stream B: odd index)
+            const streamSign = (index % 2 === 0) ? 1 : -1;
 
-            // Ribbon A (even index) vs Ribbon B (odd index) alternating wave
-            const ribbonSign = (index % 2 === 0) ? 1 : -1;
+            // 1. Dual Braided Vertical Altitude Separation:
+            // Stream A sweeps high on right/front, dips low on left/back;
+            // Stream B sweeps oppositely, creating up to 125px vertical daylight between ribbons
+            const streamAltitudeY = streamSign * (isMobile ? 36 : 60) * Math.sin(theta) * weaveEnvelope;
 
-            // Celestial Ribbon Weave 3D dimensional offsets
-            const ribbonZ = ribbonSign * (isMobile ? 32 : 55) * weaveEnvelope;
-            const ribbonRotX = ribbonSign * 11 * weaveEnvelope;
-            const ribbonRadiusMod = 1 - ribbonSign * 0.045 * weaveEnvelope;
+            // 2. Crossing Depth Clearance (Z):
+            // At the crossing nodes (theta = 0 and theta = PI), Stream A crosses in front (+Z), Stream B dives behind (-Z)
+            const streamDepthZ = streamSign * (isMobile ? 55 : 95) * Math.cos(theta) * weaveEnvelope;
 
-            // Harmonic undulating ripple waves around the orbital track
-            const trackRippleZ = Math.sin(theta * 3 + timeSec * 2.2) * (isMobile ? 16 : 28) * weaveEnvelope;
-            const trackRippleRotZ = Math.cos(theta * 2 + timeSec * 1.8) * 12 * weaveEnvelope;
+            // 3. Elliptical Radial Separation:
+            // Stream A sweeps wider while Stream B sweeps inward, giving clear negative space
+            const streamRadiusMod = 1.0 + streamSign * 0.12 * Math.sin(theta * 2) * weaveEnvelope;
+
+            // 4. Harmonic Undulating Flutter:
+            const flutterY = Math.sin(theta * 3 + timeSec * 2.8) * (isMobile ? 5 : 8) * weaveEnvelope;
+            const flutterRotZ = Math.cos(theta * 2 + timeSec * 2.2) * 8 * weaveEnvelope;
             const subtleBreathingY = Math.sin(timeSec * 0.7 + theta * 0.5) * 1.6;
 
-            // Un-tilted ellipse coordinates with generous radius preserved
-            const lx = Math.cos(theta) * rx * mergeFactor * ribbonRadiusMod;
-            const ly = Math.sin(theta) * ry * mergeFactor * ribbonRadiusMod;
+            // Un-tilted ellipse coordinates with generous radius and braided radial separation
+            const lx = Math.cos(theta) * rx * mergeFactor * streamRadiusMod;
+            const ly = Math.sin(theta) * ry * mergeFactor * streamRadiusMod;
 
             // Apply -21deg diagonal banking rotation to the entire ring with 3D weave
             targetX = (lx * cosTilt - ly * sinTilt) - (isMobile ? 10 : 35) * mergeFactor;
-            targetY = (lx * sinTilt + ly * cosTilt) + subtleBreathingY;
-            targetZ = Math.sin(theta) * rz * mergeFactor + ribbonZ + trackRippleZ;
+            targetY = (lx * sinTilt + ly * cosTilt) + streamAltitudeY + flutterY + subtleBreathingY;
+            targetZ = Math.sin(theta) * rz * mergeFactor + streamDepthZ;
 
             // Depth norm: +1 at closest foreground (bottom-right), -1 at furthest background (top-left)
             const depthNorm = Math.sin(theta);
 
-            // Tangential 3D card orientation along the banked ring with dimensional ribbon weave
-            targetRotY = -Math.cos(theta) * 26 * mergeFactor;
-            targetRotX = (8 - depthNorm * 6) * mergeFactor + ribbonRotX;
-            targetRotZ = (-18 + Math.cos(theta) * 14) * mergeFactor + trackRippleRotZ;
+            // Aerodynamic tangential card orientation along the braided ribbon curves
+            const streamPitchRotX = streamSign * 18 * Math.sin(theta) * weaveEnvelope;
+            const streamBankRotZ = streamSign * 14 * Math.cos(theta) * weaveEnvelope;
 
-            // Perspective scale & optical depth-of-field dimming on back-half cards
-            targetScale = 0.72 + (depthNorm + 1) * 0.24 * mergeFactor + (ribbonSign * 0.04 * weaveEnvelope);
-            if (depthNorm < -0.15 || (ribbonSign < 0 && weaveEnvelope > 0.3)) {
-              const bgBlur = depthNorm < -0.15 ? Math.abs(depthNorm + 0.15) * 1.8 * mergeFactor : 0;
-              const ribbonBlur = ribbonSign < 0 ? weaveEnvelope * 0.45 : 0;
-              blurPx = Math.max(bgBlur, ribbonBlur);
-              brightness = (0.65 + (depthNorm + 1) * 0.3) + (ribbonSign * 0.10 * weaveEnvelope);
-            } else {
-              brightness = 1.0 + (ribbonSign > 0 ? 0.12 * weaveEnvelope : 0);
-            }
+            targetRotY = -Math.cos(theta) * 24 * mergeFactor;
+            targetRotX = (8 - depthNorm * 6) * mergeFactor + streamPitchRotX;
+            targetRotZ = (-18 + Math.cos(theta) * 14) * mergeFactor + streamBankRotZ + flutterRotZ;
 
-            // Layering during the weave so front ribbon cards cleanly overlap back ribbon cards
+            // Accurate Depth Layering (zIndex):
+            // In shuffle phase: continuous composite depth sorting so foreground cards cleanly overlap background cards
+            // In intro phase: discrete apex sorting
             if (currentPhase === 'shuffling' && weaveEnvelope > 0.05) {
-              orbitZIndex += ribbonSign * Math.round(18000 * weaveEnvelope);
+              orbitZIndex = Math.round(50000 + targetZ * 100) + index;
+            } else {
+              if (deltaFromApex >= -stepAngle && deltaFromApex < 0) {
+                orbitZIndex = deltaFromApex > -0.5 * stepAngle ? 95000 : 88500;
+              } else if (deltaFromApex >= 0 && deltaFromApex < stepAngle) {
+                orbitZIndex = 90000;
+              } else if (deltaFromBack >= -stepAngle && deltaFromBack < 0) {
+                orbitZIndex = deltaFromBack > -0.5 * stepAngle ? 36000 : 38500;
+              } else if (deltaFromBack >= 0 && deltaFromBack < stepAngle) {
+                orbitZIndex = 37500;
+              } else {
+                orbitZIndex = Math.round(85000 - Math.abs(deltaFromApex) * 15000) + index;
+              }
             }
+
+            // Perspective scale & celestial starlight lighting
+            targetScale = 0.80 + (depthNorm + 1) * 0.20 * mergeFactor;
+            const streamGlow = streamSign > 0 ? 0.10 : -0.04;
+            brightness = 0.95 + (depthNorm + 1) * 0.12 + (streamGlow * weaveEnvelope);
+            blurPx = depthNorm < -0.35 ? Math.abs(depthNorm + 0.35) * 1.6 : 0;
 
             // If this card is tapped (or hovered) in the ring, make it rise gracefully from the ring
             if (
@@ -714,6 +727,8 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
         const filterStr =
           blurPx > 0.15
             ? `blur(${blurPx.toFixed(2)}px) brightness(${brightness.toFixed(2)})`
+            : Math.abs(brightness - 1) > 0.02
+            ? `brightness(${brightness.toFixed(2)})`
             : 'none';
 
         el.style.transform = transformStr;
