@@ -362,6 +362,12 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
                   blurPx = 0.5;
                 }
               }
+
+              if (isHovered) {
+                brightness = 0.96;
+                blurPx = 0;
+                targetScale += 0.04;
+              }
             }
           } else {
             // Standard 3-card spread positions
@@ -894,12 +900,27 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
       const card = selectedCards.find(c => c.card.id === cardId);
       if (isSelected && card) {
         ritualAudio.playCardSelect();
-        if (!card.isRevealed) {
-          // First tap: Turn the card over right in the 3-card spread
-          onFlipCard(cardId);
+        if (lightboxCardId) {
+          // In single-card inspect view:
+          if (cardId !== lightboxCardId) {
+            // Tapping on one of the other cards just brings that to the front
+            // If it's not been turned, it will come to the front face down
+            setLightboxCardId(cardId);
+          } else {
+            // Tapping on the card currently at the front turns it over if not yet revealed
+            if (!card.isRevealed) {
+              onFlipCard(cardId);
+            }
+          }
         } else {
-          // Second tap: Open the single-card focus view
-          setLightboxCardId(cardId);
+          // In 3-card spread view:
+          if (!card.isRevealed) {
+            // First tap: Turn the card over right in the 3-card spread
+            onFlipCard(cardId);
+          } else {
+            // Second tap: Open the single-card focus view
+            setLightboxCardId(cardId);
+          }
         }
       }
     }
@@ -958,7 +979,15 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
                 }
               }}
               style={getReducedMotionStyle(card.id, index)}
-              className="absolute top-0 left-0 w-full h-full transform-gpu outline-none will-change-transform"
+              className={`absolute top-0 left-0 w-full h-full transform-gpu outline-none will-change-transform ${
+                isInteractable
+                  ? isSelected
+                    ? 'cursor-pointer'
+                    : phase === 'intro'
+                    ? 'cursor-pointer'
+                    : 'cursor-grab active:cursor-grabbing'
+                  : ''
+              }`}
               onPointerDown={e => {
                 e.stopPropagation();
                 handlePointerDown(e, card.id);
@@ -1047,11 +1076,12 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
             allSelectedCards={selectedCards}
             onSelectSlot={idx => {
               const target = selectedCards[idx];
-              if (target && target.isRevealed) {
+              if (target) {
                 ritualAudio.playCardSelect();
                 setLightboxCardId(target.card.id);
               }
             }}
+            onFlipCard={onFlipCard}
             onClose={() => setLightboxCardId(null)}
           />
         );

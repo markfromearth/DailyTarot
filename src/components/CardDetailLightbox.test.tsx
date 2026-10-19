@@ -132,4 +132,32 @@ describe('CardDetailLightbox', () => {
     fireEvent.keyDown(window, { key: 'ArrowRight' });
     expect(handleSelectSlot).toHaveBeenCalledWith(1);
   });
+
+  it('renders face-down unrevealed card safely without spoiling name or meaning', () => {
+    const unrevealedCard: PositionedCard = {
+      ...mockCard,
+      isRevealed: false,
+    };
+    const handleFlip = vi.fn();
+
+    render(
+      <CardDetailLightbox
+        positionedCard={unrevealedCard}
+        slotIndex={0}
+        allSelectedCards={[unrevealedCard, mockCard2]}
+        onSelectSlot={vi.fn()}
+        onFlipCard={handleFlip}
+        onClose={vi.fn()}
+      />
+    );
+
+    expect(screen.getByText('Face Down')).toBeDefined();
+    expect(screen.getByText('Veiled Arcana')).toBeDefined();
+    expect(screen.queryByText('The Fool')).toBeNull();
+    expect(screen.queryByText('New beginnings, optimism, trust in life.')).toBeNull();
+
+    const turnOverBtn = screen.getByRole('button', { name: /turn over card/i });
+    fireEvent.click(turnOverBtn);
+    expect(handleFlip).toHaveBeenCalledWith('major-0');
+  });
 });

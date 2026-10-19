@@ -7,6 +7,7 @@ interface CardDetailLightboxProps {
   slotIndex: number;
   allSelectedCards: PositionedCard[];
   onSelectSlot: (index: number) => void;
+  onFlipCard?: (cardId: string) => void;
   onClose: () => void;
 }
 
@@ -17,6 +18,7 @@ export const CardDetailLightbox: React.FC<CardDetailLightboxProps> = ({
   slotIndex,
   allSelectedCards,
   onSelectSlot,
+  onFlipCard,
   onClose,
 }) => {
   // Keyboard navigation
@@ -25,11 +27,11 @@ export const CardDetailLightbox: React.FC<CardDetailLightboxProps> = ({
       if (e.key === 'Escape') {
         onClose();
       } else if (e.key === 'ArrowRight' && slotIndex < 2) {
-        if (allSelectedCards[slotIndex + 1]?.isRevealed) {
+        if (allSelectedCards[slotIndex + 1]) {
           onSelectSlot(slotIndex + 1);
         }
       } else if (e.key === 'ArrowLeft' && slotIndex > 0) {
-        if (allSelectedCards[slotIndex - 1]?.isRevealed) {
+        if (allSelectedCards[slotIndex - 1]) {
           onSelectSlot(slotIndex - 1);
         }
       }
@@ -40,6 +42,7 @@ export const CardDetailLightbox: React.FC<CardDetailLightboxProps> = ({
   }, [slotIndex, allSelectedCards, onSelectSlot, onClose]);
 
   const slotTitle = SLOT_TITLES[slotIndex] || `CARD ${slotIndex + 1}`;
+  const isRevealed = positionedCard.isRevealed;
   const isReversed = positionedCard.orientation === 'reversed';
   const meaningText = isReversed
     ? positionedCard.card.reversedMeaning
@@ -49,7 +52,7 @@ export const CardDetailLightbox: React.FC<CardDetailLightboxProps> = ({
     <div
       role="dialog"
       aria-modal="true"
-      aria-label={`${slotTitle} card: ${positionedCard.card.name}`}
+      aria-label={`${slotTitle} card: ${isRevealed ? positionedCard.card.name : 'Unrevealed'}`}
       className="fixed inset-0 pointer-events-none"
       style={{ zIndex: 140000 }}
     >
@@ -70,7 +73,7 @@ export const CardDetailLightbox: React.FC<CardDetailLightboxProps> = ({
           {SLOT_TITLES.map((title, idx) => {
             const cardAtSlot = allSelectedCards[idx];
             const isActive = idx === slotIndex;
-            const hasCard = !!cardAtSlot && cardAtSlot.isRevealed;
+            const hasCard = !!cardAtSlot;
 
             return (
               <button
@@ -107,59 +110,105 @@ export const CardDetailLightbox: React.FC<CardDetailLightboxProps> = ({
       {/* Reading Details Panel: Positioned cleanly below the 3D fanned cards with safe clearance */}
       <div className="fixed top-[calc(50%+60px)] sm:top-[calc(50%+76px)] md:top-[calc(50%+88px)] bottom-2 left-0 right-0 z-[220000] flex flex-col items-center px-4 overflow-y-auto pointer-events-auto animate-fade-in">
         <div className="w-full max-w-xl flex flex-col items-center text-center my-auto pb-4">
-          {/* Slot Title & Orientation Badges */}
+          {/* Slot Title & Status Badges */}
           <div className="flex items-center gap-2 mb-1.5">
             <span className="px-2.5 py-0.5 rounded-full text-[10px] sm:text-xs font-semibold tracking-[0.25em] uppercase bg-amber-400/15 text-amber-300 border border-amber-400/30">
               {slotTitle}
             </span>
-            {isReversed ? (
-              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-widest uppercase bg-rose-500/20 text-rose-300 border border-rose-500/35">
-                Reversed
-              </span>
+            {isRevealed ? (
+              isReversed ? (
+                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-widest uppercase bg-rose-500/20 text-rose-300 border border-rose-500/35">
+                  Reversed
+                </span>
+              ) : (
+                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-widest uppercase bg-emerald-500/20 text-emerald-300 border border-emerald-500/35">
+                  Upright
+                </span>
+              )
             ) : (
-              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-widest uppercase bg-emerald-500/20 text-emerald-300 border border-emerald-500/35">
-                Upright
+              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-widest uppercase bg-amber-400/20 text-amber-200 border border-amber-400/35">
+                Face Down
               </span>
             )}
           </div>
 
-          {/* Card Name */}
-          <h2
-            className="text-xl sm:text-2xl md:text-3xl font-serif text-white tracking-wide mb-1 font-medium"
-            style={{ textShadow: '0 2px 10px rgba(0,0,0,0.9)' }}
-          >
-            {positionedCard.card.name}
-          </h2>
-
-          <p className="text-white/45 text-[10px] sm:text-[11px] uppercase tracking-[0.25em] mb-2 sm:mb-2.5 font-light">
-            {positionedCard.card.arcana === 'major'
-              ? 'Major Arcana'
-              : `${positionedCard.card.suit?.toUpperCase()} • MINOR ARCANA`}
-          </p>
-
-          {/* Key Themes / Short Phrases */}
-          <div className="flex flex-wrap justify-center gap-1.5 max-w-md mb-2.5 sm:mb-3 px-2">
-            {getCardKeywords(positionedCard.card, positionedCard.orientation).map((kw, i) => (
-              <span
-                key={i}
-                className="px-2.5 py-0.5 rounded-full text-[10px] sm:text-[11px] font-light tracking-wide bg-amber-400/10 border border-amber-400/25 text-amber-200/90"
+          {isRevealed ? (
+            <>
+              {/* Card Name */}
+              <h2
+                className="text-xl sm:text-2xl md:text-3xl font-serif text-white tracking-wide mb-1 font-medium"
+                style={{ textShadow: '0 2px 10px rgba(0,0,0,0.9)' }}
               >
-                {kw}
-              </span>
-            ))}
-          </div>
+                {positionedCard.card.name}
+              </h2>
 
-          {/* Frosted Meaning Container for Optimal Readability */}
-          <div className="w-full max-w-lg bg-[#070b1a]/92 border border-white/15 rounded-2xl p-4 sm:p-5 backdrop-blur-md shadow-2xl max-h-[22vh] sm:max-h-[26vh] overflow-y-auto">
-            <p className="text-white/95 text-xs sm:text-sm md:text-base leading-relaxed font-light tracking-wide">
-              {meaningText}
-            </p>
-          </div>
+              <p className="text-white/45 text-[10px] sm:text-[11px] uppercase tracking-[0.25em] mb-2 sm:mb-2.5 font-light">
+                {positionedCard.card.arcana === 'major'
+                  ? 'Major Arcana'
+                  : `${positionedCard.card.suit?.toUpperCase()} • MINOR ARCANA`}
+              </p>
 
-          {/* Interaction Helper Hint */}
-          <p className="text-white/40 text-[9px] sm:text-[10px] uppercase tracking-[0.2em] mt-2 font-light">
-            Tap companion cards to inspect • Click outside or ESC to return
-          </p>
+              {/* Key Themes / Short Phrases */}
+              <div className="flex flex-wrap justify-center gap-1.5 max-w-md mb-2.5 sm:mb-3 px-2">
+                {getCardKeywords(positionedCard.card, positionedCard.orientation).map((kw, i) => (
+                  <span
+                    key={i}
+                    className="px-2.5 py-0.5 rounded-full text-[10px] sm:text-[11px] font-light tracking-wide bg-amber-400/10 border border-amber-400/25 text-amber-200/90"
+                  >
+                    {kw}
+                  </span>
+                ))}
+              </div>
+
+              {/* Frosted Meaning Container for Optimal Readability */}
+              <div className="w-full max-w-lg bg-[#070b1a]/92 border border-white/15 rounded-2xl p-4 sm:p-5 backdrop-blur-md shadow-2xl max-h-[22vh] sm:max-h-[26vh] overflow-y-auto">
+                <p className="text-white/95 text-xs sm:text-sm md:text-base leading-relaxed font-light tracking-wide">
+                  {meaningText}
+                </p>
+              </div>
+
+              {/* Interaction Helper Hint */}
+              <p className="text-white/40 text-[9px] sm:text-[10px] uppercase tracking-[0.2em] mt-2 font-light">
+                Tap companion cards to inspect • Click outside or ESC to return
+              </p>
+            </>
+          ) : (
+            <>
+              {/* Unrevealed / Mystery Header */}
+              <h2
+                className="text-xl sm:text-2xl md:text-3xl font-serif text-white/90 tracking-wide mb-1 font-medium"
+                style={{ textShadow: '0 2px 10px rgba(0,0,0,0.9)' }}
+              >
+                Veiled Arcana
+              </h2>
+
+              <p className="text-white/45 text-[10px] sm:text-[11px] uppercase tracking-[0.25em] mb-3 font-light">
+                Destiny Awaits • {slotTitle}
+              </p>
+
+              {/* Prompt to Turn Card Over */}
+              <div className="w-full max-w-lg bg-[#070b1a]/92 border border-white/15 rounded-2xl p-4 sm:p-5 backdrop-blur-md shadow-2xl flex flex-col items-center">
+                <p className="text-white/80 text-xs sm:text-sm leading-relaxed font-light tracking-wide mb-3 text-center">
+                  This card is face down. Tap the card above to turn it over and unveil its celestial insight.
+                </p>
+                {onFlipCard && (
+                  <button
+                    type="button"
+                    onClick={() => onFlipCard(positionedCard.card.id)}
+                    className="px-5 py-2 rounded-full bg-amber-400/20 hover:bg-amber-400/30 active:scale-95 border border-amber-400/40 text-amber-200 text-xs sm:text-sm tracking-widest uppercase font-medium transition-all shadow-lg hover:shadow-amber-500/20 cursor-pointer flex items-center gap-2 group"
+                  >
+                    <span>Turn Over Card</span>
+                    <span className="text-amber-400 text-sm group-hover:rotate-45 transition-transform duration-300">✦</span>
+                  </button>
+                )}
+              </div>
+
+              {/* Interaction Helper Hint */}
+              <p className="text-white/40 text-[9px] sm:text-[10px] uppercase tracking-[0.2em] mt-2 font-light">
+                Tap the card above or button to turn over • Tap cards behind to switch
+              </p>
+            </>
+          )}
         </div>
       </div>
     </div>
