@@ -138,4 +138,26 @@ describe('Ritual State Machine (useReading)', () => {
     // Transitions to read state
     expect(result.current.phase).toBe('read');
   });
+
+  it('returns to the ring of cards (intro) when reshuffling/resetting from the fanned deck', () => {
+    const { result } = renderHook(() => useReading());
+
+    // Initial shuffle -> fan
+    act(() => { result.current.beginShuffle(); });
+    act(() => { vi.runAllTimers(); });
+    expect(result.current.phase).toBe('fan');
+
+    // Select 1 card while fanned out
+    const firstDeckOrder = result.current.initialDeckOrder.map(c => c.id);
+    const chosenCardId = firstDeckOrder[0];
+    act(() => { result.current.selectCardFromFan(chosenCardId); });
+    expect(result.current.selectedCards.length).toBe(1);
+    expect(result.current.phase).toBe('fan');
+
+    // Trigger RESHUFFLE DECK (resetReading) while deck is fanned out -> returns to ring of cards ('intro')
+    act(() => { result.current.resetReading(); });
+    expect(result.current.phase).toBe('intro');
+    expect(result.current.selectedCards.length).toBe(0);
+    expect(result.current.initialDeckOrder.length).toBe(78);
+  });
 });

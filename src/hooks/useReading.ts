@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
-import { PositionedCard, ReadingPosition, ReadingPhase, PersistedReading } from '../types/tarot';
+import { PositionedCard, ReadingPosition, ReadingPhase, PersistedReading, TarotCard } from '../types/tarot';
 import { DeckEngine } from '../engine/deck';
 import { ReadingPersistence } from '../store/persistence';
 import { TAROT_DECK } from '../data/cards';
@@ -10,7 +10,10 @@ export function useReading() {
   const [engine] = useState(() => new DeckEngine());
   const [phase, setPhase] = useState<ReadingPhase>('intro');
   const [selectedCards, setSelectedCards] = useState<PositionedCard[]>([]);
+  const [deckOrder, setDeckOrder] = useState<TarotCard[]>(() => engine.getInitialDeckOrder());
   const isInitialized = useRef(false);
+  const selectedCardsRef = useRef(selectedCards);
+  selectedCardsRef.current = selectedCards;
 
   const saveState = useCallback((currentPhase: ReadingPhase, currentSelection: PositionedCard[]) => {
     if (currentPhase === 'intro' || currentPhase === 'shuffling') return;
@@ -55,17 +58,32 @@ export function useReading() {
         };
       });
       
+      setDeckOrder(engine.getInitialDeckOrder());
       setSelectedCards(restoredSelection);
       setPhase(todaysReading.phase);
     }
   }, [engine]);
 
+  const shuffleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (shuffleTimerRef.current) {
+        clearTimeout(shuffleTimerRef.current);
+      }
+    };
+  }, []);
+
   const beginShuffle = useCallback(() => {
     setPhase('shuffling');
-    setTimeout(() => {
+    if (shuffleTimerRef.current) {
+      clearTimeout(shuffleTimerRef.current);
+    }
+    shuffleTimerRef.current = setTimeout(() => {
       engine.shuffle();
+      setDeckOrder(engine.getInitialDeckOrder());
       setPhase('fan');
-      saveState('fan', []);
+      saveState('fan', selectedCardsRef.current);
     }, 1500);
   }, [engine, saveState]);
 
@@ -97,24 +115,27 @@ export function useReading() {
   const flipCard = useCallback((cardId: string) => {
     if (phase !== 'place' && phase !== 'read') return;
 
-    setSelectedCards(prev => {
-      const card = prev.find(c => c.card.id === cardId);
-      if (card?.isRevealed) return prev;
+    const card = selectedCards.find(c => c.card.id === cardId);
+    if (!card || card.isRevealed) return;
 
-      const updated = prev.map(c => c.card.id === cardId ? { ...c, isRevealed: true } : c);
-      
-      const nextPhase = (updated.length === 3 && updated.every(c => c.isRevealed)) ? 'read' : 'place';
-      setPhase(nextPhase);
-      saveState(nextPhase, updated);
-      
-      return updated;
-    });
-  }, [phase, saveState]);
+    const updated = selectedCards.map(c => c.card.id === cardId ? { ...c, isRevealed: true } : c);
+    const nextPhase = (updated.length === 3 && updated.every(c => c.isRevealed)) ? 'read' : 'place';
+
+    setSelectedCards(updated);
+    setPhase(nextPhase);
+    saveState(nextPhase, updated);
+  }, [phase, selectedCards, saveState]);
 
   const resetReading = useCallback(() => {
+    if (shuffleTimerRef.current) {
+      clearTimeout(shuffleTimerRef.current);
+    }
     ReadingPersistence.clearReading();
-    window.location.reload(); // The safest way to cleanly unmount and clear the DeckEngine class instance
-  }, []);
+    engine.reset();
+    setSelectedCards([]);
+    setDeckOrder(engine.getInitialDeckOrder());
+    setPhase('intro');
+  }, [engine]);
 
   return {
     phase,
@@ -124,6 +145,6 @@ export function useReading() {
     flipCard,
     resetReading,
     availableCards: engine.getAvailableCards(),
-    initialDeckOrder: engine.getInitialDeckOrder()
+    initialDeckOrder: deckOrder
   };
 }

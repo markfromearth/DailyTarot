@@ -72,9 +72,27 @@ async function generate() {
       return map[id];
     };
 
+    // Format card name (Title Case + replace "coins" with "Pentacles")
+    const formatCardName = (rawName) => {
+      return rawName
+        .replace(/\bcoins\b/gi, 'Pentacles')
+        .split(' ')
+        .map(word => {
+          const lower = word.toLowerCase();
+          if (lower === 'of' || lower === 'the') {
+            return lower;
+          }
+          return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+        })
+        .join(' ')
+        .replace(/^the\b/i, 'The');
+    };
+
+    const formattedName = formatCardName(c.name);
+
     cards.push({
       id,
-      name: c.name,
+      name: formattedName,
       arcana,
       suit,
       rank,
@@ -82,7 +100,7 @@ async function generate() {
       uprightMeaning,
       reversedMeaning,
       imageUrl: getImageUrl(id),
-      imageAltText: c.name
+      imageAltText: formattedName
     });
   }
 

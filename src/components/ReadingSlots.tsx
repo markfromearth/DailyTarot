@@ -24,7 +24,7 @@ export const ReadingSlots: React.FC<ReadingSlotsProps> = ({ phase, selectedCards
         const totalWidth = (cardWidth * 3) + (spacing * 2);
         const startX = -(totalWidth / 2) + (cardWidth / 2);
         const xPos = startX + (slot.index * (cardWidth + spacing));
-        const yPos = viewportWidth < 768 ? -220 : -280;
+        const yPos = viewportWidth < 768 ? -190 : -220;
         
         const positionedCard = selectedCards[slot.index];
 
@@ -47,18 +47,18 @@ export const ReadingSlots: React.FC<ReadingSlotsProps> = ({ phase, selectedCards
               {/* Empty slot marker */}
             </div>
 
-            <div className="absolute top-[105%] text-center w-56 drop-shadow-md z-50">
+            <div className={`absolute top-[105%] text-center drop-shadow-md z-50 ${viewportWidth < 768 ? 'w-24' : 'w-56'}`}>
               {positionedCard?.isRevealed && (
-                <div className="animate-in fade-in duration-1000 pointer-events-auto mt-2">
-                  <p className="text-white/90 font-serif text-sm leading-tight mb-1" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.9)' }}>
+                <div className="animate-fade-in pointer-events-auto mt-2">
+                  <p className="text-white/90 font-serif text-xs md:text-sm leading-tight mb-1" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.9)' }}>
                     {positionedCard.card.name}
                   </p>
                   {positionedCard.orientation === 'reversed' && (
-                    <p className="text-white/50 text-[9px] uppercase tracking-[0.2em] mb-2 font-bold" style={{ textShadow: '0 1px 2px rgba(0,0,0,0.9)' }}>
+                    <p className="text-white/50 text-[8px] md:text-[9px] uppercase tracking-[0.2em] mb-1 md:mb-2 font-bold" style={{ textShadow: '0 1px 2px rgba(0,0,0,0.9)' }}>
                       Reversed
                     </p>
                   )}
-                  <p className="text-white/70 text-xs leading-relaxed mt-2 max-w-[200px] mx-auto" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.9)' }}>
+                  <p className="text-white/70 text-[10px] md:text-xs leading-relaxed mt-1 md:mt-2 max-w-[92px] md:max-w-[200px] mx-auto" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.9)' }}>
                     {positionedCard.orientation === 'reversed' ? positionedCard.card.reversedMeaning : positionedCard.card.uprightMeaning}
                   </p>
                 </div>

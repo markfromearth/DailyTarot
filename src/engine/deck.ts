@@ -22,7 +22,16 @@ export class DeckEngine {
       [deck[i], deck[j]] = [deck[j], deck[i]];
     }
     this.availableCards = deck;
-    this.initialShuffledDeck = [...deck];
+    this.initialShuffledDeck = [...deck, ...this.drawnCards.map(d => d.card)];
+  }
+
+  /**
+   * Resets the deck back to its initial 78-card unshuffled state.
+   */
+  public reset(): void {
+    this.availableCards = [...TAROT_DECK];
+    this.drawnCards = [];
+    this.initialShuffledDeck = null;
   }
 
   /**
