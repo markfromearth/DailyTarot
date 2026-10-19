@@ -33,7 +33,7 @@ interface CardPhysicsBody {
 
 const ROTATION_SLERP_SPEED = 0.075;
 const SWIPE_DISTANCE_THRESHOLD = 45; // Single swipe distance in px to spin the ring and trigger shuffle
-const VISIBLE_ORBIT_CARDS = 30; // 30 visible cards orbiting in the 3D ring (splits into dual 15-card weaving ribbons)
+const VISIBLE_ORBIT_CARDS = 50; // 50 visible cards orbiting in the celestial 3D ring
 const TILT_RAD = -21 * (Math.PI / 180); // 21-degree diagonal banking angle
 const IDLE_ORBIT_VELOCITY = -0.0016; // Calm, meditative counter-clockwise orbital drift
 
@@ -76,6 +76,7 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
   const swirlAccumulatorRef = useRef(0);
   const hasTriggeredShuffleRef = useRef(false);
   const shuffleStartTimeRef = useRef<number | null>(null);
+  const fanTransitionStartTimeRef = useRef<number | null>(null);
   const spinDirectionRef = useRef<number>(-1);
 
   // Pointer / Drag Interaction Refs
@@ -116,6 +117,7 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
       swirlAccumulatorRef.current = 0;
       hasTriggeredShuffleRef.current = false;
       shuffleStartTimeRef.current = null;
+      fanTransitionStartTimeRef.current = null;
       heldCardIdRef.current = null;
       suppressedHoverCardIdRef.current = null;
       suppressAllHoverUntilMoveRef.current = false;
@@ -126,6 +128,7 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
       setLightboxCardId(null);
     } else if (phase === 'shuffling') {
       shuffleStartTimeRef.current = performance.now();
+      fanTransitionStartTimeRef.current = null;
       orbitVelocityRef.current = spinDirectionRef.current * 0.14;
       heldCardIdRef.current = null;
       suppressedHoverCardIdRef.current = null;
@@ -138,6 +141,8 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
     } else {
       setTappedOrbitCardId(null);
       if (phase === 'fan') {
+        fanTransitionStartTimeRef.current = performance.now();
+        suppressAllHoverUntilMoveRef.current = true;
         setLightboxCardId(null);
       }
     }
@@ -212,38 +217,33 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
       const cosTilt = Math.cos(TILT_RAD);
       const sinTilt = Math.sin(TILT_RAD);
 
-      // Celestial Ribbon Weave (Option 1):
-      // Ring stays spacious and expansive, blooming outward rather than collapsing inward.
-      // Cards split into two undulating 3D armillary ribbons weaving over and under each other.
+      // Celestial Orbital Ring Dynamics (50 Cards):
+      // Zero-collapse: the ring stays expansive, breathing gently outward (1.0 -> 1.05 -> 1.08).
+      // Multi-harmonic celestial waves give it living movement without collapsing or breaking apart.
       let mergeFactor = 1;
-      let weaveEnvelope = 0;
+      let shuffleWobbleAmp = 0;
 
       if (currentPhase === 'shuffling' && shuffleStartTimeRef.current !== null) {
         const elapsed = now - shuffleStartTimeRef.current;
         const p = Math.min(1, Math.max(0, elapsed / 3000));
 
-        // Smooth radius expansion: 1.0 -> 1.08 during the weave -> radiant bloom to 1.14
-        if (p < 0.25) {
-          const t = p / 0.25;
+        // Smooth expansive breathing: NEVER contracts below 1.0
+        if (p < 0.30) {
+          const t = p / 0.30;
           const easeIn = 0.5 - 0.5 * Math.cos(t * Math.PI);
-          mergeFactor = 1.0 + easeIn * 0.08; // 1.0 -> 1.08
-        } else if (p < 0.73) {
-          mergeFactor = 1.08;
+          mergeFactor = 1.0 + easeIn * 0.05; // 1.0 -> 1.05
+        } else if (p < 0.75) {
+          mergeFactor = 1.05;
         } else {
-          const t = (p - 0.73) / 0.27;
+          const t = (p - 0.75) / 0.25;
           const easeBloom = 0.5 - 0.5 * Math.cos(t * Math.PI);
-          mergeFactor = 1.08 + easeBloom * 0.06; // 1.08 -> 1.14
+          mergeFactor = 1.05 + easeBloom * 0.03; // 1.05 -> 1.08
         }
 
-        // Weave envelope: smoothly rises to 1.0, stays in full dance, then re-unifies to 0
-        if (p < 0.20) {
-          const t = p / 0.20;
-          weaveEnvelope = 0.5 - 0.5 * Math.cos(t * Math.PI);
-        } else if (p < 0.73) {
-          weaveEnvelope = 1.0;
-        } else {
-          const t = (p - 0.73) / 0.27;
-          weaveEnvelope = 0.5 + 0.5 * Math.cos(t * Math.PI);
+        // Living celestial undulating movement without collapse
+        if (p >= 0.08 && p <= 0.92) {
+          const u = (p - 0.08) / 0.84;
+          shuffleWobbleAmp = Math.sin(u * Math.PI) * 0.045;
         }
       }
 
@@ -447,92 +447,77 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
             const backRetreatBell = smoothTuckBell(deltaFromBack, -0.5 * stepAngle);
             const backUpcomingBell = smoothTuckBell(deltaFromBack, 0.5 * stepAngle);
 
-            const tuckFade = Math.max(0, 1 - weaveEnvelope);
             if (frontRetreatBell > 0 || frontUpcomingBell > 0) {
               const sweepDist =
                 ((isMobile ? 65 : 78) * frontRetreatBell -
                   (isMobile ? 49 : 58) * frontUpcomingBell) *
-                mergeFactor * tuckFade;
+                mergeFactor;
               tuckX = sweepDist * cosTilt;
               tuckY = sweepDist * sinTilt;
-              tuckRotY = (-12 * frontRetreatBell + 9 * frontUpcomingBell) * mergeFactor * tuckFade;
-              tuckRotZ = (-3.9 * frontRetreatBell - 2.1 * frontUpcomingBell) * mergeFactor * tuckFade;
+              tuckRotY = (-12 * frontRetreatBell + 9 * frontUpcomingBell) * mergeFactor;
+              tuckRotZ = (-3.9 * frontRetreatBell - 2.1 * frontUpcomingBell) * mergeFactor;
             } else if (backRetreatBell > 0 || backUpcomingBell > 0) {
               const sweepDistBack =
                 (-(isMobile ? 36 : 38) * backRetreatBell +
                   (isMobile ? 26 : 28) * backUpcomingBell) *
-                mergeFactor * tuckFade;
+                mergeFactor;
               tuckX = sweepDistBack * cosTilt;
               tuckY = sweepDistBack * sinTilt;
-              tuckRotY = (8 * backRetreatBell - 6 * backUpcomingBell) * mergeFactor * tuckFade;
-              tuckRotZ = (-2.1 * backRetreatBell - 3.9 * backUpcomingBell) * mergeFactor * tuckFade;
+              tuckRotY = (8 * backRetreatBell - 6 * backUpcomingBell) * mergeFactor;
+              tuckRotZ = (-2.1 * backRetreatBell - 3.9 * backUpcomingBell) * mergeFactor;
             }
 
-            // Dual Braided Ribbon Weave (Stream A: even index, Stream B: odd index)
-            const streamSign = (index % 2 === 0) ? 1 : -1;
+            if (deltaFromApex >= -stepAngle && deltaFromApex < 0) {
+              orbitZIndex = deltaFromApex > -0.5 * stepAngle ? 95000 : 88500;
+            } else if (deltaFromApex >= 0 && deltaFromApex < stepAngle) {
+              orbitZIndex = 90000;
+            } else if (deltaFromBack >= -stepAngle && deltaFromBack < 0) {
+              orbitZIndex = deltaFromBack > -0.5 * stepAngle ? 36000 : 38500;
+            } else if (deltaFromBack >= 0 && deltaFromBack < stepAngle) {
+              orbitZIndex = 37500;
+            } else {
+              orbitZIndex = Math.round(85000 - Math.abs(deltaFromApex) * 15000) + index;
+            }
 
-            // 1. Dual Braided Vertical Altitude Separation:
-            // Stream A sweeps high on right/front, dips low on left/back;
-            // Stream B sweeps oppositely, creating up to 125px vertical daylight between ribbons
-            const streamAltitudeY = streamSign * (isMobile ? 36 : 60) * Math.sin(theta) * weaveEnvelope;
+            // Gentle organic wobble wave around the ring so it ripples like a living celestial halo
+            const wobbleR =
+              Math.sin(theta * 3 + timeSec * 2.2) * (0.015 + shuffleWobbleAmp) +
+              Math.cos(theta * 2 - timeSec * 1.6) * (0.012 + shuffleWobbleAmp * 0.6);
+            const wobblyRadius = 1 + wobbleR;
 
-            // 2. Crossing Depth Clearance (Z):
-            // At the crossing nodes (theta = 0 and theta = PI), Stream A crosses in front (+Z), Stream B dives behind (-Z)
-            const streamDepthZ = streamSign * (isMobile ? 55 : 95) * Math.cos(theta) * weaveEnvelope;
-
-            // 3. Elliptical Radial Separation:
-            // Stream A sweeps wider while Stream B sweeps inward, giving clear negative space
-            const streamRadiusMod = 1.0 + streamSign * 0.12 * Math.sin(theta * 2) * weaveEnvelope;
-
-            // 4. Harmonic Undulating Flutter:
-            const flutterY = Math.sin(theta * 3 + timeSec * 2.8) * (isMobile ? 5 : 8) * weaveEnvelope;
-            const flutterRotZ = Math.cos(theta * 2 + timeSec * 2.2) * 8 * weaveEnvelope;
+            // 3D vertical and depth ripples
+            const waveZ = Math.sin(theta * 2.5 + timeSec * 2.0) * (shuffleWobbleAmp * (isMobile ? 25 : 45));
+            const waveY = Math.cos(theta * 3 - timeSec * 1.8) * (shuffleWobbleAmp * (isMobile ? 12 : 20));
             const subtleBreathingY = Math.sin(timeSec * 0.7 + theta * 0.5) * 1.6;
 
-            // Un-tilted ellipse coordinates with generous radius and braided radial separation
-            const lx = Math.cos(theta) * rx * mergeFactor * streamRadiusMod;
-            const ly = Math.sin(theta) * ry * mergeFactor * streamRadiusMod;
+            // Un-tilted ellipse coordinates with full spacious radius preserved (NO collapse)
+            const lx = Math.cos(theta) * rx * mergeFactor * wobblyRadius;
+            const ly = Math.sin(theta) * ry * mergeFactor * (1 - wobbleR * 0.35);
 
-            // Apply -21deg diagonal banking rotation to the entire ring with 3D weave
+            // Apply -21deg diagonal banking rotation to the entire ring
             targetX = (lx * cosTilt - ly * sinTilt) - (isMobile ? 10 : 35) * mergeFactor;
-            targetY = (lx * sinTilt + ly * cosTilt) + streamAltitudeY + flutterY + subtleBreathingY;
-            targetZ = Math.sin(theta) * rz * mergeFactor + streamDepthZ;
+            targetY = (lx * sinTilt + ly * cosTilt) + waveY + subtleBreathingY;
+            targetZ = Math.sin(theta) * rz * mergeFactor + waveZ;
 
             // Depth norm: +1 at closest foreground (bottom-right), -1 at furthest background (top-left)
             const depthNorm = Math.sin(theta);
 
-            // Aerodynamic tangential card orientation along the braided ribbon curves
-            const streamPitchRotX = streamSign * 18 * Math.sin(theta) * weaveEnvelope;
-            const streamBankRotZ = streamSign * 14 * Math.cos(theta) * weaveEnvelope;
+            // Tangential 3D card orientation along the banked ring with gentle undulating tilts
+            const rotWobbleZ = Math.sin(theta * 3 + timeSec * 2.4) * (shuffleWobbleAmp * 22);
+            const rotWobbleX = Math.cos(theta * 2 + timeSec * 1.9) * (shuffleWobbleAmp * 12);
+            targetRotY = -Math.cos(theta) * 26 * mergeFactor;
+            targetRotX = (8 - depthNorm * 6) * mergeFactor + rotWobbleX;
+            targetRotZ = (-18 + Math.cos(theta) * 14) * mergeFactor + rotWobbleZ;
 
-            targetRotY = -Math.cos(theta) * 24 * mergeFactor;
-            targetRotX = (8 - depthNorm * 6) * mergeFactor + streamPitchRotX;
-            targetRotZ = (-18 + Math.cos(theta) * 14) * mergeFactor + streamBankRotZ + flutterRotZ;
-
-            // Accurate Depth Layering (zIndex):
-            // In shuffle phase: continuous composite depth sorting so foreground cards cleanly overlap background cards
-            // In intro phase: discrete apex sorting
-            if (currentPhase === 'shuffling' && weaveEnvelope > 0.05) {
-              orbitZIndex = Math.round(50000 + targetZ * 100) + index;
+            // Perspective scale & depth-of-field dimming on back-half cards
+            targetScale = 0.74 + (depthNorm + 1) * 0.22 * mergeFactor;
+            if (depthNorm < -0.15) {
+              blurPx = Math.abs(depthNorm + 0.15) * 1.8 * mergeFactor;
+              brightness = 0.65 + (depthNorm + 1) * 0.3;
             } else {
-              if (deltaFromApex >= -stepAngle && deltaFromApex < 0) {
-                orbitZIndex = deltaFromApex > -0.5 * stepAngle ? 95000 : 88500;
-              } else if (deltaFromApex >= 0 && deltaFromApex < stepAngle) {
-                orbitZIndex = 90000;
-              } else if (deltaFromBack >= -stepAngle && deltaFromBack < 0) {
-                orbitZIndex = deltaFromBack > -0.5 * stepAngle ? 36000 : 38500;
-              } else if (deltaFromBack >= 0 && deltaFromBack < stepAngle) {
-                orbitZIndex = 37500;
-              } else {
-                orbitZIndex = Math.round(85000 - Math.abs(deltaFromApex) * 15000) + index;
-              }
+              blurPx = 0;
+              brightness = 1.0;
             }
-
-            // Perspective scale & celestial starlight lighting
-            targetScale = 0.80 + (depthNorm + 1) * 0.20 * mergeFactor;
-            const streamGlow = streamSign > 0 ? 0.10 : -0.04;
-            brightness = 0.95 + (depthNorm + 1) * 0.12 + (streamGlow * weaveEnvelope);
-            blurPx = depthNorm < -0.35 ? Math.abs(depthNorm + 0.35) * 1.6 : 0;
 
             // If this card is tapped (or hovered) in the ring, make it rise gracefully from the ring
             if (
@@ -589,6 +574,18 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
             targetRotZ = (normalized * 2 - 1) * (isMobile ? 15 : 22) + swayRotZ;
             targetRotX = tiltRotX;
 
+            // Smooth opacity fade for extra unselected cards during the slow fan transition
+            if (currentPhase === 'fan' && fanTransitionStartTimeRef.current !== null) {
+              const fanElapsed = now - fanTransitionStartTimeRef.current;
+              if (index >= VISIBLE_ORBIT_CARDS) {
+                opacity = Math.min(1, Math.max(0, (fanElapsed - 300) / 1400));
+              } else {
+                opacity = 1;
+              }
+            } else {
+              opacity = 1;
+            }
+
             if (heldCardIdRef.current) {
               const activeFanIndex = unselectedCards.findIndex(
                 c => c.id === heldCardIdRef.current
@@ -603,7 +600,8 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
             } else if (
               isPointerInsideRef.current &&
               !suppressAllHoverUntilMoveRef.current &&
-              totalUnselected > 1
+              totalUnselected > 1 &&
+              (fanTransitionStartTimeRef.current === null || now - fanTransitionStartTimeRef.current >= 2200)
             ) {
               // Smoothly separate fanned cards around the cursor with a pronounced, dramatic split
               const px = prevPointerPosRef.current.x;
@@ -674,14 +672,28 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
           brightness = 1.08;
         } else {
           // Fluid, telekinetic smoothing: pure serene drift towards target with zero bounce or oscillation
-          const posEase = isSelected ? 0.085 : 0.072;
+          let posEase = isSelected ? 0.085 : 0.072;
+          let rotEase = ROTATION_SLERP_SPEED;
+
+          // Slow, majestic transition from spinning orbit into the horizontal fanned deck:
+          if (currentPhase === 'fan' && fanTransitionStartTimeRef.current !== null) {
+            const fanElapsed = now - fanTransitionStartTimeRef.current;
+            const FAN_TRANSITION_DURATION = 2400; // 2.4 seconds of slow, graceful, cinematic unfurling
+            if (fanElapsed < FAN_TRANSITION_DURATION) {
+              const t = fanElapsed / FAN_TRANSITION_DURATION;
+              const easeCurve = 0.5 - 0.5 * Math.cos(t * Math.PI);
+              posEase = lerp(0.016, 0.065, easeCurve);
+              rotEase = lerp(0.020, ROTATION_SLERP_SPEED, easeCurve);
+            }
+          }
+
           body.x = lerp(body.x, targetX, posEase);
           body.y = lerp(body.y, targetY, posEase);
           body.z = lerp(body.z, targetZ, posEase);
 
-          body.rotX = lerp(body.rotX, targetRotX, ROTATION_SLERP_SPEED);
-          body.rotY = lerp(body.rotY, targetRotY, ROTATION_SLERP_SPEED);
-          body.rotZ = lerp(body.rotZ, targetRotZ, ROTATION_SLERP_SPEED);
+          body.rotX = lerp(body.rotX, targetRotX, rotEase);
+          body.rotY = lerp(body.rotY, targetRotY, rotEase);
+          body.rotZ = lerp(body.rotZ, targetRotZ, rotEase);
           body.scale = lerp(body.scale, targetScale, 0.08);
         }
 
