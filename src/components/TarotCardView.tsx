@@ -21,6 +21,7 @@ export const TarotCardView: React.FC<TarotCardViewProps> = ({
   imageUrl
 }) => {
   const isReversed = orientation === 'reversed';
+  const [imageError, setImageError] = React.useState(false);
 
   return (
     <div 
@@ -40,7 +41,7 @@ export const TarotCardView: React.FC<TarotCardViewProps> = ({
         {/* Card Front (Face Up — Eyvind Earle Style) */}
         <div className="absolute inset-0 w-full h-full backface-hidden rotate-y-180 rounded-xl overflow-hidden tarot-card-shell">
           <div className={`w-full h-full rounded-[10px] overflow-hidden bg-[#060919] transition-transform duration-500 ${isReversed ? 'rotate-180' : ''}`}>
-            {imageUrl ? (
+            {imageUrl && !imageError ? (
               <div className="w-full h-full relative">
                 <img 
                   src={imageUrl} 
@@ -48,6 +49,7 @@ export const TarotCardView: React.FC<TarotCardViewProps> = ({
                   className="w-full h-full object-cover" 
                   loading="lazy"
                   decoding="async"
+                  onError={() => setImageError(true)}
                 />
               </div>
             ) : (

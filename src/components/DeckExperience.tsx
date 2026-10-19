@@ -845,6 +845,7 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
                 )}
               <TarotCardView
                 card={card}
+                imageUrl={card.imageUrl}
                 orientation={selectedCard?.orientation || 'upright'}
                 isFlipped={selectedCard?.isRevealed || false}
                 className={isInteractable ? 'cursor-grab active:cursor-grabbing pointer-events-none' : 'pointer-events-none'}

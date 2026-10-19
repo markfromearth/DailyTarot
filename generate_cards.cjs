@@ -54,24 +54,6 @@ async function generate() {
     const uprightMeaning = c.meanings.light.join('. ') + '.';
     const reversedMeaning = c.meanings.shadow.join('. ') + '.';
 
-    // Images mapping
-    const getImageUrl = (id) => {
-      const map = {
-        'major-0': '/cards/card_the_fool.jpg',
-        'major-1': '/cards/card_the_magician.jpg',
-        'major-2': '/cards/card_the_high_priestess.jpg',
-        'major-3': '/cards/card_the_empress.jpg',
-        'major-4': '/cards/card_the_emperor.jpg',
-        'major-16': '/cards/card_the_tower.jpg',
-        'major-17': '/cards/card_the_star.jpg',
-        'major-18': '/cards/card_the_moon.jpg',
-        'major-19': '/cards/card_the_sun.jpg',
-        'major-21': '/cards/card_the_world.jpg',
-        'wands-1': '/cards/card_ace_of_wands.jpg',
-      };
-      return map[id];
-    };
-
     // Format card name (Title Case + replace "coins" with "Pentacles")
     const formatCardName = (rawName) => {
       return rawName
@@ -89,6 +71,8 @@ async function generate() {
     };
 
     const formattedName = formatCardName(c.name);
+    const imageSlug = formattedName.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
+    const imageUrl = `/cards/card_${imageSlug}.jpg`;
 
     cards.push({
       id,
@@ -99,7 +83,7 @@ async function generate() {
       number,
       uprightMeaning,
       reversedMeaning,
-      imageUrl: getImageUrl(id),
+      imageUrl,
       imageAltText: formattedName
     });
   }
