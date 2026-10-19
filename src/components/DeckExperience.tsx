@@ -361,10 +361,21 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
               (tappedOrbitCardIdRef.current === card.id || hoveredIdRef.current === card.id)
             ) {
               const isTapped = tappedOrbitCardIdRef.current === card.id;
-              targetY -= isTapped ? 72 : 34;
-              targetScale += isTapped ? 0.22 : 0.08;
-              blurPx = 0;
-              brightness = 1.15;
+              if (isTapped) {
+                targetY -= isMobile ? 85 : 110;
+                targetZ = 95;
+                targetRotX = 0;
+                targetRotY = 0;
+                targetRotZ = 0;
+                targetScale = isMobile ? 1.25 : 1.38;
+                blurPx = 0;
+                brightness = 1.15;
+              } else {
+                targetY -= 34;
+                targetScale += 0.08;
+                blurPx = 0;
+                brightness = 1.15;
+              }
             }
           }
         } else {
@@ -834,6 +845,7 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
                 ((hoveredId === card.id &&
                   !suppressAllHoverUntilMoveRef.current &&
                   suppressedHoverCardIdRef.current !== card.id) ||
+                  (phase === 'intro' && tappedOrbitCardId === card.id) ||
                   (phase === 'intro' && index % 6 === 0)) && (
                   <div
                     className="absolute -top-1.5 -left-1.5 w-3.5 h-3.5 rounded-full pointer-events-none z-50"
@@ -847,7 +859,7 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
                 card={card}
                 imageUrl={card.imageUrl}
                 orientation={selectedCard?.orientation || 'upright'}
-                isFlipped={selectedCard?.isRevealed || false}
+                isFlipped={(phase === 'intro' && tappedOrbitCardId === card.id) || (selectedCard?.isRevealed || false)}
                 className={isInteractable ? 'cursor-grab active:cursor-grabbing pointer-events-none' : 'pointer-events-none'}
               />
             </div>
