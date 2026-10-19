@@ -179,8 +179,18 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
         orbitAngleRef.current += orbitVelocityRef.current;
         orbitVelocityRef.current = lerp(orbitVelocityRef.current, IDLE_ORBIT_VELOCITY, 0.02);
       } else if (currentPhase === 'shuffling') {
-        // Spin the ring smoothly and elegantly, then contract into the shuffle cascade
-        orbitVelocityRef.current = lerp(orbitVelocityRef.current, spinDirectionRef.current * 0.11, 0.035);
+        let targetSpin = spinDirectionRef.current * 0.12;
+        if (shuffleStartTimeRef.current !== null) {
+          const elapsed = now - shuffleStartTimeRef.current;
+          const p = Math.min(1, Math.max(0, elapsed / 3000));
+          // Velocity peaks in the tight vortex (p ~ 0.5) and decelerates as it blooms back out
+          if (p < 0.55) {
+            targetSpin = spinDirectionRef.current * (0.10 + p * 0.14);
+          } else {
+            targetSpin = spinDirectionRef.current * Math.max(0.025, 0.17 - (p - 0.55) * 0.28);
+          }
+        }
+        orbitVelocityRef.current = lerp(orbitVelocityRef.current, targetSpin, 0.045);
         orbitAngleRef.current += orbitVelocityRef.current;
       } else {
         orbitVelocityRef.current = lerp(orbitVelocityRef.current, -0.0012, 0.025);
@@ -201,15 +211,32 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
       const cosTilt = Math.cos(TILT_RAD);
       const sinTilt = Math.sin(TILT_RAD);
 
-      // During shuffling (1500ms total):
-      // 0ms - 650ms: Full ring spins rapidly at full radius (mergeFactor = 1)
-      // 650ms - 1500ms: Ring contracts smoothly into the center shuffle vortex before fanning out
+      // During shuffling (3000ms total, extended by 100%):
+      // 0ms - 550ms: Ring spins at full radius
+      // 550ms - 1700ms: Ring contracts into a tighter, spinning central vortex (goes smaller down to 0.30)
+      // 1700ms - 3000ms: Ring blooms back out into an expansive ring (goes larger up to 1.06) before fanning out
       let mergeFactor = 1;
+      let shuffleWobbleAmp = 0;
       if (currentPhase === 'shuffling' && shuffleStartTimeRef.current !== null) {
         const elapsed = now - shuffleStartTimeRef.current;
-        if (elapsed > 650) {
-          const t = Math.min(1, (elapsed - 650) / 800);
-          mergeFactor = Math.max(0.08, 1 - t * t * 0.92);
+        const p = Math.min(1, Math.max(0, elapsed / 3000));
+
+        if (p < 0.18) {
+          // Spin initiation
+          mergeFactor = 1.0;
+          shuffleWobbleAmp = (p / 0.18) * 0.16;
+        } else if (p < 0.55) {
+          // Contract into smaller ring (t goes 0 to 1)
+          const t = (p - 0.18) / 0.37;
+          const smoothContract = 0.5 - 0.5 * Math.cos(t * Math.PI);
+          mergeFactor = 1.0 - smoothContract * 0.70; // down to 0.30
+          shuffleWobbleAmp = 0.16 + smoothContract * 0.14; // peaks to 0.30 wobble in vortex
+        } else {
+          // Expand back out to larger ring (t goes 0 to 1)
+          const t = (p - 0.55) / 0.45;
+          const smoothExpand = 0.5 - 0.5 * Math.cos(t * Math.PI);
+          mergeFactor = 0.30 + smoothExpand * 0.76; // blooms up to 1.06
+          shuffleWobbleAmp = 0.30 * (1 - smoothExpand * 0.65);
         }
       }
 
@@ -445,24 +472,35 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
               orbitZIndex = Math.round(85000 - Math.abs(deltaFromApex) * 15000) + index;
             }
 
-            // Un-tilted ellipse coordinates
-            const lx = Math.cos(theta) * rx * mergeFactor;
-            const ly = Math.sin(theta) * ry * mergeFactor;
+            // Multi-harmonic organic wobble so the ring ripples like a living celestial formation instead of staying in a rigid circle
+            const baseWobble = 0.05; // subtle organic ripple in intro
+            const totalWobbleAmp = baseWobble + shuffleWobbleAmp;
+            const wobbleR =
+              Math.sin(theta * 3 + timeSec * 2.2) * totalWobbleAmp +
+              Math.cos(theta * 2 - timeSec * 1.6) * (totalWobbleAmp * 0.65);
+            const wobblyRadius = 1 + wobbleR;
 
-            // Apply -21deg diagonal banking rotation to the entire ring
-            // Gentle, collective harmonic wave across the ring instead of independent card jitter
-            const bobbing = Math.sin(timeSec * 0.7 + theta * 0.5) * 1.6 * mergeFactor;
+            // Un-tilted ellipse coordinates with organic radial ripple
+            const lx = Math.cos(theta) * rx * mergeFactor * wobblyRadius;
+            const ly = Math.sin(theta) * ry * mergeFactor * (1 - wobbleR * 0.45);
+
+            // Apply -21deg diagonal banking rotation to the entire ring with 3D wave ripples
+            const zWobble = Math.sin(theta * 2.5 + timeSec * 2.0) * (totalWobbleAmp * (isMobile ? 38 : 65));
+            const yWobble = Math.cos(theta * 3 - timeSec * 1.8) * (totalWobbleAmp * (isMobile ? 18 : 32));
+
             targetX = (lx * cosTilt - ly * sinTilt) - (isMobile ? 10 : 35) * mergeFactor;
-            targetY = (lx * sinTilt + ly * cosTilt) + bobbing;
-            targetZ = Math.sin(theta) * rz * mergeFactor;
+            targetY = (lx * sinTilt + ly * cosTilt) + yWobble;
+            targetZ = Math.sin(theta) * rz * mergeFactor + zWobble;
 
             // Depth norm: +1 at closest foreground (bottom-right), -1 at furthest background (top-left)
             const depthNorm = Math.sin(theta);
 
-            // Tangential 3D card orientation along the banked ring
+            // Tangential 3D card orientation along the banked ring with dynamic undulating tilt
+            const rotWobbleZ = Math.sin(theta * 3 + timeSec * 2.4) * (totalWobbleAmp * 32);
+            const rotWobbleX = Math.cos(theta * 2 + timeSec * 1.9) * (totalWobbleAmp * 16);
             targetRotY = -Math.cos(theta) * 26 * mergeFactor;
-            targetRotX = (8 - depthNorm * 6) * mergeFactor;
-            targetRotZ = (-18 + Math.cos(theta) * 14) * mergeFactor;
+            targetRotX = (8 - depthNorm * 6) * mergeFactor + rotWobbleX;
+            targetRotZ = (-18 + Math.cos(theta) * 14) * mergeFactor + rotWobbleZ;
 
             // Perspective scale & optical depth-of-field dimming on back-half cards
             targetScale = 0.72 + (depthNorm + 1) * 0.24 * mergeFactor;
@@ -513,11 +551,18 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
             const cardWidth = isMobile ? 96 : 128;
             const maxOffset = spreadWidth / 2 - cardWidth / 2;
 
-            const bobbing = Math.sin(timeSec * 0.6) * 1.4;
+            // Celestial undulating movement across the fanned deck:
+            const fanWave = timeSec * 1.3 + fanStackIndex * 0.35;
+            const floatY = Math.sin(fanWave) * 3.8;
+            const floatZ = Math.cos(fanWave * 0.8) * 6.5;
+            const swayRotZ = Math.sin(fanWave * 0.7) * 2.2;
+            const tiltRotX = Math.cos(fanWave * 0.6) * 2.5;
+
             targetX = (normalized * 2 - 1) * maxOffset;
-            targetY = Math.abs(normalized - 0.5) * (isMobile ? 42 : 62) + bobbing + 50;
-            targetZ = (1 - Math.abs(normalized - 0.5) * 2) * 28;
-            targetRotZ = (normalized * 2 - 1) * (isMobile ? 14 : 20);
+            targetY = Math.abs(normalized - 0.5) * (isMobile ? 44 : 64) + floatY + 50;
+            targetZ = (1 - Math.abs(normalized - 0.5) * 2) * 30 + floatZ;
+            targetRotZ = (normalized * 2 - 1) * (isMobile ? 15 : 22) + swayRotZ;
+            targetRotX = tiltRotX;
 
             if (heldCardIdRef.current) {
               const activeFanIndex = unselectedCards.findIndex(
@@ -535,7 +580,7 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
               !suppressAllHoverUntilMoveRef.current &&
               totalUnselected > 1
             ) {
-              // Smoothly separate fanned cards around the cursor to reveal the card underneath without lifting
+              // Smoothly separate fanned cards around the cursor with a pronounced, dramatic split
               const px = prevPointerPosRef.current.x;
               const py = prevPointerPosRef.current.y;
 
@@ -558,14 +603,30 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
                 );
                 const cursorFanIndex = hoverNorm * (totalUnselected - 1);
                 const dist = fanStackIndex - cursorFanIndex;
+                const absDist = Math.abs(dist);
 
-                if (Math.abs(dist) < 6.5) {
-                  const sigma = 2.6;
+                // Pronounced split: cards part cleanly to the left and right
+                if (absDist < 8.5) {
+                  const sigma = 3.2;
                   const wave =
                     (dist / sigma) * Math.exp(0.5 - (dist * dist) / (2 * sigma * sigma));
-                  // Smooth, whisper-soft parting of cards
-                  const spreadStrength = dist > 0 ? (isMobile ? 10 : 14) : isMobile ? 5 : 7;
+                  // Pronounced split separation
+                  const spreadStrength = dist > 0 ? (isMobile ? 32 : 46) : (isMobile ? 18 : 26);
                   targetX += wave * spreadStrength * hoverWeight;
+                }
+
+                // Focus effect on the card directly under or nearest the cursor:
+                if (absDist < 2.0) {
+                  const focusStrength = (1 - absDist / 2.0) * hoverWeight;
+                  // Lift card out of the deck toward user
+                  targetY -= focusStrength * (isMobile ? 22 : 32);
+                  targetZ += focusStrength * 45;
+                  // Straighten rotation so it faces the user squarely
+                  targetRotZ = lerp(targetRotZ, 0, focusStrength * 0.85);
+                  targetRotX = lerp(targetRotX, 0, focusStrength * 0.85);
+                  // Subtle scale and luminous highlight
+                  targetScale += focusStrength * 0.09;
+                  brightness += focusStrength * 0.22;
                 }
               }
             }

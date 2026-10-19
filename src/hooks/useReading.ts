@@ -84,7 +84,7 @@ export function useReading() {
       setDeckOrder(engine.getInitialDeckOrder());
       setPhase('fan');
       saveState('fan', selectedCardsRef.current);
-    }, 1500);
+    }, 3000);
   }, [engine, saveState]);
 
   const selectCardFromFan = useCallback((cardId: string) => {
