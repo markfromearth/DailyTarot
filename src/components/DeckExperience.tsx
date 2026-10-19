@@ -264,20 +264,24 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
         const isInspecting = !!lightboxCardIdRef.current;
         const inspectedId = lightboxCardIdRef.current;
         const isFocusedCard = isInspecting && card.id === inspectedId;
+        const isHovered = hoveredIdRef.current === card.id;
 
         if (isSelected) {
           if (isInspecting) {
             // Inspect Focus Mode: Selected card lifts forward; other two cards fan out behind
             if (isFocusedCard) {
               targetX = 0;
-              targetY = isMobile ? -78 : -100;
-              targetZ = 165;
-              targetScale = isMobile ? 1.35 : 1.52;
+              // Subtly enlarge card when hovered while lifting upward to protect content clearance below
+              const baseScale = isMobile ? 1.35 : 1.52;
+              targetScale = isHovered ? baseScale + 0.08 : baseScale;
+              const baseY = isMobile ? -78 : -100;
+              targetY = isHovered ? baseY - 6 : baseY;
+              targetZ = isHovered ? 185 : 165;
               targetRotX = 0;
               targetRotY = 0;
               targetRotZ = 0;
               blurPx = 0;
-              brightness = 1.15;
+              brightness = isHovered ? 1.2 : 1.15;
             } else {
               // Two companion cards fanned out behind
               const focusedSlotIndex = currentSelected.findIndex(c => c.card.id === inspectedId);
@@ -648,8 +652,11 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
       const isMobile = viewportWidth < 768;
       if (lightboxCardId) {
         if (cardId === lightboxCardId) {
+          const isHovered = hoveredId === cardId;
+          const scale = isHovered ? (isMobile ? 1.43 : 1.60) : (isMobile ? 1.35 : 1.52);
+          const y = isHovered ? (isMobile ? -84 : -106) : (isMobile ? -78 : -100);
           return {
-            transform: `translate(0px, ${isMobile ? -78 : -100}px) scale(${isMobile ? 1.35 : 1.52})`,
+            transform: `translate(0px, ${y}px) scale(${scale})`,
             zIndex: 200000,
           };
         } else {

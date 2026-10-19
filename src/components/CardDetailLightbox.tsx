@@ -104,8 +104,8 @@ export const CardDetailLightbox: React.FC<CardDetailLightboxProps> = ({
         </button>
       </header>
 
-      {/* Reading Details Panel: Positioned cleanly below the 3D fanned cards */}
-      <div className="fixed top-[calc(50%+54px)] sm:top-[calc(50%+68px)] md:top-[calc(50%+82px)] bottom-2 left-0 right-0 z-[220000] flex flex-col items-center px-4 overflow-y-auto pointer-events-auto animate-fade-in">
+      {/* Reading Details Panel: Positioned cleanly below the 3D fanned cards with safe clearance */}
+      <div className="fixed top-[calc(50%+60px)] sm:top-[calc(50%+76px)] md:top-[calc(50%+88px)] bottom-2 left-0 right-0 z-[220000] flex flex-col items-center px-4 overflow-y-auto pointer-events-auto animate-fade-in">
         <div className="w-full max-w-xl flex flex-col items-center text-center my-auto pb-4">
           {/* Slot Title & Orientation Badges */}
           <div className="flex items-center gap-2 mb-1.5">
