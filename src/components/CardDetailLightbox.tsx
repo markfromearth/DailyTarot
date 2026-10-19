@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { PositionedCard } from '../types/tarot';
 import { TarotCardView } from './TarotCardView';
+import { getCardKeywords } from '../data/keywords';
 
 interface CardDetailLightboxProps {
   positionedCard: PositionedCard;
@@ -147,11 +148,23 @@ export const CardDetailLightbox: React.FC<CardDetailLightboxProps> = ({
             {positionedCard.card.name}
           </h2>
 
-          <p className="text-white/45 text-[11px] sm:text-xs uppercase tracking-[0.25em] mb-4">
+          <p className="text-white/45 text-[11px] sm:text-xs uppercase tracking-[0.25em] mb-3">
             {positionedCard.card.arcana === 'major'
               ? 'Major Arcana'
               : `${positionedCard.card.suit?.toUpperCase()} • MINOR ARCANA`}
           </p>
+
+          {/* Key Themes / Short Phrases */}
+          <div className="flex flex-wrap justify-center gap-1.5 max-w-md mb-4 px-2">
+            {getCardKeywords(positionedCard.card, positionedCard.orientation).map((kw, i) => (
+              <span
+                key={i}
+                className="px-2.5 py-0.5 rounded-full text-[11px] font-light tracking-wide bg-amber-400/10 border border-amber-400/20 text-amber-200/90"
+              >
+                {kw}
+              </span>
+            ))}
+          </div>
 
           {/* Frosted Meaning Container for Optimal Readability over Background */}
           <div className="w-full max-w-lg bg-[#070b1a]/90 border border-white/15 rounded-2xl p-5 sm:p-6 backdrop-blur-md shadow-2xl">

@@ -262,12 +262,12 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
         if (isSelected) {
           // Placed slot position at the top
           const cardWidth = isMobile ? 96 : 128;
-          const spacing = isMobile ? 10 : 20;
+          const spacing = isMobile ? 14 : 38;
           const totalWidth = cardWidth * 3 + spacing * 2;
           const startX = -(totalWidth / 2) + cardWidth / 2;
 
           targetX = startX + selectedIndex * (cardWidth + spacing);
-          targetY = isMobile ? -190 : -220;
+          targetY = isMobile ? -145 : -170;
           targetZ = 60;
           targetRotX = 0;
           targetRotY = 0;
@@ -541,11 +541,11 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
 
     if (isSelected) {
       const cardWidth = viewportWidth < 768 ? 96 : 128;
-      const spacing = viewportWidth < 768 ? 10 : 20;
+      const spacing = viewportWidth < 768 ? 14 : 38;
       const totalWidth = cardWidth * 3 + spacing * 2;
       const startX = -(totalWidth / 2) + cardWidth / 2;
       const xPos = startX + selectedIndex * (cardWidth + spacing);
-      const yPos = viewportWidth < 768 ? -190 : -220;
+      const yPos = viewportWidth < 768 ? -145 : -170;
 
       return {
         transform: `translate(${xPos}px, ${yPos}px)`,
