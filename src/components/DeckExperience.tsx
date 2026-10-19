@@ -608,6 +608,24 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
         }
 
         const isTappedInOrbit = currentPhase === 'intro' && tappedOrbitCardIdRef.current === card.id;
+
+        let companionZIndex = 175000;
+        if (isInspecting && !isFocusedCard) {
+          const focusedSlotIndex = currentSelected.findIndex(c => c.card.id === inspectedId);
+          let companionOrder = 1;
+          if (focusedSlotIndex === 0) {
+            // When inspecting PAST (0): PRESENT (1) sits on top of FUTURE (2)
+            companionOrder = selectedIndex === 1 ? 2 : 1;
+          } else if (focusedSlotIndex === 2) {
+            // When inspecting FUTURE (2): PRESENT (1) sits on top of PAST (0)
+            companionOrder = selectedIndex === 1 ? 2 : 1;
+          } else {
+            // When inspecting PRESENT (1): PAST (0) and FUTURE (2) flank on left and right
+            companionOrder = 1;
+          }
+          companionZIndex = 175000 + companionOrder;
+        }
+
         const zIndex = isBeingHeld
           ? 200000
           : isTappedInOrbit
@@ -616,7 +634,7 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
           ? isInspecting
             ? isFocusedCard
               ? 200000
-              : 175000 + selectedIndex
+              : companionZIndex
             : 150000 + selectedIndex
           : currentPhase === 'fan' || currentPhase === 'place'
           ? 10000 + fanStackIndex
@@ -671,19 +689,23 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
           let fy = isMobile ? -88 : -112;
           let frot = 0;
           let fscale = isMobile ? 1.05 : 1.16;
+          let companionOrder = 1;
           if (focusedSlotIndex === 0) {
             fx = selectedIndex === 1 ? (isMobile ? 52 : 68) : (isMobile ? 98 : 130);
             frot = selectedIndex === 1 ? 7.5 : 14;
+            companionOrder = selectedIndex === 1 ? 2 : 1;
           } else if (focusedSlotIndex === 1) {
             fx = selectedIndex === 0 ? (isMobile ? -56 : -74) : (isMobile ? 56 : 74);
             frot = selectedIndex === 0 ? -8.5 : 8.5;
+            companionOrder = 1;
           } else {
             fx = selectedIndex === 1 ? (isMobile ? -52 : -68) : (isMobile ? -98 : -130);
             frot = selectedIndex === 1 ? -7.5 : -14;
+            companionOrder = selectedIndex === 1 ? 2 : 1;
           }
           return {
             transform: `translate(${fx}px, ${fy}px) rotate(${frot}deg) scale(${fscale})`,
-            zIndex: 175000 + selectedIndex,
+            zIndex: 175000 + companionOrder,
             filter: 'brightness(0.76)',
           };
         }
