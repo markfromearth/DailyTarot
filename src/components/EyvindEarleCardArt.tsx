@@ -120,6 +120,98 @@ export const EyvindEarleCardArt: React.FC<EyvindEarleCardArtProps> = ({ card }) 
               <path d="M54,75 A6,6 0 0,0 66,75 A5,5 0 0,1 54,75 Z" fill={pal.glow} />
             </g>
           );
+        case 11: // Justice - crowned figure, upright sword & balanced scales
+          return (
+            <g>
+              <circle cx="60" cy="74" r="25" fill={pal.glow} opacity="0.88" />
+              {/* Twin Gothic Pillars */}
+              <rect x="22" y="44" width="8" height="110" fill="#050b16" stroke={pal.glow} strokeWidth="0.6" />
+              <rect x="90" y="44" width="8" height="110" fill="#050b16" stroke={pal.glow} strokeWidth="0.6" />
+              {/* Seated Judge */}
+              <polygon points="46,148 52,86 68,86 74,148" fill="#050b16" />
+              <circle cx="60" cy="80" r="4.5" fill="#050b16" />
+              <polygon points="56,74 60,68 64,74" fill={pal.glow} />
+              {/* Upright Sword */}
+              <line x1="72" y1="62" x2="72" y2="98" stroke={pal.glow} strokeWidth="1.8" />
+              <line x1="68" y1="72" x2="76" y2="72" stroke={pal.glow} strokeWidth="1.6" />
+              {/* Balanced Scales */}
+              <line x1="40" y1="76" x2="52" y2="76" stroke={pal.glow} strokeWidth="1.4" />
+              <polygon points="38,82 42,82 40,76" fill={pal.glow} />
+              <polygon points="50,82 54,82 52,76" fill={pal.glow} />
+            </g>
+          );
+        case 12: // The Hanged Man - inverted figure on living T-tree + halo
+          return (
+            <g>
+              {/* Living T-Tree */}
+              <path d="M20,44 H100 V52 H64 V155 H56 V52 H20 Z" fill="#050b16" stroke={pal.glow} strokeWidth="0.6" />
+              {/* Pointillist leaf clusters */}
+              <circle cx="28" cy="40" r="3" fill="#156b4d" />
+              <circle cx="92" cy="40" r="3" fill="#156b4d" />
+              {/* Halo Around Head at bottom */}
+              <circle cx="60" cy="116" r="14" fill={pal.glow} opacity="0.9" />
+              {/* Suspended Inverted Figure */}
+              <line x1="60" y1="52" x2="60" y2="72" stroke="#050b16" strokeWidth="2.5" />
+              <polygon points="56,72 64,72 62,106 58,106" fill="#050b16" />
+              {/* Crossed Leg */}
+              <line x1="60" y1="84" x2="72" y2="92" stroke="#050b16" strokeWidth="2.2" />
+              <circle cx="60" cy="114" r="4.5" fill="#050b16" />
+            </g>
+          );
+        case 13: // Death - armored rider, white steed, rose banner & twin distant towers
+          return (
+            <g>
+              {/* Blazing Sun Between Twin Towers on Horizon */}
+              <circle cx="60" cy="76" r="18" fill={pal.glow} />
+              <rect x="42" y="72" width="6" height="38" fill="#050b16" />
+              <rect x="72" y="72" width="6" height="38" fill="#050b16" />
+              {/* Steed & Rider Profile Silhouette */}
+              <path d="M26,140 C34,120 48,118 64,124 L76,118 L74,128 L62,132 L58,148 H50 L52,136 L38,148 Z" fill="#050b16" />
+              {/* Rider Armor */}
+              <polygon points="46,124 50,102 56,102 58,124" fill="#050b16" />
+              <circle cx="53" cy="98" r="3.5" fill="#050b16" />
+              {/* Banner with Mystic Rose */}
+              <line x1="58" y1="92" x2="58" y2="136" stroke={pal.glow} strokeWidth="1.5" />
+              <polygon points="58,92 84,98 58,106" fill="#050b16" stroke={pal.glow} strokeWidth="0.5" />
+              <circle cx="70" cy="99" r="2.2" fill="#ffffff" />
+            </g>
+          );
+        case 14: // Temperance - winged angel pouring liquid between chalices
+          return (
+            <g>
+              <circle cx="60" cy="68" r="26" fill={pal.glow} opacity="0.88" />
+              {/* Archangel Wings */}
+              <path d="M60,82 C44,56 22,66 28,94 C38,88 50,86 60,88 Z" fill={pal.accent} opacity="0.85" />
+              <path d="M60,82 C76,56 98,66 92,94 C82,88 70,86 60,88 Z" fill={pal.accent} opacity="0.85" />
+              {/* Angelic Robe */}
+              <polygon points="52,148 56,86 64,86 68,148" fill="#050b16" />
+              <circle cx="60" cy="80" r="4.5" fill="#050b16" />
+              {/* Stream of Liquid Between Chalices */}
+              <path d="M48,96 Q60,102 72,108" fill="none" stroke={pal.glow} strokeWidth="2" strokeDasharray="3 1" />
+              <polygon points="46,92 52,92 49,98" fill={pal.glow} />
+              <polygon points="70,106 76,106 73,112" fill={pal.glow} />
+            </g>
+          );
+        case 15: // The Devil - horned monolith, inverted pentagram & flame altar
+          return (
+            <g>
+              {/* Altar Cube */}
+              <rect x="44" y="118" width="32" height="32" fill="#050b16" stroke={pal.accent} strokeWidth="0.8" />
+              {/* Horned Beast Silhouette */}
+              <path d="M46,118 L52,78 L68,78 L74,118 Z" fill="#050b16" />
+              <circle cx="60" cy="74" r="5" fill="#050b16" />
+              {/* Curved Horns & Bat Wings */}
+              <path d="M57,70 C52,60 44,62 46,68" stroke={pal.glow} strokeWidth="1.6" fill="none" />
+              <path d="M63,70 C68,60 76,62 74,68" stroke={pal.glow} strokeWidth="1.6" fill="none" />
+              <polygon points="60,80 34,70 42,92" fill={pal.accent} opacity="0.8" />
+              <polygon points="60,80 86,70 78,92" fill={pal.accent} opacity="0.8" />
+              {/* Inverted Pentagram */}
+              <polygon points="60,63 56,53 65,58 55,58 64,53" fill="none" stroke={pal.glow} strokeWidth="0.8" />
+              {/* Chained Companions */}
+              <polygon points="32,150 36,128 40,150" fill="#050b16" />
+              <polygon points="80,150 84,128 88,150" fill="#050b16" />
+            </g>
+          );
         case 16: // The Tower - spire + golden lightning + crimson flames
           return (
             <g>
@@ -185,6 +277,37 @@ export const EyvindEarleCardArt: React.FC<EyvindEarleCardArtProps> = ({ card }) 
               })}
             </g>
           );
+        case 20: // Judgement - winged angel blowing golden trumpet from clouds + rising figures
+          return (
+            <g>
+              <circle cx="60" cy="54" r="28" fill={pal.glow} opacity="0.85" />
+              {/* Archangel Gabriel Wings in Clouds */}
+              <path d="M60,60 C40,40 18,50 24,78 C36,72 48,70 60,72 Z" fill={pal.accent} opacity="0.9" />
+              <path d="M60,60 C80,40 102,50 96,78 C84,72 72,70 60,72 Z" fill={pal.accent} opacity="0.9" />
+              <circle cx="60" cy="56" r="4.5" fill="#050b16" />
+              {/* Golden Bannered Trumpet */}
+              <line x1="60" y1="56" x2="78" y2="76" stroke={pal.glow} strokeWidth="2.2" strokeLinecap="round" />
+              <polygon points="78,76 84,72 82,82" fill={pal.glow} />
+              {/* Crimson Banner */}
+              <polygon points="68,66 74,72 70,78 64,72" fill={pal.accent} />
+              {/* Diagonal Light Shafts */}
+              <line x1="60" y1="64" x2="30" y2="135" stroke={pal.glow} strokeWidth="1" strokeDasharray="3 3" opacity="0.7" />
+              <line x1="60" y1="64" x2="60" y2="140" stroke={pal.glow} strokeWidth="1" strokeDasharray="3 3" opacity="0.7" />
+              <line x1="60" y1="64" x2="90" y2="135" stroke={pal.glow} strokeWidth="1" strokeDasharray="3 3" opacity="0.7" />
+              {/* Rising Figures with Arms Outstretched */}
+              <path d="M36,155 L40,132 L44,155 Z" fill="#050b16" />
+              <circle cx="40" cy="128" r="2.5" fill="#050b16" />
+              <line x1="36" y1="134" x2="44" y2="134" stroke="#050b16" strokeWidth="1.2" />
+
+              <path d="M56,155 L60,126 L64,155 Z" fill="#050b16" />
+              <circle cx="60" cy="122" r="3" fill="#050b16" />
+              <line x1="55" y1="128" x2="65" y2="128" stroke="#050b16" strokeWidth="1.4" />
+
+              <path d="M76,155 L80,132 L84,155 Z" fill="#050b16" />
+              <circle cx="80" cy="128" r="2.5" fill="#050b16" />
+              <line x1="76" y1="134" x2="84" y2="134" stroke="#050b16" strokeWidth="1.2" />
+            </g>
+          );
         default: // Other Major Arcana: Iconic Earle Backlit Monolith / Figure & Celestial Halo
           return (
             <g>
@@ -197,6 +320,68 @@ export const EyvindEarleCardArt: React.FC<EyvindEarleCardArtProps> = ({ card }) 
             </g>
           );
       }
+    }
+
+    // Five of Wands: Five dynamic silhouetted figures crossing five living staffs in a spirited geometric lattice of motion atop a rocky hillside
+    if (card.suit === 'wands' && num === 5) {
+      return (
+        <g>
+          {/* Glowing sunset disc and embers */}
+          <circle cx="60" cy="78" r="28" fill={pal.glow} opacity="0.9" />
+          <circle cx="60" cy="78" r="34" fill="none" stroke={pal.glow} strokeWidth="0.6" strokeDasharray="3 3" opacity="0.6" />
+
+          {/* Jagged hilltop ledge */}
+          <polygon points="12,165 35,130 85,128 108,165" fill="#050b16" />
+          <polygon points="28,165 42,136 78,134 92,165" fill={pal.accent} opacity="0.3" />
+
+          {/* 5 Dynamic Silhouetted Figures */}
+          <path d="M26,145 L32,122 L36,122 L38,145 Z" fill="#050b16" />
+          <circle cx="34" cy="119" r="2.8" fill="#050b16" />
+
+          <path d="M42,148 L46,120 L50,120 L53,148 Z" fill="#050b16" />
+          <circle cx="48" cy="117" r="2.8" fill="#050b16" />
+
+          <path d="M57,144 L60,116 L64,116 L66,144 Z" fill="#050b16" />
+          <circle cx="62" cy="113" r="3" fill="#050b16" />
+
+          <path d="M70,148 L73,121 L77,121 L81,148 Z" fill="#050b16" />
+          <circle cx="75" cy="118" r="2.8" fill="#050b16" />
+
+          <path d="M84,146 L88,124 L92,124 L96,146 Z" fill="#050b16" />
+          <circle cx="90" cy="121" r="2.8" fill="#050b16" />
+
+          {/* 5 Crossing Living Staffs with Sprouting Leaves & Golden Embers */}
+          <line x1="28" y1="138" x2="82" y2="44" stroke="#050b16" strokeWidth="2.8" strokeLinecap="round" />
+          <line x1="28" y1="138" x2="82" y2="44" stroke={pal.glow} strokeWidth="1.4" strokeLinecap="round" />
+          <circle cx="82" cy="44" r="2.2" fill={pal.glow} />
+          <polygon points="55,90 60,86 58,94" fill="#156b4d" />
+
+          <line x1="92" y1="138" x2="38" y2="44" stroke="#050b16" strokeWidth="2.8" strokeLinecap="round" />
+          <line x1="92" y1="138" x2="38" y2="44" stroke={pal.glow} strokeWidth="1.4" strokeLinecap="round" />
+          <circle cx="38" cy="44" r="2.2" fill={pal.glow} />
+          <polygon points="65,90 60,86 62,94" fill="#156b4d" />
+
+          <line x1="42" y1="145" x2="72" y2="38" stroke="#050b16" strokeWidth="2.8" strokeLinecap="round" />
+          <line x1="42" y1="145" x2="72" y2="38" stroke={pal.glow} strokeWidth="1.4" strokeLinecap="round" />
+          <circle cx="72" cy="38" r="2.2" fill={pal.glow} />
+          <polygon points="57,91 62,88 59,96" fill={pal.accent} />
+
+          <line x1="78" y1="145" x2="48" y2="38" stroke="#050b16" strokeWidth="2.8" strokeLinecap="round" />
+          <line x1="78" y1="145" x2="48" y2="38" stroke={pal.glow} strokeWidth="1.4" strokeLinecap="round" />
+          <circle cx="48" cy="38" r="2.2" fill={pal.glow} />
+          <polygon points="63,91 58,88 61,96" fill={pal.accent} />
+
+          <line x1="60" y1="148" x2="60" y2="34" stroke="#050b16" strokeWidth="3" strokeLinecap="round" />
+          <line x1="60" y1="148" x2="60" y2="34" stroke={pal.glow} strokeWidth="1.5" strokeLinecap="round" />
+          <circle cx="60" cy="34" r="2.5" fill={pal.glow} />
+          <polygon points="60,60 66,56 63,64" fill="#156b4d" />
+          <polygon points="60,78 54,74 57,82" fill={pal.accent} />
+
+          {/* Windswept shrubs below */}
+          <path d="M18,162 C22,154 28,154 32,162 Z" fill="#0b2922" />
+          <path d="M88,162 C92,152 98,152 102,162 Z" fill="#0b2922" />
+        </g>
+      );
     }
 
     // Minor Arcana: Render exact count (1-10) or Court Royal emblem in Eyvind Earle style
