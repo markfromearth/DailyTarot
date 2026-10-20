@@ -24,9 +24,9 @@ export const CardDetailLightbox: React.FC<CardDetailLightboxProps> = ({
   onSelectSlot,
   onFlipCard,
   onClose,
-  isEnlarged = false,
+  isEnlarged = true,
   onToggleEnlarge,
-  isMobile = false,
+  isMobile: _isMobile = false,
 }) => {
   const containerRef = useFocusTrap<HTMLDivElement>({
     isActive: true,
@@ -170,13 +170,13 @@ export const CardDetailLightbox: React.FC<CardDetailLightboxProps> = ({
         )}
       </header>
 
-      {/* Reading Details Panel: Switches to Right Column on Desktop when Enlarged */}
+      {/* Reading Details Panel: Switches to Right Column on Desktop when Enlarged; Sits in lower viewport on Mobile */}
       <div
-        className={`fixed z-[220000] pointer-events-auto transition-all duration-500 ease-out ${
+        className={`fixed z-[220000] pointer-events-auto transition-all duration-500 ease-out opacity-100 animate-fade-in ${
           isEnlarged
-            ? 'top-20 sm:top-24 bottom-6 md:top-20 md:bottom-8 md:left-[46%] md:right-8 lg:right-16 md:w-auto flex flex-col justify-center items-start text-left px-4 sm:px-6 md:px-8 overflow-y-auto'
+            ? 'top-[calc(50%-10px)] bottom-3 left-0 right-0 flex flex-col items-center px-4 overflow-y-auto md:top-20 md:bottom-8 md:left-[46%] md:right-8 lg:right-16 md:w-auto md:justify-center md:items-start md:text-left md:px-6 lg:px-8'
             : 'top-[calc(50%-45px)] sm:top-[calc(50%+60px)] md:top-[calc(50%+76px)] bottom-2 left-0 right-0 flex flex-col items-center px-4 overflow-y-auto'
-        } ${isEnlarged && isMobile ? 'opacity-0 pointer-events-none' : 'opacity-100 animate-fade-in'}`}
+        }`}
         onClick={(e) => {
           if (e.target === e.currentTarget) {
             onClose();
@@ -249,7 +249,7 @@ export const CardDetailLightbox: React.FC<CardDetailLightboxProps> = ({
 
               {/* Interaction Helper Hint */}
               <p className="text-white/70 text-[9px] sm:text-[10px] uppercase tracking-[0.2em] mt-2 font-light">
-                Swipe left/right to switch • Tap card to enlarge • Tap outside to return
+                Swipe or tap companion cards to switch • Tap outside to return
               </p>
             </>
           ) : (
@@ -288,26 +288,12 @@ export const CardDetailLightbox: React.FC<CardDetailLightboxProps> = ({
 
               {/* Interaction Helper Hint */}
               <p className="text-white/70 text-[9px] sm:text-[10px] uppercase tracking-[0.2em] mt-2 font-light">
-                Swipe left/right or tap cards behind to switch • Tap card to turn over
+                Swipe or tap companion cards to switch • Tap card to turn over
               </p>
             </>
           )}
         </div>
       </div>
-
-      {/* Mobile Enlarge Dismissal Floating Pill */}
-      {isEnlarged && onToggleEnlarge && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[230000] pointer-events-auto md:hidden animate-fade-in">
-          <button
-            type="button"
-            onClick={onToggleEnlarge}
-            className="px-4 py-2 rounded-full bg-black/85 border border-amber-400/50 text-amber-200 text-xs tracking-wider uppercase backdrop-blur-md shadow-2xl flex items-center gap-2 cursor-pointer active:scale-95 transition-transform"
-          >
-            <span>Tap card to view meaning</span>
-            <span className="text-amber-300">✦</span>
-          </button>
-        </div>
-      )}
     </div>
   );
 };

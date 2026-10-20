@@ -185,4 +185,52 @@ describe('DeckExperience Integration', () => {
       fireEvent.touchEnd(gestureContainer, { touches: [] });
     }
   });
+
+  it('renders card presentation containers with INSPECT buttons in read phase and opens inspect view', () => {
+    const revealedCards: PositionedCard[] = [
+      { card: mockCards[0], orientation: 'upright', position: 'past', isRevealed: true },
+      { card: mockCards[1], orientation: 'reversed', position: 'present', isRevealed: true },
+      { card: mockCards[2], orientation: 'upright', position: 'future', isRevealed: true },
+    ];
+
+    const { getAllByText, getByRole, getAllByRole, queryByRole } = render(
+      <DeckExperience
+        phase="read"
+        initialDeckOrder={mockCards}
+        selectedCards={revealedCards}
+        onStartShuffle={onStartShuffle}
+        onSelectCard={onSelectCard}
+        onFlipCard={onFlipCard}
+        onResetReading={onResetReading}
+      />
+    );
+
+    // Initial presented view displays INSPECT action links for revealed cards
+    const inspectButtons = getAllByText(/INSPECT ↗/i);
+    expect(inspectButtons.length).toBe(3);
+
+    // Clicking INSPECT on the first card opens the inspect view
+    fireEvent.click(inspectButtons[0]);
+
+    // Dialog is now open with the active card details
+    const dialog = getByRole('dialog');
+    expect(dialog).toBeTruthy();
+    expect(getAllByText(mockCards[0].name).length).toBeGreaterThan(0);
+
+    // Companion cards set to the left can be clicked to switch active card
+    const cardButtons = getAllByRole('button', { name: /Select Tarot Card/i });
+    expect(cardButtons.length).toBeGreaterThan(1);
+    fireEvent.click(cardButtons[1]);
+
+    // Inspect view now displays Magician details
+    expect(getAllByText(mockCards[1].name).length).toBeGreaterThan(0);
+
+    // Clicking outside (backdrop) returns to spread presentation view
+    const backdrop = getByRole('dialog').querySelector('[data-testid="lightbox-backdrop"]');
+    expect(backdrop).toBeTruthy();
+    if (backdrop) {
+      fireEvent.click(backdrop);
+    }
+    expect(queryByRole('dialog')).toBeNull();
+  });
 });

@@ -70,7 +70,7 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [tappedOrbitCardId, setTappedOrbitCardId] = useState<string | null>(null);
   const [lightboxCardId, setLightboxCardId] = useState<string | null>(null);
-  const [isEnlarged, setIsEnlarged] = useState<boolean>(false);
+  const [isEnlarged, setIsEnlarged] = useState<boolean>(true);
   const isEnlargedRef = useRef(isEnlarged);
   isEnlargedRef.current = isEnlarged;
   const [isRingHolding, setIsRingHolding] = useState<boolean>(false);
@@ -474,18 +474,18 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
             if (isFocusedCard) {
               if (isEnlargedActive) {
                 if (isMobile) {
-                  // Mobile: card enlarges to fill the viewport
+                  // Mobile: card placed in upper viewport so text details below are unblocked
                   targetX = 0;
-                  targetY = 0;
-                  targetZ = 220;
-                  targetScale = 2.45;
+                  targetY = -150;
+                  targetZ = 180;
+                  targetScale = 1.48;
                   targetRotX = 0;
                   targetRotY = 0;
                   targetRotZ = 0;
                   brightness = 1.15;
                 } else {
-                  // Desktop: card sits in one column on the left, enlarged to showcase artwork
-                  const leftColX = -Math.min(300, Math.max(220, vw * 0.22));
+                  // Desktop: card sits in left column, enlarged to showcase artwork
+                  const leftColX = -Math.min(300, Math.max(210, vw * 0.22));
                   targetX = leftColX;
                   targetY = 0;
                   targetZ = 200;
@@ -510,97 +510,158 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
               }
               blurPx = 0;
             } else {
-              // Two companion cards fanned out behind
+              // Two companion cards fanned out visibly and switchable
               const focusedSlotIndex = currentSelected.findIndex((c) => c.card.id === inspectedId);
 
-              if (focusedSlotIndex === 0) {
-                // Focused card is PAST (slot 0)
-                if (selectedIndex === 1) {
-                  // PRESENT fans out slightly to the right
-                  targetX = isMobile ? 54 : 68;
-                  targetY = isMobile ? -166 : -112;
-                  targetZ = 75;
-                  targetRotZ = 7.5;
-                  targetRotY = -5;
-                  targetRotX = 2;
-                  targetScale = isMobile ? 1.02 : 1.16;
-                  brightness = 0.78;
-                  blurPx = 0.3;
+              if (isEnlargedActive && !isMobile) {
+                // Desktop: companion cards fanned cleanly around leftColX beside active card
+                const leftColX = -Math.min(300, Math.max(210, vw * 0.22));
+                if (focusedSlotIndex === 0) {
+                  // Focused card is PAST (slot 0)
+                  if (selectedIndex === 1) {
+                    targetX = leftColX + 72;
+                    targetY = -12;
+                    targetZ = 120;
+                    targetRotZ = 7.5;
+                    targetRotY = -5;
+                    targetRotX = 2;
+                    targetScale = 1.68;
+                    brightness = 0.82;
+                    opacity = 0.88;
+                  } else {
+                    targetX = leftColX + 138;
+                    targetY = -24;
+                    targetZ = 70;
+                    targetRotZ = 14;
+                    targetRotY = -9;
+                    targetRotX = 4;
+                    targetScale = 1.52;
+                    brightness = 0.72;
+                    opacity = 0.84;
+                  }
+                } else if (focusedSlotIndex === 1) {
+                  // Focused card is PRESENT (slot 1)
+                  if (selectedIndex === 0) {
+                    targetX = leftColX - 78;
+                    targetY = -14;
+                    targetZ = 95;
+                    targetRotZ = -8.5;
+                    targetRotY = 6;
+                    targetRotX = 2;
+                    targetScale = 1.68;
+                    brightness = 0.82;
+                    opacity = 0.88;
+                  } else {
+                    targetX = leftColX + 78;
+                    targetY = -14;
+                    targetZ = 95;
+                    targetRotZ = 8.5;
+                    targetRotY = -6;
+                    targetRotX = 2;
+                    targetScale = 1.68;
+                    brightness = 0.82;
+                    opacity = 0.88;
+                  }
                 } else {
-                  // FUTURE fans out further to the right
-                  targetX = isMobile ? 100 : 130;
-                  targetY = isMobile ? -176 : -124;
-                  targetZ = 45;
-                  targetRotZ = 14;
-                  targetRotY = -9;
-                  targetRotX = 4;
-                  targetScale = isMobile ? 0.95 : 1.08;
-                  brightness = 0.68;
-                  blurPx = 0.5;
-                }
-              } else if (focusedSlotIndex === 1) {
-                // Focused card is PRESENT (slot 1)
-                if (selectedIndex === 0) {
-                  // PAST fans out to the left
-                  targetX = isMobile ? -58 : -74;
-                  targetY = isMobile ? -168 : -114;
-                  targetZ = 65;
-                  targetRotZ = -8.5;
-                  targetRotY = 6;
-                  targetRotX = 2;
-                  targetScale = isMobile ? 1.02 : 1.16;
-                  brightness = 0.76;
-                  blurPx = 0.3;
-                } else {
-                  // FUTURE fans out to the right
-                  targetX = isMobile ? 58 : 74;
-                  targetY = isMobile ? -168 : -114;
-                  targetZ = 65;
-                  targetRotZ = 8.5;
-                  targetRotY = -6;
-                  targetRotX = 2;
-                  targetScale = isMobile ? 1.02 : 1.16;
-                  brightness = 0.76;
-                  blurPx = 0.3;
+                  // Focused card is FUTURE (slot 2)
+                  if (selectedIndex === 1) {
+                    targetX = leftColX - 72;
+                    targetY = -12;
+                    targetZ = 120;
+                    targetRotZ = -7.5;
+                    targetRotY = 5;
+                    targetRotX = 2;
+                    targetScale = 1.68;
+                    brightness = 0.82;
+                    opacity = 0.88;
+                  } else {
+                    targetX = leftColX - 138;
+                    targetY = -24;
+                    targetZ = 70;
+                    targetRotZ = -14;
+                    targetRotY = 9;
+                    targetRotX = 4;
+                    targetScale = 1.52;
+                    brightness = 0.72;
+                    opacity = 0.84;
+                  }
                 }
               } else {
-                // Focused card is FUTURE (slot 2)
-                if (selectedIndex === 1) {
-                  // PRESENT fans out slightly to the left
-                  targetX = isMobile ? -54 : -68;
-                  targetY = isMobile ? -166 : -112;
-                  targetZ = 75;
-                  targetRotZ = -7.5;
-                  targetRotY = 5;
-                  targetRotX = 2;
-                  targetScale = isMobile ? 1.02 : 1.16;
-                  brightness = 0.78;
-                  blurPx = 0.3;
+                // Mobile or Standard Fan: cards fanned symmetrically
+                if (focusedSlotIndex === 0) {
+                  if (selectedIndex === 1) {
+                    targetX = isMobile ? 58 : 68;
+                    targetY = isMobile ? -162 : -112;
+                    targetZ = isMobile ? 80 : 75;
+                    targetRotZ = 7.5;
+                    targetRotY = -5;
+                    targetRotX = 2;
+                    targetScale = isMobile ? 1.12 : 1.16;
+                    brightness = 0.8;
+                    opacity = isMobile ? 0.86 : 0.88;
+                  } else {
+                    targetX = isMobile ? 110 : 130;
+                    targetY = isMobile ? -172 : -124;
+                    targetZ = isMobile ? 50 : 45;
+                    targetRotZ = 14;
+                    targetRotY = -9;
+                    targetRotX = 4;
+                    targetScale = isMobile ? 1.02 : 1.08;
+                    brightness = 0.7;
+                    opacity = isMobile ? 0.82 : 0.84;
+                  }
+                } else if (focusedSlotIndex === 1) {
+                  if (selectedIndex === 0) {
+                    targetX = isMobile ? -62 : -74;
+                    targetY = isMobile ? -162 : -114;
+                    targetZ = isMobile ? 75 : 65;
+                    targetRotZ = -8.5;
+                    targetRotY = 6;
+                    targetRotX = 2;
+                    targetScale = isMobile ? 1.12 : 1.16;
+                    brightness = 0.8;
+                    opacity = isMobile ? 0.86 : 0.88;
+                  } else {
+                    targetX = isMobile ? 62 : 74;
+                    targetY = isMobile ? -162 : -114;
+                    targetZ = isMobile ? 75 : 65;
+                    targetRotZ = 8.5;
+                    targetRotY = -6;
+                    targetRotX = 2;
+                    targetScale = isMobile ? 1.12 : 1.16;
+                    brightness = 0.8;
+                    opacity = isMobile ? 0.86 : 0.88;
+                  }
                 } else {
-                  // PAST fans out further to the left
-                  targetX = isMobile ? -100 : -130;
-                  targetY = isMobile ? -176 : -124;
-                  targetZ = 45;
-                  targetRotZ = -14;
-                  targetRotY = 9;
-                  targetRotX = 4;
-                  targetScale = isMobile ? 0.95 : 1.08;
-                  brightness = 0.68;
-                  blurPx = 0.5;
+                  if (selectedIndex === 1) {
+                    targetX = isMobile ? -58 : -68;
+                    targetY = isMobile ? -162 : -112;
+                    targetZ = isMobile ? 80 : 75;
+                    targetRotZ = -7.5;
+                    targetRotY = 5;
+                    targetRotX = 2;
+                    targetScale = isMobile ? 1.12 : 1.16;
+                    brightness = 0.8;
+                    opacity = isMobile ? 0.86 : 0.88;
+                  } else {
+                    targetX = isMobile ? -110 : -130;
+                    targetY = isMobile ? -172 : -124;
+                    targetZ = isMobile ? 50 : 45;
+                    targetRotZ = -14;
+                    targetRotY = 9;
+                    targetRotX = 4;
+                    targetScale = isMobile ? 1.02 : 1.08;
+                    brightness = 0.7;
+                    opacity = isMobile ? 0.82 : 0.84;
+                  }
                 }
               }
 
               if (isHovered) {
-                brightness = 0.96;
+                brightness = 0.98;
                 blurPx = 0;
-                targetScale += 0.04;
-              }
-
-              if (isEnlargedActive) {
-                opacity = isMobile ? 0 : 0.2;
-                if (!isMobile) {
-                  targetX -= 140;
-                }
+                targetScale += 0.05;
+                opacity = 1;
               }
             }
           } else {
@@ -936,8 +997,16 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
       if (lightboxCardId) {
         if (cardId === lightboxCardId) {
           const isHovered = hoveredId === cardId;
-          const scale = isHovered ? (isMobile ? 1.345 : 1.565) : isMobile ? 1.3 : 1.52;
-          const y = isHovered ? (isMobile ? -159 : -103) : isMobile ? -156 : -100;
+          if (isEnlarged && !isMobile) {
+            const leftColX = -Math.min(300, Math.max(210, viewportWidth * 0.22));
+            const scale = isHovered ? 2.2 : 2.15;
+            return {
+              transform: `translate(${leftColX}px, 0px) scale(${scale})`,
+              zIndex: 200000,
+            };
+          }
+          const scale = isHovered ? (isMobile ? 1.52 : 1.565) : isMobile ? 1.48 : 1.52;
+          const y = isHovered ? (isMobile ? -153 : -103) : isMobile ? -150 : -100;
           return {
             transform: `translate(0px, ${y}px) scale(${scale})`,
             zIndex: 200000,
@@ -945,30 +1014,59 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
         } else {
           const focusedSlotIndex = selectedCards.findIndex((c) => c.card.id === lightboxCardId);
           let fx = 0;
-          let fy = isMobile ? -168 : -114;
+          let fy = isMobile ? -162 : -114;
           let frot = 0;
-          const fscale = isMobile ? 1.02 : 1.16;
+          let fscale = isMobile ? 1.12 : 1.16;
           let companionOrder = 1;
-          if (focusedSlotIndex === 0) {
-            fx = selectedIndex === 1 ? (isMobile ? 54 : 68) : isMobile ? 100 : 130;
-            fy = selectedIndex === 1 ? (isMobile ? -166 : -112) : isMobile ? -176 : -124;
-            frot = selectedIndex === 1 ? 7.5 : 14;
-            companionOrder = selectedIndex === 1 ? 2 : 1;
-          } else if (focusedSlotIndex === 1) {
-            fx = selectedIndex === 0 ? (isMobile ? -58 : -74) : isMobile ? 58 : 74;
-            fy = isMobile ? -168 : -114;
-            frot = selectedIndex === 0 ? -8.5 : 8.5;
-            companionOrder = 1;
+
+          if (isEnlarged && !isMobile) {
+            const leftColX = -Math.min(300, Math.max(210, viewportWidth * 0.22));
+            if (focusedSlotIndex === 0) {
+              fx = selectedIndex === 1 ? leftColX + 72 : leftColX + 138;
+              fy = selectedIndex === 1 ? -12 : -24;
+              frot = selectedIndex === 1 ? 7.5 : 14;
+              fscale = selectedIndex === 1 ? 1.68 : 1.52;
+              companionOrder = selectedIndex === 1 ? 2 : 1;
+            } else if (focusedSlotIndex === 1) {
+              fx = selectedIndex === 0 ? leftColX - 78 : leftColX + 78;
+              fy = -14;
+              frot = selectedIndex === 0 ? -8.5 : 8.5;
+              fscale = 1.68;
+              companionOrder = 1;
+            } else {
+              fx = selectedIndex === 1 ? leftColX - 72 : leftColX - 138;
+              fy = selectedIndex === 1 ? -12 : -24;
+              frot = selectedIndex === 1 ? -7.5 : -14;
+              fscale = selectedIndex === 1 ? 1.68 : 1.52;
+              companionOrder = selectedIndex === 1 ? 2 : 1;
+            }
           } else {
-            fx = selectedIndex === 1 ? (isMobile ? -54 : -68) : isMobile ? -100 : -130;
-            fy = selectedIndex === 1 ? (isMobile ? -166 : -112) : isMobile ? -176 : -124;
-            frot = selectedIndex === 1 ? -7.5 : -14;
-            companionOrder = selectedIndex === 1 ? 2 : 1;
+            if (focusedSlotIndex === 0) {
+              fx = selectedIndex === 1 ? (isMobile ? 58 : 68) : isMobile ? 110 : 130;
+              fy = selectedIndex === 1 ? (isMobile ? -162 : -112) : isMobile ? -172 : -124;
+              frot = selectedIndex === 1 ? 7.5 : 14;
+              fscale = selectedIndex === 1 ? (isMobile ? 1.12 : 1.16) : isMobile ? 1.02 : 1.08;
+              companionOrder = selectedIndex === 1 ? 2 : 1;
+            } else if (focusedSlotIndex === 1) {
+              fx = selectedIndex === 0 ? (isMobile ? -62 : -74) : isMobile ? 62 : 74;
+              fy = isMobile ? -162 : -114;
+              frot = selectedIndex === 0 ? -8.5 : 8.5;
+              fscale = isMobile ? 1.12 : 1.16;
+              companionOrder = 1;
+            } else {
+              fx = selectedIndex === 1 ? (isMobile ? -58 : -68) : isMobile ? -110 : -130;
+              fy = selectedIndex === 1 ? (isMobile ? -162 : -112) : isMobile ? -172 : -124;
+              frot = selectedIndex === 1 ? -7.5 : -14;
+              fscale = selectedIndex === 1 ? (isMobile ? 1.12 : 1.16) : isMobile ? 1.02 : 1.08;
+              companionOrder = selectedIndex === 1 ? 2 : 1;
+            }
           }
+
           return {
             transform: `translate(${fx}px, ${fy}px) rotate(${frot}deg) scale(${fscale})`,
             zIndex: 175000 + companionOrder,
-            filter: 'brightness(0.76)',
+            filter: 'brightness(0.82)',
+            opacity: 0.88,
           };
         }
       }
@@ -1278,18 +1376,17 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
       if (isSelected && card) {
         ritualAudio.playCardSelect();
         if (lightboxCardId) {
-          // In single-card inspect view:
+          // In inspect view:
           if (cardId !== lightboxCardId) {
-            // Tapping on one of the other cards just brings that to the front
-            // If it's not been turned, it will come to the front face down
+            // Tapping on one of the companion cards switches focus to it
             setLightboxCardId(cardId);
-            setIsEnlarged(false);
+            setIsEnlarged(true);
           } else {
             // Tapping on the card currently at the front turns it over if not yet revealed
             if (!card.isRevealed) {
               onFlipCard(cardId);
             } else {
-              // Tapping the card in inspect view enlarges it / toggles standard view
+              // Tapping the card in inspect view toggles standard view
               setIsEnlarged((prev) => !prev);
             }
           }
@@ -1299,9 +1396,9 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
             // First tap: Turn the card over right in the 3-card spread
             onFlipCard(cardId);
           } else {
-            // Second tap: Open the single-card focus view
+            // Second tap: Open the 2-column fanned inspect view
             setLightboxCardId(cardId);
-            setIsEnlarged(false);
+            setIsEnlarged(true);
           }
         }
       }
@@ -1504,14 +1601,14 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
               if (target) {
                 ritualAudio.playCardSelect();
                 setLightboxCardId(target.card.id);
-                setIsEnlarged(false);
+                setIsEnlarged(true);
               }
             }}
             onFlipCard={onFlipCard}
             onClose={() => {
               ritualAudio.playCardSelect();
               setLightboxCardId(null);
-              setIsEnlarged(false);
+              setIsEnlarged(true);
             }}
             isEnlarged={isEnlarged}
             onToggleEnlarge={() => setIsEnlarged((prev) => !prev)}
