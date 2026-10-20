@@ -76,7 +76,7 @@ describe('CardDetailLightbox', () => {
     expect(screen.getByText('Trickery, illusions, out of touch.')).toBeDefined();
   });
 
-  it('triggers onClose when Close button or Escape key is pressed', () => {
+  it('triggers onClose when clicking the backdrop outside cards or pressing Escape', () => {
     const handleClose = vi.fn();
     render(
       <CardDetailLightbox
@@ -88,8 +88,10 @@ describe('CardDetailLightbox', () => {
       />
     );
 
-    const closeBtn = screen.getByRole('button', { name: /close card detail view/i });
-    fireEvent.click(closeBtn);
+    expect(screen.queryByText('Return to Spread')).toBeNull();
+
+    const backdrop = screen.getByTestId('lightbox-backdrop');
+    fireEvent.click(backdrop);
     expect(handleClose).toHaveBeenCalledTimes(1);
 
     fireEvent.keyDown(window, { key: 'Escape' });

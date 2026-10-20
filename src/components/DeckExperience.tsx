@@ -375,9 +375,9 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
               } else {
                 targetX = 0;
                 // Subtly enlarge card when hovered while lifting upward to protect content clearance below
-                const baseScale = isMobile ? 1.35 : 1.52;
+                const baseScale = isMobile ? 1.3 : 1.52;
                 targetScale = isHovered ? baseScale + 0.045 : baseScale;
-                const baseY = isMobile ? -78 : -100;
+                const baseY = isMobile ? -156 : -100;
                 targetY = isHovered ? baseY - 3 : baseY;
                 targetZ = isHovered ? 178 : 165;
                 targetRotX = 0;
@@ -394,24 +394,24 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
                 // Focused card is PAST (slot 0)
                 if (selectedIndex === 1) {
                   // PRESENT fans out slightly to the right
-                  targetX = isMobile ? 52 : 68;
-                  targetY = isMobile ? -88 : -112;
+                  targetX = isMobile ? 54 : 68;
+                  targetY = isMobile ? -166 : -112;
                   targetZ = 75;
                   targetRotZ = 7.5;
                   targetRotY = -5;
                   targetRotX = 2;
-                  targetScale = isMobile ? 1.05 : 1.16;
+                  targetScale = isMobile ? 1.02 : 1.16;
                   brightness = 0.78;
                   blurPx = 0.3;
                 } else {
                   // FUTURE fans out further to the right
-                  targetX = isMobile ? 98 : 130;
-                  targetY = isMobile ? -98 : -124;
+                  targetX = isMobile ? 100 : 130;
+                  targetY = isMobile ? -176 : -124;
                   targetZ = 45;
                   targetRotZ = 14;
                   targetRotY = -9;
                   targetRotX = 4;
-                  targetScale = isMobile ? 0.98 : 1.08;
+                  targetScale = isMobile ? 0.95 : 1.08;
                   brightness = 0.68;
                   blurPx = 0.5;
                 }
@@ -419,24 +419,24 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
                 // Focused card is PRESENT (slot 1)
                 if (selectedIndex === 0) {
                   // PAST fans out to the left
-                  targetX = isMobile ? -56 : -74;
-                  targetY = isMobile ? -90 : -114;
+                  targetX = isMobile ? -58 : -74;
+                  targetY = isMobile ? -168 : -114;
                   targetZ = 65;
                   targetRotZ = -8.5;
                   targetRotY = 6;
                   targetRotX = 2;
-                  targetScale = isMobile ? 1.05 : 1.16;
+                  targetScale = isMobile ? 1.02 : 1.16;
                   brightness = 0.76;
                   blurPx = 0.3;
                 } else {
                   // FUTURE fans out to the right
-                  targetX = isMobile ? 56 : 74;
-                  targetY = isMobile ? -90 : -114;
+                  targetX = isMobile ? 58 : 74;
+                  targetY = isMobile ? -168 : -114;
                   targetZ = 65;
                   targetRotZ = 8.5;
                   targetRotY = -6;
                   targetRotX = 2;
-                  targetScale = isMobile ? 1.05 : 1.16;
+                  targetScale = isMobile ? 1.02 : 1.16;
                   brightness = 0.76;
                   blurPx = 0.3;
                 }
@@ -444,24 +444,24 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
                 // Focused card is FUTURE (slot 2)
                 if (selectedIndex === 1) {
                   // PRESENT fans out slightly to the left
-                  targetX = isMobile ? -52 : -68;
-                  targetY = isMobile ? -88 : -112;
+                  targetX = isMobile ? -54 : -68;
+                  targetY = isMobile ? -166 : -112;
                   targetZ = 75;
                   targetRotZ = -7.5;
                   targetRotY = 5;
                   targetRotX = 2;
-                  targetScale = isMobile ? 1.05 : 1.16;
+                  targetScale = isMobile ? 1.02 : 1.16;
                   brightness = 0.78;
                   blurPx = 0.3;
                 } else {
                   // PAST fans out further to the left
-                  targetX = isMobile ? -98 : -130;
-                  targetY = isMobile ? -98 : -124;
+                  targetX = isMobile ? -100 : -130;
+                  targetY = isMobile ? -176 : -124;
                   targetZ = 45;
                   targetRotZ = -14;
                   targetRotY = 9;
                   targetRotX = 4;
-                  targetScale = isMobile ? 0.98 : 1.08;
+                  targetScale = isMobile ? 0.95 : 1.08;
                   brightness = 0.68;
                   blurPx = 0.5;
                 }
@@ -815,8 +815,8 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
       if (lightboxCardId) {
         if (cardId === lightboxCardId) {
           const isHovered = hoveredId === cardId;
-          const scale = isHovered ? (isMobile ? 1.395 : 1.565) : isMobile ? 1.35 : 1.52;
-          const y = isHovered ? (isMobile ? -81 : -103) : isMobile ? -78 : -100;
+          const scale = isHovered ? (isMobile ? 1.345 : 1.565) : isMobile ? 1.3 : 1.52;
+          const y = isHovered ? (isMobile ? -159 : -103) : isMobile ? -156 : -100;
           return {
             transform: `translate(0px, ${y}px) scale(${scale})`,
             zIndex: 200000,
@@ -824,20 +824,23 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
         } else {
           const focusedSlotIndex = selectedCards.findIndex((c) => c.card.id === lightboxCardId);
           let fx = 0;
-          const fy = isMobile ? -88 : -112;
+          let fy = isMobile ? -168 : -114;
           let frot = 0;
-          const fscale = isMobile ? 1.05 : 1.16;
+          const fscale = isMobile ? 1.02 : 1.16;
           let companionOrder = 1;
           if (focusedSlotIndex === 0) {
-            fx = selectedIndex === 1 ? (isMobile ? 52 : 68) : isMobile ? 98 : 130;
+            fx = selectedIndex === 1 ? (isMobile ? 54 : 68) : isMobile ? 100 : 130;
+            fy = selectedIndex === 1 ? (isMobile ? -166 : -112) : isMobile ? -176 : -124;
             frot = selectedIndex === 1 ? 7.5 : 14;
             companionOrder = selectedIndex === 1 ? 2 : 1;
           } else if (focusedSlotIndex === 1) {
-            fx = selectedIndex === 0 ? (isMobile ? -56 : -74) : isMobile ? 56 : 74;
+            fx = selectedIndex === 0 ? (isMobile ? -58 : -74) : isMobile ? 58 : 74;
+            fy = isMobile ? -168 : -114;
             frot = selectedIndex === 0 ? -8.5 : 8.5;
             companionOrder = 1;
           } else {
-            fx = selectedIndex === 1 ? (isMobile ? -52 : -68) : isMobile ? -98 : -130;
+            fx = selectedIndex === 1 ? (isMobile ? -54 : -68) : isMobile ? -100 : -130;
+            fy = selectedIndex === 1 ? (isMobile ? -166 : -112) : isMobile ? -176 : -124;
             frot = selectedIndex === 1 ? -7.5 : -14;
             companionOrder = selectedIndex === 1 ? 2 : 1;
           }
@@ -1281,6 +1284,7 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
             }}
             onFlipCard={onFlipCard}
             onClose={() => {
+              ritualAudio.playCardSelect();
               setLightboxCardId(null);
               setIsEnlarged(false);
             }}

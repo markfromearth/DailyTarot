@@ -116,17 +116,19 @@ export const CardDetailLightbox: React.FC<CardDetailLightboxProps> = ({
     >
       {/* Dimmed Lightbox Backdrop with Opacity & Blur Behind the 3D Cards */}
       <div
-        className="fixed inset-0 bg-black/80 backdrop-blur-md transition-opacity duration-500 pointer-events-auto"
+        data-testid="lightbox-backdrop"
+        className="fixed inset-0 bg-black/80 backdrop-blur-md transition-opacity duration-500 pointer-events-auto cursor-pointer"
         style={{
           background:
             'radial-gradient(ellipse at center, rgba(16, 20, 48, 0.88) 0%, rgba(3, 5, 14, 0.96) 80%)',
         }}
         onClick={onClose}
+        title="Click outside to return to spread"
       />
 
-      {/* Top Header: Spread Slot Selector Tabs & Close Button */}
-      <header className="fixed top-4 sm:top-6 left-0 right-0 z-[220000] px-4 sm:px-8 max-w-4xl mx-auto flex items-center justify-between pointer-events-auto animate-fade-in">
-        {/* Spread Slot Selector Tabs */}
+      {/* Top Header: Spread Slot Selector Tabs Centered */}
+      <header className="fixed top-4 sm:top-6 left-0 right-0 z-[220000] px-4 sm:px-8 flex items-center justify-center pointer-events-auto animate-fade-in">
+        {/* Spread Slot Selector Tabs - Centered */}
         <div className="flex items-center gap-1.5 sm:gap-2 bg-white/[0.08] border border-white/10 rounded-full p-1 backdrop-blur-md shadow-lg">
           {SLOT_TITLES.map((title, idx) => {
             const cardAtSlot = allSelectedCards[idx];
@@ -153,8 +155,8 @@ export const CardDetailLightbox: React.FC<CardDetailLightboxProps> = ({
           })}
         </div>
 
-        <div className="flex items-center gap-2">
-          {onToggleEnlarge && (
+        {onToggleEnlarge && (
+          <div className="absolute right-4 sm:right-8 flex items-center">
             <button
               type="button"
               onClick={onToggleEnlarge}
@@ -164,21 +166,8 @@ export const CardDetailLightbox: React.FC<CardDetailLightboxProps> = ({
               <span className="hidden sm:inline">{isEnlarged ? 'Standard' : 'Enlarge'}</span>
               <span className="text-amber-300 font-serif text-sm">{isEnlarged ? '⤡' : '⤢'}</span>
             </button>
-          )}
-
-          {/* Close Inspect Button */}
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Close card detail view"
-            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/[0.08] hover:bg-white/20 border border-white/10 text-white/90 hover:text-white transition-colors duration-300 text-xs tracking-wider uppercase group shadow-lg cursor-pointer"
-          >
-            <span>Return to Spread</span>
-            <span className="text-sm leading-none group-hover:text-amber-200 transition-colors">
-              ✕
-            </span>
-          </button>
-        </div>
+          </div>
+        )}
       </header>
 
       {/* Reading Details Panel: Switches to Right Column on Desktop when Enlarged */}
@@ -186,14 +175,19 @@ export const CardDetailLightbox: React.FC<CardDetailLightboxProps> = ({
         className={`fixed z-[220000] pointer-events-auto transition-all duration-500 ease-out ${
           isEnlarged
             ? 'top-20 sm:top-24 bottom-6 md:top-20 md:bottom-8 md:left-[46%] md:right-8 lg:right-16 md:w-auto flex flex-col justify-center items-start text-left px-4 sm:px-6 md:px-8 overflow-y-auto'
-            : 'top-[calc(50%+60px)] sm:top-[calc(50%+76px)] md:top-[calc(50%+88px)] bottom-2 left-0 right-0 flex flex-col items-center px-4 overflow-y-auto'
+            : 'top-[calc(50%-45px)] sm:top-[calc(50%+60px)] md:top-[calc(50%+76px)] bottom-2 left-0 right-0 flex flex-col items-center px-4 overflow-y-auto'
         } ${isEnlarged && isMobile ? 'opacity-0 pointer-events-none' : 'opacity-100 animate-fade-in'}`}
+        onClick={(e) => {
+          if (e.target === e.currentTarget) {
+            onClose();
+          }
+        }}
       >
         <div
           className={`w-full flex flex-col ${
             isEnlarged
               ? 'md:items-start md:text-left items-center text-center max-w-xl md:max-w-2xl bg-[#070b1a]/92 md:border md:border-white/15 md:rounded-3xl md:p-6 lg:p-8 md:backdrop-blur-md md:shadow-2xl my-auto'
-              : 'items-center text-center max-w-xl my-auto pb-4'
+              : 'items-center text-center max-w-xl my-0 sm:my-auto pt-1 sm:pt-0 pb-4'
           }`}
         >
           {/* Slot Title & Status Badges */}
@@ -255,7 +249,7 @@ export const CardDetailLightbox: React.FC<CardDetailLightboxProps> = ({
 
               {/* Interaction Helper Hint */}
               <p className="text-white/70 text-[9px] sm:text-[10px] uppercase tracking-[0.2em] mt-2 font-light">
-                Swipe left/right or tap companion cards to inspect • ESC to return
+                Swipe left/right to switch • Tap card to enlarge • Tap outside to return
               </p>
             </>
           ) : (
