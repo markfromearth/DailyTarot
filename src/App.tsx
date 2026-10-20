@@ -1,3 +1,4 @@
+import { SpeedInsights } from '@vercel/speed-insights/react';
 import { useReading } from './hooks/useReading';
 import { DeckExperience } from './components/DeckExperience';
 
@@ -65,6 +66,9 @@ function App() {
           onResetReading={resetReading}
         />
       </main>
+
+      {/* Vercel Speed Insights Web Vitals Telemetry */}
+      <SpeedInsights />
     </div>
   );
 }
