@@ -49,6 +49,141 @@ export interface TuckOffset {
   orbitZIndex: number;
 }
 
+export interface Quaternion {
+  x: number;
+  y: number;
+  z: number;
+  w: number;
+}
+
+export interface TransitionChoreographyConfig {
+  cardIndex: number;
+  totalCards: number;
+  fanStackIndex: number;
+  totalUnselected: number;
+  elapsedMs: number;
+  durationMs: number;
+  orbitPose: KinematicTransform;
+  fanPose: KinematicTransform;
+  isMobile: boolean;
+}
+
+/**
+ * Converts Euler angles in degrees (order X-Y-Z) to a normalized quaternion.
+ */
+export function eulerToQuaternion(rotXDeg: number, rotYDeg: number, rotZDeg: number): Quaternion {
+  const DEG2RAD = Math.PI / 180;
+  const x = rotXDeg * DEG2RAD * 0.5;
+  const y = rotYDeg * DEG2RAD * 0.5;
+  const z = rotZDeg * DEG2RAD * 0.5;
+
+  const c1 = Math.cos(x),
+    c2 = Math.cos(y),
+    c3 = Math.cos(z);
+  const s1 = Math.sin(x),
+    s2 = Math.sin(y),
+    s3 = Math.sin(z);
+
+  return {
+    x: s1 * c2 * c3 + c1 * s2 * s3,
+    y: c1 * s2 * c3 - s1 * c2 * s3,
+    z: c1 * c2 * s3 + s1 * s2 * c3,
+    w: c1 * c2 * c3 - s1 * s2 * s3,
+  };
+}
+
+/**
+ * Converts a quaternion to Euler angles in degrees (order X-Y-Z).
+ */
+export function quaternionToEuler(q: Quaternion): { rotX: number; rotY: number; rotZ: number } {
+  const RAD2DEG = 180 / Math.PI;
+  const { x, y, z, w } = q;
+
+  const m11 = 1 - 2 * (y * y + z * z);
+  const m12 = 2 * (x * y - z * w);
+  const m13 = 2 * (x * z + y * w);
+  const m23 = 2 * (y * z - x * w);
+  const m32 = 2 * (y * z + x * w);
+  const m33 = 1 - 2 * (x * x + y * y);
+  const m22 = 1 - 2 * (x * x + z * z);
+
+  const clampedM13 = Math.max(-1, Math.min(1, m13));
+  const rotY = Math.asin(clampedM13);
+  let rotX: number;
+  let rotZ: number;
+
+  if (Math.abs(clampedM13) < 0.9999999) {
+    rotX = Math.atan2(-m23, m33);
+    rotZ = Math.atan2(-m12, m11);
+  } else {
+    rotX = Math.atan2(m32, m22);
+    rotZ = 0;
+  }
+
+  return {
+    rotX: rotX * RAD2DEG,
+    rotY: rotY * RAD2DEG,
+    rotZ: rotZ * RAD2DEG,
+  };
+}
+
+/**
+ * Spherical linear interpolation between two quaternions along the geodesic on S^3.
+ */
+export function slerpQuaternion(q1: Quaternion, q2: Quaternion, t: number): Quaternion {
+  let { x: x2, y: y2, z: z2, w: w2 } = q2;
+  let dot = q1.x * x2 + q1.y * y2 + q1.z * z2 + q1.w * w2;
+
+  if (dot < 0) {
+    dot = -dot;
+    x2 = -x2;
+    y2 = -y2;
+    z2 = -z2;
+    w2 = -w2;
+  }
+
+  if (dot > 0.9995) {
+    const x = q1.x + t * (x2 - q1.x);
+    const y = q1.y + t * (y2 - q1.y);
+    const z = q1.z + t * (z2 - q1.z);
+    const w = q1.w + t * (w2 - q1.w);
+    const len = Math.hypot(x, y, z, w) || 1;
+    return { x: x / len, y: y / len, z: z / len, w: w / len };
+  }
+
+  const theta0 = Math.acos(Math.max(-1, Math.min(1, dot)));
+  const theta = theta0 * t;
+  const sinTheta0 = Math.sin(theta0);
+  const sinTheta = Math.sin(theta);
+
+  const s0 = Math.cos(theta) - (dot * sinTheta) / sinTheta0;
+  const s1 = sinTheta / sinTheta0;
+
+  return {
+    x: s0 * q1.x + s1 * x2,
+    y: s0 * q1.y + s1 * y2,
+    z: s0 * q1.z + s1 * z2,
+    w: s0 * q1.w + s1 * w2,
+  };
+}
+
+/**
+ * Interpolates Euler angles in degrees using quaternion SLERP for smooth, gimbal-free 3D rotation.
+ */
+export function slerpEuler(
+  rot1: { rotX: number; rotY: number; rotZ: number },
+  rot2: { rotX: number; rotY: number; rotZ: number },
+  t: number
+): { rotX: number; rotY: number; rotZ: number } {
+  if (t <= 0) return { ...rot1 };
+  if (t >= 1) return { ...rot2 };
+
+  const q1 = eulerToQuaternion(rot1.rotX, rot1.rotY, rot1.rotZ);
+  const q2 = eulerToQuaternion(rot2.rotX, rot2.rotY, rot2.rotZ);
+  const qInterp = slerpQuaternion(q1, q2, t);
+  return quaternionToEuler(qInterp);
+}
+
 /**
  * C2-smooth raised-cosine bell (0 value, 0 velocity, and 0 acceleration at ends u = ±1).
  */
@@ -244,5 +379,161 @@ export function calculateFanPose(config: FanConfig): KinematicTransform {
     zIndex: 10000 + fanStackIndex,
     brightness: 1,
     blurPx: 0,
+  };
+}
+
+/**
+ * Returns the squared-up deck pose resting at bottom center (representing dealer's gathered deck).
+ */
+export function getSquaredDeckPose(cardIndex: number, isMobile: boolean): KinematicTransform {
+  return {
+    x: 0,
+    y: isMobile ? 66 : 80,
+    z: -cardIndex * 0.22,
+    rotX: 0,
+    rotY: 0,
+    rotZ: 0,
+    scale: 1,
+    opacity: 1,
+    zIndex: 10000 + cardIndex,
+    brightness: 1,
+    blurPx: 0,
+    tuckX: 0,
+    tuckY: 0,
+    tuckRotY: 0,
+    tuckRotZ: 0,
+  };
+}
+
+/**
+ * Choreographs the smooth physical transition between the orbital ring and the fanned reading deck:
+ * Act 1 (0% -> 44%): Gathering Phase - The ring dynamically spirals and collapses inwards into a squared deck.
+ * Act 2 (44% -> 50%): Settle Phase - The squared deck pauses momentarily in the dealer's hand.
+ * Act 3 (50% -> 100%): Ribbon Bloom Phase - The cards unfurl smoothly from the deck into the reading fan.
+ */
+export function calculateTransitionPose(config: TransitionChoreographyConfig): KinematicTransform {
+  const {
+    cardIndex,
+    totalCards,
+    fanStackIndex,
+    totalUnselected,
+    elapsedMs,
+    durationMs,
+    orbitPose,
+    fanPose,
+    isMobile,
+  } = config;
+
+  if (elapsedMs <= 0) {
+    return { ...orbitPose };
+  }
+  if (elapsedMs >= durationMs) {
+    return { ...fanPose };
+  }
+
+  const normT = Math.min(1, Math.max(0, elapsedMs / durationMs));
+  const deckPose = getSquaredDeckPose(cardIndex, isMobile);
+
+  // Phase 1: Inward Spiral Collapse into squared deck (0.00 -> 0.44)
+  if (normT < 0.44) {
+    // Index-based organic stagger: cards pull inward in a living cascading wave
+    const gatherStagger = (cardIndex / Math.max(1, totalCards - 1)) * 0.12;
+    const cardProgress = Math.min(1, Math.max(0, (normT - gatherStagger) / (0.44 - gatherStagger)));
+    const easeGather = 0.5 - 0.5 * Math.cos(cardProgress * Math.PI);
+
+    // Dynamic spiral arc: subtle lateral vortex sweep as cards collapse inward
+    const spiralArc = Math.sin(easeGather * Math.PI) * (isMobile ? 18 : 28);
+    // Vertical scoop: cards gently lift then settle down into the deck
+    const liftY = -Math.sin(easeGather * Math.PI) * (isMobile ? 14 : 22);
+
+    const x =
+      orbitPose.x +
+      (deckPose.x - orbitPose.x) * easeGather +
+      Math.cos(cardIndex * 0.3) * spiralArc * (1 - easeGather);
+    const y = orbitPose.y + (deckPose.y - orbitPose.y) * easeGather + liftY;
+    const z = orbitPose.z + (deckPose.z - orbitPose.z) * easeGather;
+
+    const rot = slerpEuler(
+      { rotX: orbitPose.rotX, rotY: orbitPose.rotY, rotZ: orbitPose.rotZ },
+      { rotX: deckPose.rotX, rotY: deckPose.rotY, rotZ: deckPose.rotZ },
+      easeGather
+    );
+
+    const scale = orbitPose.scale + (deckPose.scale - orbitPose.scale) * easeGather;
+
+    // Smoothly fade in cards that were invisible in the 50-card ring
+    const baseOpacity = cardIndex < 50 ? 1 : 0;
+    const opacity = baseOpacity + (1 - baseOpacity) * Math.min(1, easeGather * 1.6);
+
+    const blurPx = orbitPose.blurPx * (1 - easeGather);
+    const brightness = orbitPose.brightness + (1 - orbitPose.brightness) * easeGather;
+
+    // Tuck offsets fade out smoothly
+    const tuckX = (orbitPose.tuckX ?? 0) * (1 - easeGather);
+    const tuckY = (orbitPose.tuckY ?? 0) * (1 - easeGather);
+    const tuckRotY = (orbitPose.tuckRotY ?? 0) * (1 - easeGather);
+    const tuckRotZ = (orbitPose.tuckRotZ ?? 0) * (1 - easeGather);
+
+    return {
+      x,
+      y,
+      z,
+      rotX: rot.rotX,
+      rotY: rot.rotY,
+      rotZ: rot.rotZ,
+      scale,
+      opacity,
+      zIndex: easeGather > 0.5 ? deckPose.zIndex : orbitPose.zIndex,
+      brightness,
+      blurPx,
+      tuckX,
+      tuckY,
+      tuckRotY,
+      tuckRotZ,
+    };
+  }
+
+  // Phase 2: Settled squared deck (0.44 -> 0.50)
+  if (normT < 0.5) {
+    return { ...deckPose };
+  }
+
+  // Phase 3: Ribbon Fan Bloom Phase (0.50 -> 1.00)
+  // Dealer ribbon spread ripples out across the table
+  const fanStagger = (fanStackIndex / Math.max(1, totalUnselected - 1)) * 0.16;
+  const bloomProgress = Math.min(1, Math.max(0, (normT - 0.5 - fanStagger) / (0.5 - fanStagger)));
+  const easeBloom = 0.5 - 0.5 * Math.cos(bloomProgress * Math.PI);
+
+  // Gentle wave crest as cards spread outward
+  const crestY = -Math.sin(easeBloom * Math.PI) * (isMobile ? 10 : 16);
+
+  const x = deckPose.x + (fanPose.x - deckPose.x) * easeBloom;
+  const y = deckPose.y + (fanPose.y - deckPose.y) * easeBloom + crestY;
+  const z = deckPose.z + (fanPose.z - deckPose.z) * easeBloom;
+
+  const rot = slerpEuler(
+    { rotX: deckPose.rotX, rotY: deckPose.rotY, rotZ: deckPose.rotZ },
+    { rotX: fanPose.rotX, rotY: fanPose.rotY, rotZ: fanPose.rotZ },
+    easeBloom
+  );
+
+  const scale = deckPose.scale + (fanPose.scale - deckPose.scale) * easeBloom;
+
+  return {
+    x,
+    y,
+    z,
+    rotX: rot.rotX,
+    rotY: rot.rotY,
+    rotZ: rot.rotZ,
+    scale,
+    opacity: 1,
+    zIndex: fanPose.zIndex,
+    brightness: 1,
+    blurPx: 0,
+    tuckX: 0,
+    tuckY: 0,
+    tuckRotY: 0,
+    tuckRotZ: 0,
   };
 }

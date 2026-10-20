@@ -7,7 +7,11 @@ import { CardDetailLightbox } from './CardDetailLightbox';
 import { StardustCanvas, StardustEmitterHandle } from './StardustCanvas';
 import { ReadingPhase, TarotCard, PositionedCard } from '../types/tarot';
 import { ritualAudio } from '../engine/sound';
-import { calculateOrbitPose, calculateFanPose } from '../engine/kinematics';
+import {
+  calculateOrbitPose,
+  calculateFanPose,
+  calculateTransitionPose,
+} from '../engine/kinematics';
 import { getSlotCoordinate } from '../constants/layout';
 
 interface DeckExperienceProps {
@@ -77,6 +81,7 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
   const hasTriggeredShuffleRef = useRef(false);
   const shuffleStartTimeRef = useRef<number | null>(null);
   const fanTransitionStartTimeRef = useRef<number | null>(null);
+  const finalShuffleAngleRef = useRef<number>(0);
   const spinDirectionRef = useRef<number>(-1);
 
   // Pointer / Drag Interaction Refs
@@ -145,6 +150,7 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
       setTappedOrbitCardId(null);
       if (phase === 'fan') {
         fanTransitionStartTimeRef.current = performance.now();
+        finalShuffleAngleRef.current = orbitAngleRef.current;
         suppressAllHoverUntilMoveRef.current = true;
         setLightboxCardId(null);
       }
@@ -487,6 +493,7 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
             const cardWidth = isMobile ? 96 : 128;
             const maxOffset = spreadWidth / 2 - cardWidth / 2;
 
+            const FAN_TRANSITION_DURATION = 2600;
             const fanPose = calculateFanPose({
               fanStackIndex,
               totalUnselected,
@@ -496,23 +503,69 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
               timeSec,
             });
 
-            targetX = fanPose.x;
-            targetY = fanPose.y;
-            targetZ = fanPose.z;
-            targetRotX = fanPose.rotX;
-            targetRotY = fanPose.rotY;
-            targetRotZ = fanPose.rotZ;
-            targetScale = fanPose.scale;
-
-            // Smooth opacity fade for extra unselected cards during the slow fan transition
+            // Smooth physical transition from orbital ring -> squared deck -> fan spread
             if (currentPhase === 'fan' && fanTransitionStartTimeRef.current !== null) {
               const fanElapsed = now - fanTransitionStartTimeRef.current;
-              if (index >= VISIBLE_ORBIT_CARDS) {
-                opacity = Math.min(1, Math.max(0, (fanElapsed - 300) / 1400));
+              if (fanElapsed < FAN_TRANSITION_DURATION) {
+                const sourceOrbitPose = calculateOrbitPose(
+                  index,
+                  finalShuffleAngleRef.current,
+                  timeSec,
+                  {
+                    rx,
+                    ry,
+                    rz,
+                    tiltRad: TILT_RAD,
+                    mergeFactor: 1.08,
+                    shuffleWobbleAmp: 0,
+                    isMobile,
+                    visibleOrbitCards: VISIBLE_ORBIT_CARDS,
+                  }
+                );
+
+                const transitionPose = calculateTransitionPose({
+                  cardIndex: index,
+                  totalCards: deck.length,
+                  fanStackIndex,
+                  totalUnselected,
+                  elapsedMs: fanElapsed,
+                  durationMs: FAN_TRANSITION_DURATION,
+                  orbitPose: sourceOrbitPose,
+                  fanPose,
+                  isMobile,
+                });
+
+                targetX = transitionPose.x;
+                targetY = transitionPose.y;
+                targetZ = transitionPose.z;
+                targetRotX = transitionPose.rotX;
+                targetRotY = transitionPose.rotY;
+                targetRotZ = transitionPose.rotZ;
+                targetScale = transitionPose.scale;
+                opacity = transitionPose.opacity;
+                fanStackIndex = transitionPose.zIndex - 10000;
+                tuckX = transitionPose.tuckX ?? 0;
+                tuckY = transitionPose.tuckY ?? 0;
+                tuckRotY = transitionPose.tuckRotY ?? 0;
+                tuckRotZ = transitionPose.tuckRotZ ?? 0;
               } else {
+                targetX = fanPose.x;
+                targetY = fanPose.y;
+                targetZ = fanPose.z;
+                targetRotX = fanPose.rotX;
+                targetRotY = fanPose.rotY;
+                targetRotZ = fanPose.rotZ;
+                targetScale = fanPose.scale;
                 opacity = 1;
               }
             } else {
+              targetX = fanPose.x;
+              targetY = fanPose.y;
+              targetZ = fanPose.z;
+              targetRotX = fanPose.rotX;
+              targetRotY = fanPose.rotY;
+              targetRotZ = fanPose.rotZ;
+              targetScale = fanPose.scale;
               opacity = 1;
             }
 
@@ -532,7 +585,7 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
               !suppressAllHoverUntilMoveRef.current &&
               totalUnselected > 1 &&
               (fanTransitionStartTimeRef.current === null ||
-                now - fanTransitionStartTimeRef.current >= 2200)
+                now - fanTransitionStartTimeRef.current >= 2600)
             ) {
               // Smoothly separate fanned cards around the cursor with a pronounced, dramatic split
               const px = prevPointerPosRef.current.x;
@@ -605,15 +658,15 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
           let posEase = isSelected ? 0.085 : 0.072;
           let rotEase = ROTATION_SLERP_SPEED;
 
-          // Slow, majestic transition from spinning orbit into the horizontal fanned deck:
+          // Physics smoothing tracking the transition target:
           if (currentPhase === 'fan' && fanTransitionStartTimeRef.current !== null) {
             const fanElapsed = now - fanTransitionStartTimeRef.current;
-            const FAN_TRANSITION_DURATION = 2400; // 2.4 seconds of slow, graceful, cinematic unfurling
+            const FAN_TRANSITION_DURATION = 2600; // 2.6s physical gather into squared deck & ribbon fan bloom
             if (fanElapsed < FAN_TRANSITION_DURATION) {
               const t = fanElapsed / FAN_TRANSITION_DURATION;
               const easeCurve = 0.5 - 0.5 * Math.cos(t * Math.PI);
-              posEase = lerp(0.016, 0.065, easeCurve);
-              rotEase = lerp(0.02, ROTATION_SLERP_SPEED, easeCurve);
+              posEase = lerp(0.08, 0.12, easeCurve);
+              rotEase = lerp(0.08, ROTATION_SLERP_SPEED, easeCurve);
             }
           }
 
