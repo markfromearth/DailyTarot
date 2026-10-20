@@ -41,6 +41,8 @@ const ROTATION_SLERP_SPEED = 0.075;
 const VISIBLE_ORBIT_CARDS = 50; // 50 visible cards orbiting in the celestial 3D ring
 const TILT_RAD = -21 * (Math.PI / 180); // 21-degree diagonal banking angle
 const IDLE_ORBIT_VELOCITY = -0.0016; // Calm, meditative counter-clockwise orbital drift
+const SHUFFLE_DURATION_MS = 5000; // Sustained majestic orbital weave before gathering
+const FAN_TRANSITION_DURATION_MS = 4800; // Deliberate physical gather into squared deck & ribbon fan bloom
 
 function lerp(a: number, b: number, t: number): number {
   return a + (b - a) * t;
@@ -321,13 +323,14 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
         let targetSpin = spinDirectionRef.current * baseSpeed;
         if (shuffleStartTimeRef.current !== null) {
           const elapsed = now - shuffleStartTimeRef.current;
-          const p = Math.min(1, Math.max(0, elapsed / 3000));
+          const p = Math.min(1, Math.max(0, elapsed / SHUFFLE_DURATION_MS));
           // Steady, majestic orbital spin during the weave, softly decelerating as it blooms into the spread
-          if (p < 0.65) {
+          if (p < 0.7) {
             targetSpin = spinDirectionRef.current * baseSpeed;
           } else {
-            const decelT = (p - 0.65) / 0.35;
-            targetSpin = spinDirectionRef.current * Math.max(0.02, baseSpeed * (1 - decelT * 0.85));
+            const decelT = (p - 0.7) / 0.3;
+            targetSpin =
+              spinDirectionRef.current * Math.max(0.015, baseSpeed * (1 - decelT * 0.88));
           }
         }
         orbitVelocityRef.current = lerp(orbitVelocityRef.current, targetSpin, 0.04);
@@ -338,31 +341,31 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
       }
 
       // Celestial Orbital Ring Dynamics (50 Cards):
-      // Zero-collapse: the ring stays expansive, breathing gently outward (1.0 -> 1.05 -> 1.08).
+      // Zero-collapse: the ring stays expansive, breathing gently outward (1.0 -> 1.06 -> 1.08).
       // Multi-harmonic celestial waves give it living movement without collapsing or breaking apart.
       let mergeFactor = 1;
       let shuffleWobbleAmp = 0;
 
       if (currentPhase === 'shuffling' && shuffleStartTimeRef.current !== null) {
         const elapsed = now - shuffleStartTimeRef.current;
-        const p = Math.min(1, Math.max(0, elapsed / 3000));
+        const p = Math.min(1, Math.max(0, elapsed / SHUFFLE_DURATION_MS));
 
         // Smooth expansive breathing: NEVER contracts below 1.0
-        if (p < 0.3) {
-          const t = p / 0.3;
+        if (p < 0.25) {
+          const t = p / 0.25;
           const easeIn = 0.5 - 0.5 * Math.cos(t * Math.PI);
-          mergeFactor = 1.0 + easeIn * 0.05; // 1.0 -> 1.05
-        } else if (p < 0.75) {
-          mergeFactor = 1.05;
+          mergeFactor = 1.0 + easeIn * 0.06; // 1.0 -> 1.06
+        } else if (p < 0.8) {
+          mergeFactor = 1.06;
         } else {
-          const t = (p - 0.75) / 0.25;
+          const t = (p - 0.8) / 0.2;
           const easeBloom = 0.5 - 0.5 * Math.cos(t * Math.PI);
-          mergeFactor = 1.05 + easeBloom * 0.03; // 1.05 -> 1.08
+          mergeFactor = 1.06 + easeBloom * 0.02; // 1.06 -> 1.08
         }
 
         // Living celestial undulating movement without collapse
-        if (p >= 0.08 && p <= 0.92) {
-          const u = (p - 0.08) / 0.84;
+        if (p >= 0.05 && p <= 0.95) {
+          const u = (p - 0.05) / 0.9;
           shuffleWobbleAmp = Math.sin(u * Math.PI) * 0.045;
         }
       }
@@ -672,7 +675,6 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
             const fanIndex = unselectedIndexMap.get(card.id);
             fanStackIndex = fanIndex !== undefined ? fanIndex : index;
 
-            const FAN_TRANSITION_DURATION = 2600;
             const fanPose = calculateFanPose({
               fanStackIndex,
               totalUnselected,
@@ -685,7 +687,7 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
             // Smooth physical transition from orbital ring -> squared deck -> fan spread
             if (currentPhase === 'fan' && fanTransitionStartTimeRef.current !== null) {
               const fanElapsed = now - fanTransitionStartTimeRef.current;
-              if (fanElapsed < FAN_TRANSITION_DURATION) {
+              if (fanElapsed < FAN_TRANSITION_DURATION_MS) {
                 const sourceOrbitPose = calculateOrbitPose(
                   index,
                   finalShuffleAngleRef.current,
@@ -708,7 +710,7 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
                   fanStackIndex,
                   totalUnselected,
                   elapsedMs: fanElapsed,
-                  durationMs: FAN_TRANSITION_DURATION,
+                  durationMs: FAN_TRANSITION_DURATION_MS,
                   orbitPose: sourceOrbitPose,
                   fanPose,
                   isMobile,
@@ -764,7 +766,7 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
               !suppressAllHoverUntilMoveRef.current &&
               totalUnselected > 1 &&
               (fanTransitionStartTimeRef.current === null ||
-                now - fanTransitionStartTimeRef.current >= 2600)
+                now - fanTransitionStartTimeRef.current >= FAN_TRANSITION_DURATION_MS)
             ) {
               // Smoothly separate fanned cards around the cursor with a pronounced, dramatic split
               const px = prevPointerPosRef.current.x;
@@ -840,9 +842,8 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
           // Physics smoothing tracking the transition target:
           if (currentPhase === 'fan' && fanTransitionStartTimeRef.current !== null) {
             const fanElapsed = now - fanTransitionStartTimeRef.current;
-            const FAN_TRANSITION_DURATION = 2600; // 2.6s physical gather into squared deck & ribbon fan bloom
-            if (fanElapsed < FAN_TRANSITION_DURATION) {
-              const t = fanElapsed / FAN_TRANSITION_DURATION;
+            if (fanElapsed < FAN_TRANSITION_DURATION_MS) {
+              const t = fanElapsed / FAN_TRANSITION_DURATION_MS;
               const easeCurve = 0.5 - 0.5 * Math.cos(t * Math.PI);
               posEase = lerp(0.08, 0.12, easeCurve);
               rotEase = lerp(0.08, ROTATION_SLERP_SPEED, easeCurve);

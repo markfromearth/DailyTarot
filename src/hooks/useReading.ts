@@ -7,6 +7,8 @@ import { readingReducer, createInitialReadingState } from '../engine/readingRedu
 
 const POSITIONS: ReadingPosition[] = ['past', 'present', 'future'];
 
+export const SHUFFLE_DURATION_MS = 5000;
+
 export function useReading() {
   const [engine] = useState(() => new DeckEngine());
   const [state, dispatch] = useReducer(readingReducer, undefined, () =>
@@ -98,7 +100,7 @@ export function useReading() {
         payload: { deckOrder: newDeckOrder },
       });
       saveState('fan', stateRef.current.selectedCards);
-    }, 3000);
+    }, SHUFFLE_DURATION_MS);
   }, [engine, saveState]);
 
   const selectCardFromFan = useCallback(

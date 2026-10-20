@@ -407,9 +407,9 @@ export function getSquaredDeckPose(cardIndex: number, isMobile: boolean): Kinema
 
 /**
  * Choreographs the smooth physical transition between the orbital ring and the fanned reading deck:
- * Act 1 (0% -> 44%): Gathering Phase - The ring dynamically spirals and collapses inwards into a squared deck.
- * Act 2 (44% -> 50%): Settle Phase - The squared deck pauses momentarily in the dealer's hand.
- * Act 3 (50% -> 100%): Ribbon Bloom Phase - The cards unfurl smoothly from the deck into the reading fan.
+ * Act 1 (0% -> 42%): Gathering Phase - The ring dynamically spirals and collapses inwards into a squared deck.
+ * Act 2 (42% -> 52%): Settle Phase - The squared deck pauses momentarily in the dealer's hand.
+ * Act 3 (52% -> 100%): Ribbon Bloom Phase - The cards unfurl smoothly from the deck into the reading fan.
  */
 export function calculateTransitionPose(config: TransitionChoreographyConfig): KinematicTransform {
   const {
@@ -434,11 +434,11 @@ export function calculateTransitionPose(config: TransitionChoreographyConfig): K
   const normT = Math.min(1, Math.max(0, elapsedMs / durationMs));
   const deckPose = getSquaredDeckPose(cardIndex, isMobile);
 
-  // Phase 1: Inward Spiral Collapse into squared deck (0.00 -> 0.44)
-  if (normT < 0.44) {
+  // Phase 1: Inward Spiral Collapse into squared deck (0.00 -> 0.42)
+  if (normT < 0.42) {
     // Index-based organic stagger: cards pull inward in a living cascading wave
     const gatherStagger = (cardIndex / Math.max(1, totalCards - 1)) * 0.12;
-    const cardProgress = Math.min(1, Math.max(0, (normT - gatherStagger) / (0.44 - gatherStagger)));
+    const cardProgress = Math.min(1, Math.max(0, (normT - gatherStagger) / (0.42 - gatherStagger)));
     const easeGather = 0.5 - 0.5 * Math.cos(cardProgress * Math.PI);
 
     // Dynamic spiral arc: subtle lateral vortex sweep as cards collapse inward
@@ -493,15 +493,15 @@ export function calculateTransitionPose(config: TransitionChoreographyConfig): K
     };
   }
 
-  // Phase 2: Settled squared deck (0.44 -> 0.50)
-  if (normT < 0.5) {
+  // Phase 2: Settled squared deck (0.42 -> 0.52)
+  if (normT < 0.52) {
     return { ...deckPose };
   }
 
-  // Phase 3: Ribbon Fan Bloom Phase (0.50 -> 1.00)
+  // Phase 3: Ribbon Fan Bloom Phase (0.52 -> 1.00)
   // Dealer ribbon spread ripples out across the table
   const fanStagger = (fanStackIndex / Math.max(1, totalUnselected - 1)) * 0.16;
-  const bloomProgress = Math.min(1, Math.max(0, (normT - 0.5 - fanStagger) / (0.5 - fanStagger)));
+  const bloomProgress = Math.min(1, Math.max(0, (normT - 0.52 - fanStagger) / (0.48 - fanStagger)));
   const easeBloom = 0.5 - 0.5 * Math.cos(bloomProgress * Math.PI);
 
   // Gentle wave crest as cards spread outward
