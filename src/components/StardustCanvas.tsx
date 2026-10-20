@@ -36,7 +36,11 @@ export const StardustCanvas: React.FC<StardustCanvasProps> = ({ emitterRef }) =>
   useEffect(() => {
     emitterRef.current = {
       spawnBurst: (x: number, y: number, vx = 0, vy = 0, count = 4) => {
-        for (let i = 0; i < count; i++) {
+        const isMobile = window.innerWidth < 768;
+        const actualCount = isMobile ? Math.min(2, count) : count;
+        const maxParticles = isMobile ? 65 : 420;
+
+        for (let i = 0; i < actualCount; i++) {
           const angle = Math.random() * Math.PI * 2;
           const speed = Math.random() * 0.6 + 0.1;
           particlesRef.current.push({
@@ -51,8 +55,8 @@ export const StardustCanvas: React.FC<StardustCanvasProps> = ({ emitterRef }) =>
             twinklePhase: Math.random() * Math.PI * 2,
           });
         }
-        if (particlesRef.current.length > 420) {
-          particlesRef.current.splice(0, particlesRef.current.length - 420);
+        if (particlesRef.current.length > maxParticles) {
+          particlesRef.current.splice(0, particlesRef.current.length - maxParticles);
         }
       },
       setOrbitState: (angle: number, velocity: number, phase: ReadingPhase) => {
@@ -99,17 +103,25 @@ export const StardustCanvas: React.FC<StardustCanvasProps> = ({ emitterRef }) =>
       };
     };
 
-    const drawTargetNode = (x: number, y: number, pulse: number) => {
+    const drawTargetNode = (x: number, y: number, pulse: number, isMobile = false) => {
       ctx.save();
-      // Soft outer halo
-      const grad = ctx.createRadialGradient(x, y, 1, x, y, 14);
-      grad.addColorStop(0, 'rgba(224, 242, 254, 0.95)');
-      grad.addColorStop(0.35, 'rgba(186, 230, 253, 0.45)');
-      grad.addColorStop(1, 'rgba(186, 230, 253, 0)');
-      ctx.fillStyle = grad;
-      ctx.beginPath();
-      ctx.arc(x, y, 14, 0, Math.PI * 2);
-      ctx.fill();
+      if (!isMobile) {
+        // Soft outer halo on desktop
+        const grad = ctx.createRadialGradient(x, y, 1, x, y, 14);
+        grad.addColorStop(0, 'rgba(224, 242, 254, 0.95)');
+        grad.addColorStop(0.35, 'rgba(186, 230, 253, 0.45)');
+        grad.addColorStop(1, 'rgba(186, 230, 253, 0)');
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(x, y, 14, 0, Math.PI * 2);
+        ctx.fill();
+      } else {
+        // Lightweight flat halo on mobile
+        ctx.fillStyle = 'rgba(186, 230, 253, 0.35)';
+        ctx.beginPath();
+        ctx.arc(x, y, 10, 0, Math.PI * 2);
+        ctx.fill();
+      }
 
       // Crisp outer ring
       ctx.strokeStyle = `rgba(226, 232, 240, ${0.65 + pulse * 0.25})`;
@@ -132,9 +144,10 @@ export const StardustCanvas: React.FC<StardustCanvasProps> = ({ emitterRef }) =>
       rx: number,
       ry: number,
       cx: number,
-      cy: number
+      cy: number,
+      isMobile = false
     ) => {
-      const steps = 42;
+      const steps = isMobile ? 12 : 42;
       ctx.save();
       for (let i = 0; i < steps; i++) {
         const t0 = i / steps;
@@ -147,22 +160,31 @@ export const StardustCanvas: React.FC<StardustCanvasProps> = ({ emitterRef }) =>
         ctx.lineTo(p1.x, p1.y);
         ctx.strokeStyle = `rgba(248, 198, 108, ${Math.pow(t1, 1.7) * 0.88})`;
         ctx.lineWidth = 0.5 + Math.pow(t1, 1.9) * 3.2;
-        ctx.shadowBlur = 12 * t1;
-        ctx.shadowColor = 'rgba(245, 166, 35, 0.9)';
+        if (!isMobile) {
+          ctx.shadowBlur = 12 * t1;
+          ctx.shadowColor = 'rgba(245, 166, 35, 0.9)';
+        }
         ctx.stroke();
       }
 
       // Comet Starburst Head
       const head = projectOrbitPoint(startTheta + arcLength, rx, ry, cx, cy);
-      const headGrad = ctx.createRadialGradient(head.x, head.y, 0.5, head.x, head.y, 18);
-      headGrad.addColorStop(0, '#ffffff');
-      headGrad.addColorStop(0.25, 'rgba(255, 224, 150, 0.95)');
-      headGrad.addColorStop(0.6, 'rgba(234, 155, 60, 0.35)');
-      headGrad.addColorStop(1, 'rgba(234, 155, 60, 0)');
-      ctx.fillStyle = headGrad;
-      ctx.beginPath();
-      ctx.arc(head.x, head.y, 18, 0, Math.PI * 2);
-      ctx.fill();
+      if (!isMobile) {
+        const headGrad = ctx.createRadialGradient(head.x, head.y, 0.5, head.x, head.y, 18);
+        headGrad.addColorStop(0, '#ffffff');
+        headGrad.addColorStop(0.25, 'rgba(255, 224, 150, 0.95)');
+        headGrad.addColorStop(0.6, 'rgba(234, 155, 60, 0.35)');
+        headGrad.addColorStop(1, 'rgba(234, 155, 60, 0)');
+        ctx.fillStyle = headGrad;
+        ctx.beginPath();
+        ctx.arc(head.x, head.y, 18, 0, Math.PI * 2);
+        ctx.fill();
+      } else {
+        ctx.fillStyle = 'rgba(255, 224, 150, 0.95)';
+        ctx.beginPath();
+        ctx.arc(head.x, head.y, 6, 0, Math.PI * 2);
+        ctx.fill();
+      }
 
       // 4-point lens flare spike on comet head
       ctx.strokeStyle = 'rgba(255, 245, 220, 0.85)';
@@ -174,8 +196,8 @@ export const StardustCanvas: React.FC<StardustCanvasProps> = ({ emitterRef }) =>
       ctx.lineTo(head.x, head.y + 12);
       ctx.stroke();
 
-      // Spawn trailing golden sparks from the comet head
-      if (frame % 2 === 0) {
+      // Spawn trailing golden sparks from the comet head (throttled on mobile)
+      if (frame % (isMobile ? 5 : 2) === 0) {
         particlesRef.current.push({
           x: head.x + (Math.random() - 0.5) * 8,
           y: head.y + (Math.random() - 0.5) * 8,
@@ -209,7 +231,7 @@ export const StardustCanvas: React.FC<StardustCanvasProps> = ({ emitterRef }) =>
 
         // 1. Primary Dotted Orbital Track with Gaps
         ctx.save();
-        const dotCount = 140;
+        const dotCount = isMobile ? 65 : 140;
         for (let i = 0; i < dotCount; i++) {
           // Leave artistic breaks around the track like the concept image
           if ((i > 18 && i < 26) || (i > 68 && i < 76) || (i > 112 && i < 120)) continue;
@@ -223,7 +245,7 @@ export const StardustCanvas: React.FC<StardustCanvasProps> = ({ emitterRef }) =>
         }
 
         // 2. Secondary Intersecting Dotted Astrolabe Arc (Bottom-Right & Far-Left)
-        const secDotCount = 65;
+        const secDotCount = isMobile ? 32 : 65;
         for (let i = 0; i < secDotCount; i++) {
           const theta = -0.55 + (i / secDotCount) * 1.65;
           const pt = projectOrbitPoint(
@@ -263,8 +285,8 @@ export const StardustCanvas: React.FC<StardustCanvasProps> = ({ emitterRef }) =>
         ctx.restore();
 
         // 4. Sweeping Golden Comet Light Ribbons (Left Upper Swoop & Right Lower Swoop)
-        drawCometArc(2.35 + angle * 0.5, -0.82, outerRx * 0.96, outerRy * 0.92, cx, cy);
-        drawCometArc(-0.62 + angle * 0.5, 1.55, outerRx * 1.03, outerRy * 1.06, cx, cy);
+        drawCometArc(2.35 + angle * 0.5, -0.82, outerRx * 0.96, outerRy * 0.92, cx, cy, isMobile);
+        drawCometArc(-0.62 + angle * 0.5, 1.55, outerRx * 1.03, outerRy * 1.06, cx, cy, isMobile);
 
         // 5. Glowing Circular Target Nodes (⦿) matching the 5 nodes in the reference image
         const pulse = 0.5 + 0.5 * Math.sin(frame * 0.06);
@@ -274,11 +296,16 @@ export const StardustCanvas: React.FC<StardustCanvasProps> = ({ emitterRef }) =>
           projectOrbitPoint(0.72 + angle * 0.2, rx * 0.76, ry * 0.72, cx, cy), // Inner Right Node
           projectOrbitPoint(0.08 + angle * 0.2, outerRx * 0.95, outerRy * 0.95, cx, cy), // Far Right Node
         ];
-        nodePositions.forEach((np) => drawTargetNode(np.x, np.y, pulse));
+        nodePositions.forEach((np) => drawTargetNode(np.x, np.y, pulse, isMobile));
       }
 
       // Render Stardust Particles
       const list = particlesRef.current;
+      const maxP = isMobile ? 60 : 350;
+      if (list.length > maxP) {
+        list.splice(0, list.length - maxP);
+      }
+
       for (let i = list.length - 1; i >= 0; i--) {
         const p = list[i];
         p.x += p.vx;
@@ -298,8 +325,10 @@ export const StardustCanvas: React.FC<StardustCanvasProps> = ({ emitterRef }) =>
         ctx.save();
         ctx.beginPath();
         ctx.fillStyle = p.isGold ? `rgba(248, 202, 115, ${a})` : `rgba(226, 240, 255, ${a})`;
-        ctx.shadowBlur = p.size * 4;
-        ctx.shadowColor = p.isGold ? 'rgba(245, 175, 65, 0.85)' : 'rgba(200, 230, 255, 0.85)';
+        if (!isMobile) {
+          ctx.shadowBlur = p.size * 3.5;
+          ctx.shadowColor = p.isGold ? 'rgba(245, 175, 65, 0.85)' : 'rgba(200, 230, 255, 0.85)';
+        }
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
         ctx.fill();
         ctx.restore();

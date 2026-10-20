@@ -261,9 +261,35 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
         }
       }
 
+      // Pre-compute maps once per frame to eliminate 4,000+ array iterations/allocations per second
+      const selectedIndexMap = new Map<string, number>();
+      currentSelected.forEach((c, idx) => selectedIndexMap.set(c.card.id, idx));
+
+      const unselectedCards = fanDeckOrderRef.current.filter((c) => !selectedIds.has(c.id));
+      const totalUnselected = Math.max(1, unselectedCards.length);
+      const unselectedIndexMap = new Map<string, number>();
+      unselectedCards.forEach((c, idx) => unselectedIndexMap.set(c.id, idx));
+
+      const spreadWidth = Math.min(vw - 32, 820);
+      const cardWidth = isMobile ? 96 : 128;
+      const maxOffset = spreadWidth / 2 - cardWidth / 2;
+
       deck.forEach((card, index) => {
         const el = cardNodeRefs.current.get(card.id);
         if (!el) return;
+
+        // Skip non-visible background cards in intro and shuffling to save 28 full 3D transforms per frame
+        const isHiddenOrbitCard =
+          (currentPhase === 'intro' || currentPhase === 'shuffling') &&
+          index >= VISIBLE_ORBIT_CARDS;
+
+        if (isHiddenOrbitCard) {
+          if (el.style.opacity !== '0') {
+            el.style.opacity = '0';
+            el.style.pointerEvents = 'none';
+          }
+          return;
+        }
 
         let body = bodiesRef.current.get(card.id);
         if (!body) {
@@ -282,7 +308,7 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
           bodiesRef.current.set(card.id, body);
         }
 
-        const selectedIndex = currentSelected.findIndex((c) => c.card.id === card.id);
+        const selectedIndex = selectedIndexMap.has(card.id) ? selectedIndexMap.get(card.id)! : -1;
         const isSelected = selectedIndex !== -1;
         const isBeingHeld =
           heldCardIdRef.current === card.id &&
@@ -484,14 +510,8 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
             targetScale = 0.75;
             opacity = 0;
           } else {
-            const unselectedCards = fanDeckOrderRef.current.filter((c) => !selectedIds.has(c.id));
-            const fanIndex = unselectedCards.findIndex((c) => c.id === card.id);
-            fanStackIndex = fanIndex !== -1 ? fanIndex : index;
-            const totalUnselected = Math.max(1, unselectedCards.length);
-
-            const spreadWidth = Math.min(vw - 32, 820);
-            const cardWidth = isMobile ? 96 : 128;
-            const maxOffset = spreadWidth / 2 - cardWidth / 2;
+            const fanIndex = unselectedIndexMap.get(card.id);
+            fanStackIndex = fanIndex !== undefined ? fanIndex : index;
 
             const FAN_TRANSITION_DURATION = 2600;
             const fanPose = calculateFanPose({
@@ -720,17 +740,20 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
         const renderRotZ = body.rotZ + (isTappedInOrbit ? 0 : tuckRotZ);
 
         const transformStr = `translate3d(${renderX.toFixed(2)}px, ${renderY.toFixed(2)}px, 0px) rotateX(${body.rotX.toFixed(2)}deg) rotateY(${renderRotY.toFixed(2)}deg) rotateZ(${renderRotZ.toFixed(2)}deg) scale(${body.scale.toFixed(3)})`;
+        // On mobile, omit CSS filter blurs completely to preserve smooth 60fps GPU fill rate
         const filterStr =
-          blurPx > 0.15
+          !isMobile && blurPx > 0.15
             ? `blur(${blurPx.toFixed(2)}px) brightness(${brightness.toFixed(2)})`
-            : Math.abs(brightness - 1) > 0.02
+            : !isMobile && Math.abs(brightness - 1) > 0.02
               ? `brightness(${brightness.toFixed(2)})`
               : 'none';
 
         el.style.transform = transformStr;
         el.style.zIndex = String(zIndex);
         el.style.opacity = String(opacity);
-        el.style.filter = filterStr;
+        if (el.style.filter !== filterStr) {
+          el.style.filter = filterStr;
+        }
         el.style.pointerEvents = opacity === 0 ? 'none' : 'auto';
       });
 
