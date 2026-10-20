@@ -26,7 +26,7 @@ export const ShuffleControl: React.FC<ShuffleControlProps> = ({
         ? 'RESHUFFLE DECK'
         : phase === 'read'
           ? 'CLEAR & RESTART'
-          : 'SWIRL TO SHUFFLE';
+          : 'SWIPE TO SHUFFLE';
 
   const handleClick = () => {
     if ((phase === 'fan' || phase === 'read') && onResetReading) {

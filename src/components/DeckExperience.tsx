@@ -38,7 +38,6 @@ interface CardPhysicsBody {
 }
 
 const ROTATION_SLERP_SPEED = 0.075;
-const SWIPE_DISTANCE_THRESHOLD = 45; // Single swipe distance in px to spin the ring and trigger shuffle
 const VISIBLE_ORBIT_CARDS = 50; // 50 visible cards orbiting in the celestial 3D ring
 const TILT_RAD = -21 * (Math.PI / 180); // 21-degree diagonal banking angle
 const IDLE_ORBIT_VELOCITY = -0.0016; // Calm, meditative counter-clockwise orbital drift
@@ -72,6 +71,7 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
   const [isEnlarged, setIsEnlarged] = useState<boolean>(false);
   const isEnlargedRef = useRef(isEnlarged);
   isEnlargedRef.current = isEnlarged;
+  const [isRingHolding, setIsRingHolding] = useState<boolean>(false);
 
   const containerRef = useRef<HTMLDivElement | null>(null);
   const cardNodeRefs = useRef<Map<string, HTMLDivElement>>(new Map());
@@ -86,7 +86,16 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
   const shuffleStartTimeRef = useRef<number | null>(null);
   const fanTransitionStartTimeRef = useRef<number | null>(null);
   const finalShuffleAngleRef = useRef<number>(0);
-  const spinDirectionRef = useRef<number>(-1);
+  const spinDirectionRef = useRef<-1 | 1>(-1);
+  const shuffleSpinSpeedRef = useRef<number>(0.14);
+
+  // Smart Phone Gesture Refs: Press-and-Hold to Pan, Multi-Touch Pinch Zoom
+  const ringPanXRef = useRef<number>(0);
+  const ringPanYRef = useRef<number>(0);
+  const ringZoomRef = useRef<number>(1);
+  const isHoldingRingRef = useRef<boolean>(false);
+  const holdTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const touchStartPosRef = useRef<{ x: number; y: number; time: number } | null>(null);
 
   // Pointer / Drag Interaction Refs
   const heldCardIdRef = useRef<string | null>(null);
@@ -141,7 +150,7 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
     } else if (phase === 'shuffling') {
       shuffleStartTimeRef.current = performance.now();
       fanTransitionStartTimeRef.current = null;
-      orbitVelocityRef.current = spinDirectionRef.current * 0.14;
+      orbitVelocityRef.current = spinDirectionRef.current * shuffleSpinSpeedRef.current;
       heldCardIdRef.current = null;
       suppressedHoverCardIdRef.current = null;
       suppressAllHoverUntilMoveRef.current = false;
@@ -150,6 +159,8 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
       setTappedOrbitCardId(null);
       setLightboxCardId(null);
       setIsEnlarged(false);
+      setIsRingHolding(false);
+      isHoldingRingRef.current = false;
       ritualAudio.playShuffleChime();
     } else {
       setTappedOrbitCardId(null);
@@ -159,6 +170,11 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
         suppressAllHoverUntilMoveRef.current = true;
         setLightboxCardId(null);
         setIsEnlarged(false);
+        setIsRingHolding(false);
+        isHoldingRingRef.current = false;
+        ringPanXRef.current = 0;
+        ringPanYRef.current = 0;
+        ringZoomRef.current = 1;
       }
     }
   }, [phase]);
@@ -185,6 +201,101 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
     };
   }, []);
 
+  // Multi-Touch Pinch-to-Zoom & Trackpad Wheel Handler for the Celestial Orbital Ring
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    let initialPinchDist: number | null = null;
+    let initialZoom = 1;
+    let initialMidpoint: { x: number; y: number } | null = null;
+    let initialPan = { x: 0, y: 0 };
+
+    const handleTouchStart = (e: TouchEvent) => {
+      if (phaseRef.current !== 'intro' && phaseRef.current !== 'shuffling') return;
+
+      if (e.touches.length === 2) {
+        if (holdTimerRef.current) {
+          clearTimeout(holdTimerRef.current);
+          holdTimerRef.current = null;
+        }
+        isHoldingRingRef.current = false;
+        setIsRingHolding(false);
+        touchStartPosRef.current = null;
+
+        const t1 = e.touches[0];
+        const t2 = e.touches[1];
+        initialPinchDist = Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
+        initialZoom = ringZoomRef.current;
+        initialMidpoint = {
+          x: (t1.clientX + t2.clientX) / 2,
+          y: (t1.clientY + t2.clientY) / 2,
+        };
+        initialPan = { x: ringPanXRef.current, y: ringPanYRef.current };
+      }
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (phaseRef.current !== 'intro' && phaseRef.current !== 'shuffling') return;
+
+      if (e.touches.length === 2 && initialPinchDist !== null && initialMidpoint !== null) {
+        if (e.cancelable) e.preventDefault();
+
+        const t1 = e.touches[0];
+        const t2 = e.touches[1];
+        const currentDist = Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
+        const scaleRatio = currentDist / Math.max(10, initialPinchDist);
+
+        // Clamped zoom between 0.45 (distant perspective) and 2.35 (close-up perspective)
+        ringZoomRef.current = Math.min(2.35, Math.max(0.45, initialZoom * scaleRatio));
+
+        const currentMidpoint = {
+          x: (t1.clientX + t2.clientX) / 2,
+          y: (t1.clientY + t2.clientY) / 2,
+        };
+        const maxPanX = window.innerWidth * 0.42;
+        const maxPanY = window.innerHeight * 0.42;
+        ringPanXRef.current = Math.max(
+          -maxPanX,
+          Math.min(maxPanX, initialPan.x + (currentMidpoint.x - initialMidpoint.x))
+        );
+        ringPanYRef.current = Math.max(
+          -maxPanY,
+          Math.min(maxPanY, initialPan.y + (currentMidpoint.y - initialMidpoint.y))
+        );
+      }
+    };
+
+    const handleTouchEnd = (e: TouchEvent) => {
+      if (e.touches.length < 2) {
+        initialPinchDist = null;
+        initialMidpoint = null;
+      }
+    };
+
+    const handleWheel = (e: WheelEvent) => {
+      if (phaseRef.current !== 'intro' && phaseRef.current !== 'shuffling') return;
+      if (e.ctrlKey || Math.abs(e.deltaY) > 0) {
+        const delta = -e.deltaY * 0.0025;
+        ringZoomRef.current = Math.min(2.35, Math.max(0.45, ringZoomRef.current * (1 + delta)));
+      }
+    };
+
+    container.addEventListener('touchstart', handleTouchStart, { passive: true });
+    container.addEventListener('touchmove', handleTouchMove, { passive: false });
+    container.addEventListener('touchend', handleTouchEnd, { passive: true });
+    container.addEventListener('touchcancel', handleTouchEnd, { passive: true });
+    container.addEventListener('wheel', handleWheel, { passive: true });
+
+    return () => {
+      container.removeEventListener('touchstart', handleTouchStart);
+      container.removeEventListener('touchmove', handleTouchMove);
+      container.removeEventListener('touchend', handleTouchEnd);
+      container.removeEventListener('touchcancel', handleTouchEnd);
+      container.removeEventListener('wheel', handleWheel);
+    };
+  }, []);
+
   // Main 60fps Antigravity + Tilted 3D Carousel Physics Loop
   useEffect(() => {
     if (prefersReducedMotion) return;
@@ -206,16 +317,17 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
         orbitAngleRef.current += orbitVelocityRef.current;
         orbitVelocityRef.current = lerp(orbitVelocityRef.current, IDLE_ORBIT_VELOCITY, 0.02);
       } else if (currentPhase === 'shuffling') {
-        let targetSpin = spinDirectionRef.current * 0.12;
+        const baseSpeed = shuffleSpinSpeedRef.current;
+        let targetSpin = spinDirectionRef.current * baseSpeed;
         if (shuffleStartTimeRef.current !== null) {
           const elapsed = now - shuffleStartTimeRef.current;
           const p = Math.min(1, Math.max(0, elapsed / 3000));
           // Steady, majestic orbital spin during the weave, softly decelerating as it blooms into the spread
           if (p < 0.65) {
-            targetSpin = spinDirectionRef.current * 0.13;
+            targetSpin = spinDirectionRef.current * baseSpeed;
           } else {
             const decelT = (p - 0.65) / 0.35;
-            targetSpin = spinDirectionRef.current * Math.max(0.02, 0.13 - decelT * 0.11);
+            targetSpin = spinDirectionRef.current * Math.max(0.02, baseSpeed * (1 - decelT * 0.85));
           }
         }
         orbitVelocityRef.current = lerp(orbitVelocityRef.current, targetSpin, 0.04);
@@ -224,18 +336,6 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
         orbitVelocityRef.current = lerp(orbitVelocityRef.current, -0.0012, 0.025);
         orbitAngleRef.current += orbitVelocityRef.current;
       }
-
-      // Sync orbital angle with StardustCanvas astrolabe tracks & comets
-      emitterRef.current?.setOrbitState(
-        orbitAngleRef.current,
-        orbitVelocityRef.current,
-        currentPhase
-      );
-
-      const isMobile = vw < 768;
-      const rx = isMobile ? 165 : 340;
-      const ry = isMobile ? 88 : 172;
-      const rz = isMobile ? 120 : 210;
 
       // Celestial Orbital Ring Dynamics (50 Cards):
       // Zero-collapse: the ring stays expansive, breathing gently outward (1.0 -> 1.05 -> 1.08).
@@ -266,6 +366,26 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
           shuffleWobbleAmp = Math.sin(u * Math.PI) * 0.045;
         }
       }
+
+      const panWeight = currentPhase === 'intro' || currentPhase === 'shuffling' ? 1 : 0;
+      const effectivePanX = ringPanXRef.current * panWeight;
+      const effectivePanY = ringPanYRef.current * panWeight;
+      const effectiveZoom = 1 + (ringZoomRef.current - 1) * panWeight;
+
+      // Sync orbital angle with StardustCanvas astrolabe tracks & comets
+      emitterRef.current?.setOrbitState(
+        orbitAngleRef.current,
+        orbitVelocityRef.current,
+        currentPhase,
+        effectivePanX,
+        effectivePanY,
+        effectiveZoom
+      );
+
+      const isMobile = vw < 768;
+      const rx = isMobile ? 165 : 340;
+      const ry = isMobile ? 88 : 172;
+      const rz = isMobile ? 120 : 210;
 
       // Pre-compute maps once per frame to eliminate 4,000+ array iterations/allocations per second
       const selectedIndexMap = new Map<string, number>();
@@ -502,19 +622,19 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
             visibleOrbitCards: VISIBLE_ORBIT_CARDS,
           });
 
-          targetX = orbitPose.x;
-          targetY = orbitPose.y;
-          targetZ = orbitPose.z;
+          targetX = orbitPose.x * effectiveZoom + effectivePanX;
+          targetY = orbitPose.y * effectiveZoom + effectivePanY;
+          targetZ = orbitPose.z * effectiveZoom + (effectiveZoom - 1) * 160;
           targetRotX = orbitPose.rotX;
           targetRotY = orbitPose.rotY;
           targetRotZ = orbitPose.rotZ;
-          targetScale = orbitPose.scale;
+          targetScale = orbitPose.scale * effectiveZoom;
           opacity = orbitPose.opacity;
           orbitZIndex = orbitPose.zIndex;
           brightness = orbitPose.brightness;
           blurPx = orbitPose.blurPx;
-          tuckX = orbitPose.tuckX ?? 0;
-          tuckY = orbitPose.tuckY ?? 0;
+          tuckX = (orbitPose.tuckX ?? 0) * effectiveZoom;
+          tuckY = (orbitPose.tuckY ?? 0) * effectiveZoom;
           tuckRotY = orbitPose.tuckRotY ?? 0;
           tuckRotZ = orbitPose.tuckRotZ ?? 0;
 
@@ -901,6 +1021,56 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
     };
   };
 
+  const triggerSwipeShuffle = (
+    startX: number,
+    startY: number,
+    endX: number,
+    endY: number,
+    speedPxPerMs: number
+  ) => {
+    if (hasTriggeredShuffleRef.current || phaseRef.current !== 'intro') return;
+
+    const dx = endX - startX;
+
+    const rect = containerRef.current?.getBoundingClientRect();
+    const ringCenterX =
+      (rect ? rect.left + rect.width / 2 : window.innerWidth / 2) + ringPanXRef.current;
+    const ringCenterY =
+      (rect ? rect.top + rect.height / 2 : window.innerHeight / 2) + ringPanYRef.current;
+
+    const a1 = Math.atan2(startY - ringCenterY, startX - ringCenterX);
+    const a2 = Math.atan2(endY - ringCenterY, endX - ringCenterX);
+    let dAngle = a2 - a1;
+    while (dAngle > Math.PI) dAngle -= Math.PI * 2;
+    while (dAngle < -Math.PI) dAngle += Math.PI * 2;
+
+    // Swiping tangentially vs horizontally
+    let direction: -1 | 1;
+    if (Math.abs(dAngle) > 0.18) {
+      direction = dAngle > 0 ? 1 : -1;
+    } else {
+      direction = dx >= 0 ? 1 : -1;
+    }
+
+    // Speed of swipe directly governs spin velocity:
+    // Gentle flick (~0.3-0.5 px/ms) -> ~0.09-0.12
+    // Medium swipe (~0.8-1.4 px/ms) -> ~0.15-0.20
+    // Fast swipe (> 2.0 px/ms)       -> ~0.25-0.30
+    const spinSpeed = Math.min(0.3, Math.max(0.085, 0.085 + (speedPxPerMs - 0.2) * 0.1));
+
+    spinDirectionRef.current = direction;
+    shuffleSpinSpeedRef.current = spinSpeed;
+    orbitVelocityRef.current = direction * spinSpeed;
+    hasTriggeredShuffleRef.current = true;
+
+    if (containerRef.current) {
+      containerRef.current.style.setProperty('--swirl-progress', '0%');
+      containerRef.current.style.setProperty('--swirl-opacity', '0');
+    }
+
+    onStartShuffle();
+  };
+
   const handlePointerDown = (e: React.PointerEvent, cardId?: string) => {
     isPointerDownRef.current = true;
     isPointerInsideRef.current = true;
@@ -911,7 +1081,22 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
     prevPointerPosRef.current = { x: pos.x, y: pos.y };
     prevPointerAngleRef.current = Math.atan2(pos.y, pos.x);
 
-    if (cardId && (phase === 'intro' || phase === 'fan' || phase === 'place')) {
+    if (phase === 'intro') {
+      touchStartPosRef.current = { x: e.clientX, y: e.clientY, time: performance.now() };
+      if (holdTimerRef.current) clearTimeout(holdTimerRef.current);
+      // Press & hold 260ms activates ring translation/panning
+      holdTimerRef.current = setTimeout(() => {
+        isHoldingRingRef.current = true;
+        setIsRingHolding(true);
+        if (typeof navigator !== 'undefined' && navigator.vibrate) {
+          try {
+            navigator.vibrate(25);
+          } catch {
+            // Optional haptic feedback ignored if blocked
+          }
+        }
+      }, 260);
+    } else if (cardId && (phase === 'fan' || phase === 'place')) {
       const isSelected = selectedCards.some((c) => c.card.id === cardId);
       if (!isSelected) {
         heldCardIdRef.current = cardId;
@@ -953,6 +1138,39 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
 
     if (isPointerDownRef.current) {
       dragDistanceRef.current += speed;
+
+      if (phase === 'intro') {
+        if (isHoldingRingRef.current) {
+          // Press & Hold active: drag and move the ring around the screen
+          const maxPanX = viewportWidthRef.current * 0.42;
+          const maxPanY = (typeof window !== 'undefined' ? window.innerHeight : 800) * 0.42;
+          ringPanXRef.current = Math.max(-maxPanX, Math.min(maxPanX, ringPanXRef.current + dx));
+          ringPanYRef.current = Math.max(-maxPanY, Math.min(maxPanY, ringPanYRef.current + dy));
+        } else if (touchStartPosRef.current) {
+          const moveDist = Math.hypot(
+            e.clientX - touchStartPosRef.current.x,
+            e.clientY - touchStartPosRef.current.y
+          );
+          if (moveDist > 14 && holdTimerRef.current) {
+            clearTimeout(holdTimerRef.current);
+            holdTimerRef.current = null;
+          }
+
+          const elapsedMs = Math.max(1, performance.now() - touchStartPosRef.current.time);
+          const currentSpeed = moveDist / elapsedMs;
+          // In-flight swift swipe trigger
+          if (moveDist > 55 && currentSpeed > 0.45 && !hasTriggeredShuffleRef.current) {
+            triggerSwipeShuffle(
+              touchStartPosRef.current.x,
+              touchStartPosRef.current.y,
+              e.clientX,
+              e.clientY,
+              currentSpeed
+            );
+          }
+        }
+      }
+
       // Lift held card slightly above the pointer in fan phase so the user clearly sees the parted slot in the deck below
       const liftY = heldCardIdRef.current && (phase === 'fan' || phase === 'place') ? -38 : 0;
       pointerPosRef.current = { x: pos.x, y: pos.y + liftY };
@@ -986,52 +1204,43 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
           }
         }
       }
-
-      const currentAngle = Math.atan2(pos.y, pos.x);
-      if (prevPointerAngleRef.current !== null) {
-        let deltaAngle = currentAngle - prevPointerAngleRef.current;
-        while (deltaAngle > Math.PI) deltaAngle -= Math.PI * 2;
-        while (deltaAngle < -Math.PI) deltaAngle += Math.PI * 2;
-
-        if (Math.abs(deltaAngle) < 0.8 && Math.abs(deltaAngle) > 0.001) {
-          spinDirectionRef.current = deltaAngle >= 0 ? 1 : -1;
-          orbitVelocityRef.current += deltaAngle * 0.16;
-          orbitVelocityRef.current = Math.max(-0.12, Math.min(0.12, orbitVelocityRef.current));
-        }
-      }
-      prevPointerAngleRef.current = currentAngle;
-
-      // Single swipe across the ring or cards triggers the ring spin & shuffle progression
-      if (phase === 'intro' && !hasTriggeredShuffleRef.current) {
-        swirlAccumulatorRef.current = Math.min(
-          SWIPE_DISTANCE_THRESHOLD,
-          swirlAccumulatorRef.current + speed
-        );
-        const progress = swirlAccumulatorRef.current / SWIPE_DISTANCE_THRESHOLD;
-        if (containerRef.current) {
-          containerRef.current.style.setProperty(
-            '--swirl-progress',
-            `${Math.min(100, Math.round(progress * 100))}%`
-          );
-          containerRef.current.style.setProperty('--swirl-opacity', progress > 0.02 ? '1' : '0');
-        }
-
-        if (swirlAccumulatorRef.current >= SWIPE_DISTANCE_THRESHOLD) {
-          hasTriggeredShuffleRef.current = true;
-          heldCardIdRef.current = null;
-          if (containerRef.current) {
-            containerRef.current.style.setProperty('--swirl-progress', '0%');
-            containerRef.current.style.setProperty('--swirl-opacity', '0');
-          }
-          onStartShuffle();
-        }
-      }
     }
 
     prevPointerPosRef.current = { x: pos.x, y: pos.y };
   };
 
-  const handlePointerUp = () => {
+  const handlePointerUp = (e?: React.PointerEvent) => {
+    if (holdTimerRef.current) {
+      clearTimeout(holdTimerRef.current);
+      holdTimerRef.current = null;
+    }
+
+    if (phase === 'intro') {
+      if (isHoldingRingRef.current) {
+        isHoldingRingRef.current = false;
+        setIsRingHolding(false);
+      } else if (touchStartPosRef.current && !hasTriggeredShuffleRef.current) {
+        const clientX = e ? e.clientX : prevPointerPosRef.current.x;
+        const clientY = e ? e.clientY : prevPointerPosRef.current.y;
+        const dx = clientX - touchStartPosRef.current.x;
+        const dy = clientY - touchStartPosRef.current.y;
+        const swipeDist = Math.hypot(dx, dy);
+        const elapsedMs = Math.max(1, performance.now() - touchStartPosRef.current.time);
+        const swipeSpeed = swipeDist / elapsedMs;
+
+        if (swipeDist > 25 && swipeSpeed > 0.18 && elapsedMs < 650) {
+          triggerSwipeShuffle(
+            touchStartPosRef.current.x,
+            touchStartPosRef.current.y,
+            clientX,
+            clientY,
+            swipeSpeed
+          );
+        }
+      }
+      touchStartPosRef.current = null;
+    }
+
     if (heldCardIdRef.current && dragDistanceRef.current > 6) {
       // Disable hover on release so the user clearly sees the moved card slide down into the fanned deck at its new location
       suppressedHoverCardIdRef.current = heldCardIdRef.current;
@@ -1103,15 +1312,30 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
       ref={containerRef}
       onPointerDown={(e) => handlePointerDown(e)}
       onPointerMove={handlePointerMove}
-      onPointerUp={handlePointerUp}
-      onPointerCancel={handlePointerUp}
+      onPointerUp={(e) => handlePointerUp(e)}
+      onPointerCancel={() => handlePointerUp()}
       onPointerLeave={() => {
         isPointerInsideRef.current = false;
       }}
-      className="relative w-full h-full flex flex-col items-center justify-center overflow-hidden touch-none"
+      className={`relative w-full h-full flex flex-col items-center justify-center overflow-hidden touch-none select-none ${
+        isRingHolding ? 'cursor-grabbing' : ''
+      }`}
     >
       {/* 3D Astrolabe Orbital Paths, Target Nodes, Golden Comet Arcs & Stardust */}
       <StardustCanvas emitterRef={emitterRef} />
+
+      {/* Visual glowing aura ring indicator when press-and-hold is active */}
+      {phase === 'intro' && isRingHolding && (
+        <div
+          className="absolute pointer-events-none rounded-full border border-amber-300/50 bg-amber-400/5 animate-pulse transition-all duration-300 z-40"
+          style={{
+            width: isMobile ? 340 : 690,
+            height: isMobile ? 190 : 360,
+            transform: `translate(${ringPanXRef.current}px, ${ringPanYRef.current}px) scale(${ringZoomRef.current}) rotate(-21deg)`,
+            boxShadow: '0 0 35px rgba(246, 200, 99, 0.28)',
+          }}
+        />
+      )}
 
       {/* Placed Cards Guidance */}
       <ReadingGuidance phase={phase} selectedCount={selectedCards.length} />

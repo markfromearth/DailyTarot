@@ -32,7 +32,7 @@ describe('DeckExperience Integration', () => {
       />
     );
 
-    expect(getByText(/SWIRL TO SHUFFLE/i)).toBeTruthy();
+    expect(getByText(/SWIPE TO SHUFFLE/i)).toBeTruthy();
 
     const buttons = getAllByRole('button');
     expect(buttons.length).toBeGreaterThan(0);
@@ -120,5 +120,69 @@ describe('DeckExperience Integration', () => {
     fireEvent.click(cardButtons[0]);
 
     expect(onFlipCard).toHaveBeenCalledWith(mockCards[0].id);
+  });
+
+  it('triggers onStartShuffle when swiping across the card ring in intro phase', () => {
+    const { container } = render(
+      <DeckExperience
+        phase="intro"
+        initialDeckOrder={mockCards}
+        selectedCards={[]}
+        onStartShuffle={onStartShuffle}
+        onSelectCard={onSelectCard}
+        onFlipCard={onFlipCard}
+        onResetReading={onResetReading}
+      />
+    );
+
+    const gestureContainer = container.querySelector('.relative.w-full.h-full');
+    expect(gestureContainer).toBeTruthy();
+
+    if (gestureContainer) {
+      // Simulate quick swipe right
+      fireEvent.pointerDown(gestureContainer, { clientX: 100, clientY: 200 });
+      fireEvent.pointerMove(gestureContainer, { clientX: 220, clientY: 205 });
+      fireEvent.pointerUp(gestureContainer, { clientX: 240, clientY: 208 });
+
+      expect(onStartShuffle).toHaveBeenCalledTimes(1);
+    }
+  });
+
+  it('handles two-finger touch gestures without errors', () => {
+    const { container } = render(
+      <DeckExperience
+        phase="intro"
+        initialDeckOrder={mockCards}
+        selectedCards={[]}
+        onStartShuffle={onStartShuffle}
+        onSelectCard={onSelectCard}
+        onFlipCard={onFlipCard}
+        onResetReading={onResetReading}
+      />
+    );
+
+    const gestureContainer = container.querySelector('.relative.w-full.h-full');
+    expect(gestureContainer).toBeTruthy();
+
+    if (gestureContainer) {
+      // Pinch start with 2 fingers
+      fireEvent.touchStart(gestureContainer, {
+        touches: [
+          { clientX: 100, clientY: 200 },
+          { clientX: 200, clientY: 200 },
+        ],
+      });
+
+      // Pinch zoom in (distance expands to 200px)
+      fireEvent.touchMove(gestureContainer, {
+        touches: [
+          { clientX: 80, clientY: 200 },
+          { clientX: 280, clientY: 200 },
+        ],
+      });
+
+      // Lift touches
+      fireEvent.touchEnd(gestureContainer, { touches: [] });
+    }
   });
 });

@@ -9,6 +9,15 @@ interface ReadingGuidanceProps {
 export const ReadingGuidance: React.FC<ReadingGuidanceProps> = ({ phase, selectedCount }) => {
   return (
     <>
+      {phase === 'intro' && (
+        <div
+          className="absolute bottom-10 md:bottom-14 left-0 right-0 text-center text-white/50 tracking-[0.25em] text-[9px] md:text-[10px] uppercase pointer-events-none transition-opacity duration-700 animate-fade-in z-50 px-4"
+          style={{ textShadow: '0 2px 6px rgba(0,0,0,0.9)' }}
+        >
+          Swipe ring to shuffle • Hold to move • Pinch to zoom
+        </div>
+      )}
+
       {phase === 'shuffling' && (
         <div
           className="absolute bottom-16 text-white/50 tracking-[0.3em] text-[10px] uppercase animate-pulse z-50"

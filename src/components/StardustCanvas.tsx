@@ -3,7 +3,14 @@ import { ReadingPhase } from '../types/tarot';
 
 export interface StardustEmitterHandle {
   spawnBurst: (x: number, y: number, vx?: number, vy?: number, count?: number) => void;
-  setOrbitState: (angle: number, velocity: number, phase: ReadingPhase) => void;
+  setOrbitState: (
+    angle: number,
+    velocity: number,
+    phase: ReadingPhase,
+    panX?: number,
+    panY?: number,
+    zoom?: number
+  ) => void;
 }
 
 interface Particle {
@@ -27,10 +34,20 @@ const TILT_ANGLE = -21 * (Math.PI / 180); // Diagonal banking angle matching the
 export const StardustCanvas: React.FC<StardustCanvasProps> = ({ emitterRef }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const particlesRef = useRef<Particle[]>([]);
-  const orbitStateRef = useRef<{ angle: number; velocity: number; phase: ReadingPhase }>({
+  const orbitStateRef = useRef<{
+    angle: number;
+    velocity: number;
+    phase: ReadingPhase;
+    panX: number;
+    panY: number;
+    zoom: number;
+  }>({
     angle: 0,
     velocity: 0.004,
     phase: 'intro',
+    panX: 0,
+    panY: 0,
+    zoom: 1,
   });
 
   useEffect(() => {
@@ -59,10 +76,20 @@ export const StardustCanvas: React.FC<StardustCanvasProps> = ({ emitterRef }) =>
           particlesRef.current.splice(0, particlesRef.current.length - maxParticles);
         }
       },
-      setOrbitState: (angle: number, velocity: number, phase: ReadingPhase) => {
+      setOrbitState: (
+        angle: number,
+        velocity: number,
+        phase: ReadingPhase,
+        panX = 0,
+        panY = 0,
+        zoom = 1
+      ) => {
         orbitStateRef.current.angle = angle;
         orbitStateRef.current.velocity = velocity;
         orbitStateRef.current.phase = phase;
+        orbitStateRef.current.panX = panX;
+        orbitStateRef.current.panY = panY;
+        orbitStateRef.current.zoom = zoom;
       },
     };
   }, [emitterRef]);
@@ -217,15 +244,15 @@ export const StardustCanvas: React.FC<StardustCanvasProps> = ({ emitterRef }) =>
       frame++;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      const { angle, phase } = orbitStateRef.current;
+      const { angle, phase, panX = 0, panY = 0, zoom = 1 } = orbitStateRef.current;
       const isMobile = canvas.width < 768;
-      const cx = canvas.width * 0.47;
-      const cy = canvas.height * 0.49;
+      const cx = canvas.width * 0.47 + panX;
+      const cy = canvas.height * 0.49 + panY;
 
       // Render Astrolabe Dotted Orbital Tracks, Nodes & Golden Comet Ribbons during Intro / Shuffling
       if (phase === 'intro' || phase === 'shuffling') {
-        const rx = isMobile ? 165 : 340;
-        const ry = isMobile ? 88 : 172;
+        const rx = (isMobile ? 165 : 340) * zoom;
+        const ry = (isMobile ? 88 : 172) * zoom;
         const outerRx = rx * 1.18;
         const outerRy = ry * 1.18;
 
@@ -252,8 +279,8 @@ export const StardustCanvas: React.FC<StardustCanvasProps> = ({ emitterRef }) =>
             theta,
             outerRx,
             outerRy * 1.25,
-            cx + 25,
-            cy + 30,
+            cx + 25 * zoom,
+            cy + 30 * zoom,
             TILT_ANGLE + 0.32
           );
           ctx.fillStyle = 'rgba(190, 220, 255, 0.45)';
