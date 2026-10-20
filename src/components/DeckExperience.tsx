@@ -65,9 +65,13 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
   const [viewportWidth, setViewportWidth] = useState(() =>
     typeof window !== 'undefined' ? window.innerWidth : 1024
   );
+  const isMobile = viewportWidth < 768;
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [tappedOrbitCardId, setTappedOrbitCardId] = useState<string | null>(null);
   const [lightboxCardId, setLightboxCardId] = useState<string | null>(null);
+  const [isEnlarged, setIsEnlarged] = useState<boolean>(false);
+  const isEnlargedRef = useRef(isEnlarged);
+  isEnlargedRef.current = isEnlarged;
 
   const containerRef = useRef<HTMLDivElement | null>(null);
   const cardNodeRefs = useRef<Map<string, HTMLDivElement>>(new Map());
@@ -145,6 +149,7 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
       setHoveredId(null);
       setTappedOrbitCardId(null);
       setLightboxCardId(null);
+      setIsEnlarged(false);
       ritualAudio.playShuffleChime();
     } else {
       setTappedOrbitCardId(null);
@@ -153,6 +158,7 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
         finalShuffleAngleRef.current = orbitAngleRef.current;
         suppressAllHoverUntilMoveRef.current = true;
         setLightboxCardId(null);
+        setIsEnlarged(false);
       }
     }
   }, [phase]);
@@ -340,20 +346,46 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
 
         if (isSelected) {
           if (isInspecting) {
+            const isEnlargedActive = isEnlargedRef.current;
             // Inspect Focus Mode: Selected card lifts forward; other two cards fan out behind
             if (isFocusedCard) {
-              targetX = 0;
-              // Subtly enlarge card when hovered while lifting upward to protect content clearance below
-              const baseScale = isMobile ? 1.35 : 1.52;
-              targetScale = isHovered ? baseScale + 0.045 : baseScale;
-              const baseY = isMobile ? -78 : -100;
-              targetY = isHovered ? baseY - 3 : baseY;
-              targetZ = isHovered ? 178 : 165;
-              targetRotX = 0;
-              targetRotY = 0;
-              targetRotZ = 0;
+              if (isEnlargedActive) {
+                if (isMobile) {
+                  // Mobile: card enlarges to fill the viewport
+                  targetX = 0;
+                  targetY = 0;
+                  targetZ = 220;
+                  targetScale = 2.45;
+                  targetRotX = 0;
+                  targetRotY = 0;
+                  targetRotZ = 0;
+                  brightness = 1.15;
+                } else {
+                  // Desktop: card sits in one column on the left, enlarged to showcase artwork
+                  const leftColX = -Math.min(300, Math.max(220, vw * 0.22));
+                  targetX = leftColX;
+                  targetY = 0;
+                  targetZ = 200;
+                  targetScale = 2.15;
+                  targetRotX = 0;
+                  targetRotY = 0;
+                  targetRotZ = 0;
+                  brightness = 1.15;
+                }
+              } else {
+                targetX = 0;
+                // Subtly enlarge card when hovered while lifting upward to protect content clearance below
+                const baseScale = isMobile ? 1.35 : 1.52;
+                targetScale = isHovered ? baseScale + 0.045 : baseScale;
+                const baseY = isMobile ? -78 : -100;
+                targetY = isHovered ? baseY - 3 : baseY;
+                targetZ = isHovered ? 178 : 165;
+                targetRotX = 0;
+                targetRotY = 0;
+                targetRotZ = 0;
+                brightness = isHovered ? 1.18 : 1.15;
+              }
               blurPx = 0;
-              brightness = isHovered ? 1.18 : 1.15;
             } else {
               // Two companion cards fanned out behind
               const focusedSlotIndex = currentSelected.findIndex((c) => c.card.id === inspectedId);
@@ -439,6 +471,13 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
                 brightness = 0.96;
                 blurPx = 0;
                 targetScale += 0.04;
+              }
+
+              if (isEnlargedActive) {
+                opacity = isMobile ? 0 : 0.2;
+                if (!isMobile) {
+                  targetX -= 140;
+                }
               }
             }
           } else {
@@ -1031,10 +1070,14 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
             // Tapping on one of the other cards just brings that to the front
             // If it's not been turned, it will come to the front face down
             setLightboxCardId(cardId);
+            setIsEnlarged(false);
           } else {
             // Tapping on the card currently at the front turns it over if not yet revealed
             if (!card.isRevealed) {
               onFlipCard(cardId);
+            } else {
+              // Tapping the card in inspect view enlarges it / toggles standard view
+              setIsEnlarged((prev) => !prev);
             }
           }
         } else {
@@ -1045,6 +1088,7 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
           } else {
             // Second tap: Open the single-card focus view
             setLightboxCardId(cardId);
+            setIsEnlarged(false);
           }
         }
       }
@@ -1113,7 +1157,11 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
               className={`absolute top-0 left-0 w-full h-full transform-gpu outline-none will-change-transform ${
                 isInteractable
                   ? isSelected
-                    ? 'cursor-pointer'
+                    ? lightboxCardId === card.id
+                      ? isEnlarged
+                        ? 'cursor-zoom-out'
+                        : 'cursor-zoom-in'
+                      : 'cursor-pointer'
                     : phase === 'intro'
                       ? 'cursor-pointer'
                       : 'cursor-grab active:cursor-grabbing'
@@ -1228,10 +1276,17 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
               if (target) {
                 ritualAudio.playCardSelect();
                 setLightboxCardId(target.card.id);
+                setIsEnlarged(false);
               }
             }}
             onFlipCard={onFlipCard}
-            onClose={() => setLightboxCardId(null)}
+            onClose={() => {
+              setLightboxCardId(null);
+              setIsEnlarged(false);
+            }}
+            isEnlarged={isEnlarged}
+            onToggleEnlarge={() => setIsEnlarged((prev) => !prev)}
+            isMobile={isMobile}
           />
         );
       })()}

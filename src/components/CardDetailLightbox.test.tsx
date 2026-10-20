@@ -211,4 +211,41 @@ describe('CardDetailLightbox', () => {
 
     expect(handleSelectSlot).not.toHaveBeenCalled();
   });
+
+  it('triggers onToggleEnlarge when clicking the Enlarge/Standard toggle button', () => {
+    const handleToggleEnlarge = vi.fn();
+    const { rerender } = render(
+      <CardDetailLightbox
+        positionedCard={mockCard}
+        slotIndex={0}
+        allSelectedCards={[mockCard, mockCard2]}
+        onSelectSlot={vi.fn()}
+        onClose={vi.fn()}
+        isEnlarged={false}
+        onToggleEnlarge={handleToggleEnlarge}
+      />
+    );
+
+    const enlargeBtn = screen.getByRole('button', { name: /enlarge card view/i });
+    expect(enlargeBtn).toBeDefined();
+    fireEvent.click(enlargeBtn);
+    expect(handleToggleEnlarge).toHaveBeenCalledTimes(1);
+
+    rerender(
+      <CardDetailLightbox
+        positionedCard={mockCard}
+        slotIndex={0}
+        allSelectedCards={[mockCard, mockCard2]}
+        onSelectSlot={vi.fn()}
+        onClose={vi.fn()}
+        isEnlarged={true}
+        onToggleEnlarge={handleToggleEnlarge}
+      />
+    );
+
+    const standardBtn = screen.getByRole('button', { name: /standard card view/i });
+    expect(standardBtn).toBeDefined();
+    fireEvent.click(standardBtn);
+    expect(handleToggleEnlarge).toHaveBeenCalledTimes(2);
+  });
 });

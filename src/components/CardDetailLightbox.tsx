@@ -10,6 +10,9 @@ interface CardDetailLightboxProps {
   onSelectSlot: (index: number) => void;
   onFlipCard?: (cardId: string) => void;
   onClose: () => void;
+  isEnlarged?: boolean;
+  onToggleEnlarge?: () => void;
+  isMobile?: boolean;
 }
 
 const SLOT_TITLES = ['PAST', 'PRESENT', 'FUTURE'];
@@ -21,6 +24,9 @@ export const CardDetailLightbox: React.FC<CardDetailLightboxProps> = ({
   onSelectSlot,
   onFlipCard,
   onClose,
+  isEnlarged = false,
+  onToggleEnlarge,
+  isMobile = false,
 }) => {
   const containerRef = useFocusTrap<HTMLDivElement>({
     isActive: true,
@@ -147,23 +153,49 @@ export const CardDetailLightbox: React.FC<CardDetailLightboxProps> = ({
           })}
         </div>
 
-        {/* Close Inspect Button */}
-        <button
-          type="button"
-          onClick={onClose}
-          aria-label="Close card detail view"
-          className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/[0.08] hover:bg-white/20 border border-white/10 text-white/90 hover:text-white transition-colors duration-300 text-xs tracking-wider uppercase group shadow-lg cursor-pointer"
-        >
-          <span>Return to Spread</span>
-          <span className="text-sm leading-none group-hover:text-amber-200 transition-colors">
-            ✕
-          </span>
-        </button>
+        <div className="flex items-center gap-2">
+          {onToggleEnlarge && (
+            <button
+              type="button"
+              onClick={onToggleEnlarge}
+              aria-label={isEnlarged ? 'Standard card view' : 'Enlarge card view'}
+              className="flex items-center gap-1.5 px-3 sm:px-3.5 py-1.5 rounded-full bg-white/[0.08] hover:bg-white/20 border border-white/10 text-white/90 hover:text-white transition-colors duration-300 text-[10px] sm:text-xs tracking-wider uppercase group shadow-lg cursor-pointer"
+            >
+              <span className="hidden sm:inline">{isEnlarged ? 'Standard' : 'Enlarge'}</span>
+              <span className="text-amber-300 font-serif text-sm">{isEnlarged ? '⤡' : '⤢'}</span>
+            </button>
+          )}
+
+          {/* Close Inspect Button */}
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Close card detail view"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/[0.08] hover:bg-white/20 border border-white/10 text-white/90 hover:text-white transition-colors duration-300 text-xs tracking-wider uppercase group shadow-lg cursor-pointer"
+          >
+            <span>Return to Spread</span>
+            <span className="text-sm leading-none group-hover:text-amber-200 transition-colors">
+              ✕
+            </span>
+          </button>
+        </div>
       </header>
 
-      {/* Reading Details Panel: Positioned cleanly below the 3D fanned cards with safe clearance */}
-      <div className="fixed top-[calc(50%+60px)] sm:top-[calc(50%+76px)] md:top-[calc(50%+88px)] bottom-2 left-0 right-0 z-[220000] flex flex-col items-center px-4 overflow-y-auto pointer-events-auto animate-fade-in">
-        <div className="w-full max-w-xl flex flex-col items-center text-center my-auto pb-4">
+      {/* Reading Details Panel: Switches to Right Column on Desktop when Enlarged */}
+      <div
+        className={`fixed z-[220000] pointer-events-auto transition-all duration-500 ease-out ${
+          isEnlarged
+            ? 'top-20 sm:top-24 bottom-6 md:top-20 md:bottom-8 md:left-[46%] md:right-8 lg:right-16 md:w-auto flex flex-col justify-center items-start text-left px-4 sm:px-6 md:px-8 overflow-y-auto'
+            : 'top-[calc(50%+60px)] sm:top-[calc(50%+76px)] md:top-[calc(50%+88px)] bottom-2 left-0 right-0 flex flex-col items-center px-4 overflow-y-auto'
+        } ${isEnlarged && isMobile ? 'opacity-0 pointer-events-none' : 'opacity-100 animate-fade-in'}`}
+      >
+        <div
+          className={`w-full flex flex-col ${
+            isEnlarged
+              ? 'md:items-start md:text-left items-center text-center max-w-xl md:max-w-2xl bg-[#070b1a]/92 md:border md:border-white/15 md:rounded-3xl md:p-6 lg:p-8 md:backdrop-blur-md md:shadow-2xl my-auto'
+              : 'items-center text-center max-w-xl my-auto pb-4'
+          }`}
+        >
           {/* Slot Title & Status Badges */}
           <div className="flex items-center gap-2 mb-1.5">
             <span className="px-2.5 py-0.5 rounded-full text-[10px] sm:text-xs font-semibold tracking-[0.25em] uppercase bg-amber-400/15 text-amber-300 border border-amber-400/30">
@@ -268,6 +300,20 @@ export const CardDetailLightbox: React.FC<CardDetailLightboxProps> = ({
           )}
         </div>
       </div>
+
+      {/* Mobile Enlarge Dismissal Floating Pill */}
+      {isEnlarged && onToggleEnlarge && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[230000] pointer-events-auto md:hidden animate-fade-in">
+          <button
+            type="button"
+            onClick={onToggleEnlarge}
+            className="px-4 py-2 rounded-full bg-black/85 border border-amber-400/50 text-amber-200 text-xs tracking-wider uppercase backdrop-blur-md shadow-2xl flex items-center gap-2 cursor-pointer active:scale-95 transition-transform"
+          >
+            <span>Tap card to view meaning</span>
+            <span className="text-amber-300">✦</span>
+          </button>
+        </div>
+      )}
     </div>
   );
 };
