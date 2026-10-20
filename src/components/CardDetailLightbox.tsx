@@ -27,7 +27,7 @@ export const CardDetailLightbox: React.FC<CardDetailLightboxProps> = ({
     onEscape: onClose,
   });
 
-  // Arrow key navigation across companion cards
+  // Arrow key navigation & Touch swipe gestures across companion cards
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'ArrowRight' && slotIndex < 2) {
@@ -41,8 +41,54 @@ export const CardDetailLightbox: React.FC<CardDetailLightboxProps> = ({
       }
     };
 
+    let touchStartX: number | null = null;
+    let touchStartY: number | null = null;
+
+    const handleTouchStart = (e: TouchEvent) => {
+      if (e.touches.length === 1) {
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+      }
+    };
+
+    const handleTouchEnd = (e: TouchEvent) => {
+      if (touchStartX === null || touchStartY === null) return;
+      if (e.changedTouches.length === 0) return;
+
+      const touchEndX = e.changedTouches[0].clientX;
+      const touchEndY = e.changedTouches[0].clientY;
+      const deltaX = touchEndX - touchStartX;
+      const deltaY = touchEndY - touchStartY;
+
+      // Minimum horizontal displacement to distinguish intentional swipe from vertical scroll
+      const SWIPE_THRESHOLD = 40;
+      if (Math.abs(deltaX) > SWIPE_THRESHOLD && Math.abs(deltaX) > Math.abs(deltaY) * 1.2) {
+        if (deltaX < 0 && slotIndex < 2) {
+          // Swipe Left -> Next Card (e.g. Past -> Present -> Future)
+          if (allSelectedCards[slotIndex + 1]) {
+            onSelectSlot(slotIndex + 1);
+          }
+        } else if (deltaX > 0 && slotIndex > 0) {
+          // Swipe Right -> Previous Card (e.g. Future -> Present -> Past)
+          if (allSelectedCards[slotIndex - 1]) {
+            onSelectSlot(slotIndex - 1);
+          }
+        }
+      }
+
+      touchStartX = null;
+      touchStartY = null;
+    };
+
     window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    window.addEventListener('touchstart', handleTouchStart, { passive: true });
+    window.addEventListener('touchend', handleTouchEnd, { passive: true });
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('touchstart', handleTouchStart);
+      window.removeEventListener('touchend', handleTouchEnd);
+    };
   }, [slotIndex, allSelectedCards, onSelectSlot]);
 
   const slotTitle = SLOT_TITLES[slotIndex] || `CARD ${slotIndex + 1}`;
@@ -177,7 +223,7 @@ export const CardDetailLightbox: React.FC<CardDetailLightboxProps> = ({
 
               {/* Interaction Helper Hint */}
               <p className="text-white/70 text-[9px] sm:text-[10px] uppercase tracking-[0.2em] mt-2 font-light">
-                Tap companion cards to inspect • Click outside or ESC to return
+                Swipe left/right or tap companion cards to inspect • ESC to return
               </p>
             </>
           ) : (
@@ -216,7 +262,7 @@ export const CardDetailLightbox: React.FC<CardDetailLightboxProps> = ({
 
               {/* Interaction Helper Hint */}
               <p className="text-white/70 text-[9px] sm:text-[10px] uppercase tracking-[0.2em] mt-2 font-light">
-                Tap the card above or button to turn over • Tap cards behind to switch
+                Swipe left/right or tap cards behind to switch • Tap card to turn over
               </p>
             </>
           )}

@@ -156,4 +156,59 @@ describe('CardDetailLightbox', () => {
     fireEvent.click(turnOverBtn);
     expect(handleFlip).toHaveBeenCalledWith('major-0');
   });
+
+  it('navigates to next card on swipe left and previous card on swipe right', () => {
+    const handleSelectSlot = vi.fn();
+    render(
+      <CardDetailLightbox
+        positionedCard={mockCard}
+        slotIndex={0}
+        allSelectedCards={[mockCard, mockCard2]}
+        onSelectSlot={handleSelectSlot}
+        onClose={vi.fn()}
+      />
+    );
+
+    // Swipe Left: Start at x=200, End at x=100 (deltaX = -100px)
+    fireEvent.touchStart(window, {
+      touches: [{ clientX: 200, clientY: 300 }],
+    });
+    fireEvent.touchEnd(window, {
+      changedTouches: [{ clientX: 100, clientY: 305 }],
+    });
+
+    expect(handleSelectSlot).toHaveBeenCalledWith(1);
+    handleSelectSlot.mockClear();
+
+    // Swipe Right on slot 1: Start at x=100, End at x=220 (deltaX = +120px)
+    render(
+      <CardDetailLightbox
+        positionedCard={mockCard2}
+        slotIndex={1}
+        allSelectedCards={[mockCard, mockCard2]}
+        onSelectSlot={handleSelectSlot}
+        onClose={vi.fn()}
+      />
+    );
+
+    fireEvent.touchStart(window, {
+      touches: [{ clientX: 100, clientY: 300 }],
+    });
+    fireEvent.touchEnd(window, {
+      changedTouches: [{ clientX: 220, clientY: 302 }],
+    });
+
+    expect(handleSelectSlot).toHaveBeenCalledWith(0);
+    handleSelectSlot.mockClear();
+
+    // Vertical scroll (deltaY = 150px, deltaX = 10px) should NOT switch cards
+    fireEvent.touchStart(window, {
+      touches: [{ clientX: 150, clientY: 200 }],
+    });
+    fireEvent.touchEnd(window, {
+      changedTouches: [{ clientX: 160, clientY: 350 }],
+    });
+
+    expect(handleSelectSlot).not.toHaveBeenCalled();
+  });
 });
