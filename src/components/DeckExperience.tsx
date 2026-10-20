@@ -7,6 +7,8 @@ import { CardDetailLightbox } from './CardDetailLightbox';
 import { StardustCanvas, StardustEmitterHandle } from './StardustCanvas';
 import { ReadingPhase, TarotCard, PositionedCard } from '../types/tarot';
 import { ritualAudio } from '../engine/sound';
+import { calculateOrbitPose, calculateFanPose } from '../engine/kinematics';
+import { getSlotCoordinate } from '../constants/layout';
 
 interface DeckExperienceProps {
   phase: ReadingPhase;
@@ -48,21 +50,19 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
   onStartShuffle,
   onSelectCard,
   onFlipCard,
-  onResetReading
+  onResetReading,
 }) => {
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(
-    () =>
-      typeof window !== 'undefined' && typeof window.matchMedia === 'function'
-        ? window.matchMedia('(prefers-reduced-motion: reduce)').matches
-        : false
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(() =>
+    typeof window !== 'undefined' && typeof window.matchMedia === 'function'
+      ? window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      : false
   );
 
-  const [viewportWidth, setViewportWidth] = useState(
-    () => (typeof window !== 'undefined' ? window.innerWidth : 1024)
+  const [viewportWidth, setViewportWidth] = useState(() =>
+    typeof window !== 'undefined' ? window.innerWidth : 1024
   );
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [tappedOrbitCardId, setTappedOrbitCardId] = useState<string | null>(null);
-  const [swirlProgress, setSwirlProgress] = useState(0);
   const [lightboxCardId, setLightboxCardId] = useState<string | null>(null);
 
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -124,8 +124,11 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
       hoveredIdRef.current = null;
       setHoveredId(null);
       setTappedOrbitCardId(null);
-      setSwirlProgress(0);
       setLightboxCardId(null);
+      if (containerRef.current) {
+        containerRef.current.style.setProperty('--swirl-progress', '0%');
+        containerRef.current.style.setProperty('--swirl-opacity', '0');
+      }
     } else if (phase === 'shuffling') {
       shuffleStartTimeRef.current = performance.now();
       fanTransitionStartTimeRef.current = null;
@@ -150,7 +153,13 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
 
   useEffect(() => {
     setViewportWidth(window.innerWidth);
-    const handleResize = () => setViewportWidth(window.innerWidth);
+    let resizeFrameId: number;
+    const handleResize = () => {
+      cancelAnimationFrame(resizeFrameId);
+      resizeFrameId = requestAnimationFrame(() => {
+        setViewportWidth(window.innerWidth);
+      });
+    };
     window.addEventListener('resize', handleResize);
 
     const mediaQuery = window.matchMedia?.('(prefers-reduced-motion: reduce)');
@@ -159,6 +168,7 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
 
     return () => {
       window.removeEventListener('resize', handleResize);
+      cancelAnimationFrame(resizeFrameId);
       mediaQuery?.removeEventListener?.('change', handleMotionChange);
     };
   }, []);
@@ -177,7 +187,7 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
       const deck = deckOrderRef.current;
       const vw = viewportWidthRef.current;
 
-      const selectedIds = new Set(currentSelected.map(c => c.card.id));
+      const selectedIds = new Set(currentSelected.map((c) => c.card.id));
 
       // Update orbital carousel velocity & angle
       if (currentPhase === 'intro') {
@@ -214,8 +224,6 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
       const rx = isMobile ? 165 : 340;
       const ry = isMobile ? 88 : 172;
       const rz = isMobile ? 120 : 210;
-      const cosTilt = Math.cos(TILT_RAD);
-      const sinTilt = Math.sin(TILT_RAD);
 
       // Celestial Orbital Ring Dynamics (50 Cards):
       // Zero-collapse: the ring stays expansive, breathing gently outward (1.0 -> 1.05 -> 1.08).
@@ -228,8 +236,8 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
         const p = Math.min(1, Math.max(0, elapsed / 3000));
 
         // Smooth expansive breathing: NEVER contracts below 1.0
-        if (p < 0.30) {
-          const t = p / 0.30;
+        if (p < 0.3) {
+          const t = p / 0.3;
           const easeIn = 0.5 - 0.5 * Math.cos(t * Math.PI);
           mergeFactor = 1.0 + easeIn * 0.05; // 1.0 -> 1.05
         } else if (p < 0.75) {
@@ -247,8 +255,6 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
         }
       }
 
-      const stepAngle = (Math.PI * 2) / VISIBLE_ORBIT_CARDS;
-
       deck.forEach((card, index) => {
         const el = cardNodeRefs.current.get(card.id);
         if (!el) return;
@@ -265,14 +271,17 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
             rotX: 0,
             rotY: 0,
             rotZ: 0,
-            scale: 1
+            scale: 1,
           };
           bodiesRef.current.set(card.id, body);
         }
 
-        const selectedIndex = currentSelected.findIndex(c => c.card.id === card.id);
+        const selectedIndex = currentSelected.findIndex((c) => c.card.id === card.id);
         const isSelected = selectedIndex !== -1;
-        const isBeingHeld = heldCardIdRef.current === card.id && currentPhase !== 'intro' && currentPhase !== 'shuffling';
+        const isBeingHeld =
+          heldCardIdRef.current === card.id &&
+          currentPhase !== 'intro' &&
+          currentPhase !== 'shuffling';
 
         let targetX = 0;
         let targetY = 0;
@@ -315,7 +324,7 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
               brightness = isHovered ? 1.18 : 1.15;
             } else {
               // Two companion cards fanned out behind
-              const focusedSlotIndex = currentSelected.findIndex(c => c.card.id === inspectedId);
+              const focusedSlotIndex = currentSelected.findIndex((c) => c.card.id === inspectedId);
 
               if (focusedSlotIndex === 0) {
                 // Focused card is PAST (slot 0)
@@ -402,144 +411,62 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
             }
           } else {
             // Standard 3-card spread positions
-            const cardWidth = isMobile ? 96 : 128;
-            const spacing = isMobile ? 14 : 38;
-            const totalWidth = cardWidth * 3 + spacing * 2;
-            const startX = -(totalWidth / 2) + cardWidth / 2;
-
-            targetX = startX + selectedIndex * (cardWidth + spacing);
-            targetY = isMobile ? -145 : -170;
+            const coord = getSlotCoordinate(selectedIndex, isMobile);
+            targetX = coord.x;
+            targetY = coord.y;
             targetZ = 60;
             targetRotX = 0;
             targetRotY = 0;
             targetRotZ = 0;
           }
         } else if (currentPhase === 'intro' || currentPhase === 'shuffling') {
-          if (index >= VISIBLE_ORBIT_CARDS) {
-            opacity = 0;
-            targetScale = 0.5;
-          } else {
-            const theta = (index / VISIBLE_ORBIT_CARDS) * Math.PI * 2 + orbitAngleRef.current;
+          const orbitPose = calculateOrbitPose(index, orbitAngleRef.current, timeSec, {
+            rx,
+            ry,
+            rz,
+            tiltRad: TILT_RAD,
+            mergeFactor,
+            shuffleWobbleAmp,
+            isMobile,
+            visibleOrbitCards: VISIBLE_ORBIT_CARDS,
+          });
 
-            // Signed angular distance in [-PI, PI] from the front apex (+PI / 2) and back apex (-PI / 2)
-            const deltaFromApex = Math.atan2(
-              Math.sin(theta - Math.PI / 2),
-              Math.cos(theta - Math.PI / 2)
-            );
-            const deltaFromBack = Math.atan2(
-              Math.sin(theta + Math.PI / 2),
-              Math.cos(theta + Math.PI / 2)
-            );
+          targetX = orbitPose.x;
+          targetY = orbitPose.y;
+          targetZ = orbitPose.z;
+          targetRotX = orbitPose.rotX;
+          targetRotY = orbitPose.rotY;
+          targetRotZ = orbitPose.rotZ;
+          targetScale = orbitPose.scale;
+          opacity = orbitPose.opacity;
+          orbitZIndex = orbitPose.zIndex;
+          brightness = orbitPose.brightness;
+          blurPx = orbitPose.blurPx;
+          tuckX = orbitPose.tuckX ?? 0;
+          tuckY = orbitPose.tuckY ?? 0;
+          tuckRotY = orbitPose.tuckRotY ?? 0;
+          tuckRotZ = orbitPose.tuckRotZ ?? 0;
 
-            // C2-smooth raised-cosine bell (0 value, 0 velocity, and 0 acceleration at both ends u = ±1)
-            // Half-width of 0.72 * stepAngle lets the ease-in and ease-out tails overlap smoothly across the apex
-            // so one card's upcoming and retreating motions blend into a single fluid glide without abrupt starts/stops.
-            const tuckHalfWidth = stepAngle * 0.72;
-            const smoothTuckBell = (delta: number, center: number): number => {
-              const u = (delta - center) / tuckHalfWidth;
-              if (u <= -1 || u >= 1) return 0;
-              const c = Math.cos(u * Math.PI * 0.5);
-              return c * c * c;
-            };
-
-            const frontRetreatBell = smoothTuckBell(deltaFromApex, -0.5 * stepAngle);
-            const frontUpcomingBell = smoothTuckBell(deltaFromApex, 0.5 * stepAngle);
-            const backRetreatBell = smoothTuckBell(deltaFromBack, -0.5 * stepAngle);
-            const backUpcomingBell = smoothTuckBell(deltaFromBack, 0.5 * stepAngle);
-
-            if (frontRetreatBell > 0 || frontUpcomingBell > 0) {
-              const sweepDist =
-                ((isMobile ? 65 : 78) * frontRetreatBell -
-                  (isMobile ? 49 : 58) * frontUpcomingBell) *
-                mergeFactor;
-              tuckX = sweepDist * cosTilt;
-              tuckY = sweepDist * sinTilt;
-              tuckRotY = (-12 * frontRetreatBell + 9 * frontUpcomingBell) * mergeFactor;
-              tuckRotZ = (-3.9 * frontRetreatBell - 2.1 * frontUpcomingBell) * mergeFactor;
-            } else if (backRetreatBell > 0 || backUpcomingBell > 0) {
-              const sweepDistBack =
-                (-(isMobile ? 36 : 38) * backRetreatBell +
-                  (isMobile ? 26 : 28) * backUpcomingBell) *
-                mergeFactor;
-              tuckX = sweepDistBack * cosTilt;
-              tuckY = sweepDistBack * sinTilt;
-              tuckRotY = (8 * backRetreatBell - 6 * backUpcomingBell) * mergeFactor;
-              tuckRotZ = (-2.1 * backRetreatBell - 3.9 * backUpcomingBell) * mergeFactor;
-            }
-
-            if (deltaFromApex >= -stepAngle && deltaFromApex < 0) {
-              orbitZIndex = deltaFromApex > -0.5 * stepAngle ? 95000 : 88500;
-            } else if (deltaFromApex >= 0 && deltaFromApex < stepAngle) {
-              orbitZIndex = 90000;
-            } else if (deltaFromBack >= -stepAngle && deltaFromBack < 0) {
-              orbitZIndex = deltaFromBack > -0.5 * stepAngle ? 36000 : 38500;
-            } else if (deltaFromBack >= 0 && deltaFromBack < stepAngle) {
-              orbitZIndex = 37500;
-            } else {
-              orbitZIndex = Math.round(85000 - Math.abs(deltaFromApex) * 15000) + index;
-            }
-
-            // Gentle organic wobble wave around the ring so it ripples like a living celestial halo
-            const wobbleR =
-              Math.sin(theta * 3 + timeSec * 2.2) * (0.015 + shuffleWobbleAmp) +
-              Math.cos(theta * 2 - timeSec * 1.6) * (0.012 + shuffleWobbleAmp * 0.6);
-            const wobblyRadius = 1 + wobbleR;
-
-            // 3D vertical and depth ripples
-            const waveZ = Math.sin(theta * 2.5 + timeSec * 2.0) * (shuffleWobbleAmp * (isMobile ? 25 : 45));
-            const waveY = Math.cos(theta * 3 - timeSec * 1.8) * (shuffleWobbleAmp * (isMobile ? 12 : 20));
-            const subtleBreathingY = Math.sin(timeSec * 0.7 + theta * 0.5) * 1.6;
-
-            // Un-tilted ellipse coordinates with full spacious radius preserved (NO collapse)
-            const lx = Math.cos(theta) * rx * mergeFactor * wobblyRadius;
-            const ly = Math.sin(theta) * ry * mergeFactor * (1 - wobbleR * 0.35);
-
-            // Apply -21deg diagonal banking rotation to the entire ring
-            targetX = (lx * cosTilt - ly * sinTilt) - (isMobile ? 10 : 35) * mergeFactor;
-            targetY = (lx * sinTilt + ly * cosTilt) + waveY + subtleBreathingY;
-            targetZ = Math.sin(theta) * rz * mergeFactor + waveZ;
-
-            // Depth norm: +1 at closest foreground (bottom-right), -1 at furthest background (top-left)
-            const depthNorm = Math.sin(theta);
-
-            // Tangential 3D card orientation along the banked ring with gentle undulating tilts
-            const rotWobbleZ = Math.sin(theta * 3 + timeSec * 2.4) * (shuffleWobbleAmp * 22);
-            const rotWobbleX = Math.cos(theta * 2 + timeSec * 1.9) * (shuffleWobbleAmp * 12);
-            targetRotY = -Math.cos(theta) * 26 * mergeFactor;
-            targetRotX = (8 - depthNorm * 6) * mergeFactor + rotWobbleX;
-            targetRotZ = (-18 + Math.cos(theta) * 14) * mergeFactor + rotWobbleZ;
-
-            // Perspective scale & depth-of-field dimming on back-half cards
-            targetScale = 0.74 + (depthNorm + 1) * 0.22 * mergeFactor;
-            if (depthNorm < -0.15) {
-              blurPx = Math.abs(depthNorm + 0.15) * 1.8 * mergeFactor;
-              brightness = 0.65 + (depthNorm + 1) * 0.3;
-            } else {
+          // If this card is tapped (or hovered) in the ring, make it rise gracefully from the ring
+          if (
+            currentPhase === 'intro' &&
+            (tappedOrbitCardIdRef.current === card.id || hoveredIdRef.current === card.id)
+          ) {
+            const isTapped = tappedOrbitCardIdRef.current === card.id;
+            if (isTapped) {
+              targetY -= isMobile ? 65 : 85;
+              targetZ = 80;
+              targetRotX = 0;
+              targetRotY = 0;
+              targetRotZ = 0;
+              targetScale = isMobile ? 1.18 : 1.28;
               blurPx = 0;
-              brightness = 1.0;
-            }
-
-            // If this card is tapped (or hovered) in the ring, make it rise gracefully from the ring
-            if (
-              currentPhase === 'intro' &&
-              (tappedOrbitCardIdRef.current === card.id || hoveredIdRef.current === card.id)
-            ) {
-              const isTapped = tappedOrbitCardIdRef.current === card.id;
-              if (isTapped) {
-                targetY -= isMobile ? 65 : 85;
-                targetZ = 80;
-                targetRotX = 0;
-                targetRotY = 0;
-                targetRotZ = 0;
-                targetScale = isMobile ? 1.18 : 1.28;
-                blurPx = 0;
-                brightness = 1.15;
-              } else {
-                targetY -= 16;
-                targetScale += 0.04;
-                blurPx = 0;
-                brightness = 1.12;
-              }
+              brightness = 1.15;
+            } else {
+              targetY -= 16;
+              targetScale += 0.04;
+              blurPx = 0;
+              brightness = 1.12;
             }
           }
         } else {
@@ -551,28 +478,31 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
             targetScale = 0.75;
             opacity = 0;
           } else {
-            const unselectedCards = fanDeckOrderRef.current.filter(c => !selectedIds.has(c.id));
-            const fanIndex = unselectedCards.findIndex(c => c.id === card.id);
+            const unselectedCards = fanDeckOrderRef.current.filter((c) => !selectedIds.has(c.id));
+            const fanIndex = unselectedCards.findIndex((c) => c.id === card.id);
             fanStackIndex = fanIndex !== -1 ? fanIndex : index;
             const totalUnselected = Math.max(1, unselectedCards.length);
-            const normalized = totalUnselected > 1 ? fanStackIndex / (totalUnselected - 1) : 0.5;
 
             const spreadWidth = Math.min(vw - 32, 820);
             const cardWidth = isMobile ? 96 : 128;
             const maxOffset = spreadWidth / 2 - cardWidth / 2;
 
-            // Celestial undulating movement across the fanned deck:
-            const fanWave = timeSec * 1.3 + fanStackIndex * 0.35;
-            const floatY = Math.sin(fanWave) * 3.8;
-            const floatZ = Math.cos(fanWave * 0.8) * 6.5;
-            const swayRotZ = Math.sin(fanWave * 0.7) * 2.2;
-            const tiltRotX = Math.cos(fanWave * 0.6) * 2.5;
+            const fanPose = calculateFanPose({
+              fanStackIndex,
+              totalUnselected,
+              maxOffset,
+              cardWidth,
+              isMobile,
+              timeSec,
+            });
 
-            targetX = (normalized * 2 - 1) * maxOffset;
-            targetY = Math.abs(normalized - 0.5) * (isMobile ? 44 : 64) + floatY + 50;
-            targetZ = (1 - Math.abs(normalized - 0.5) * 2) * 30 + floatZ;
-            targetRotZ = (normalized * 2 - 1) * (isMobile ? 15 : 22) + swayRotZ;
-            targetRotX = tiltRotX;
+            targetX = fanPose.x;
+            targetY = fanPose.y;
+            targetZ = fanPose.z;
+            targetRotX = fanPose.rotX;
+            targetRotY = fanPose.rotY;
+            targetRotZ = fanPose.rotZ;
+            targetScale = fanPose.scale;
 
             // Smooth opacity fade for extra unselected cards during the slow fan transition
             if (currentPhase === 'fan' && fanTransitionStartTimeRef.current !== null) {
@@ -588,7 +518,7 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
 
             if (heldCardIdRef.current) {
               const activeFanIndex = unselectedCards.findIndex(
-                c => c.id === heldCardIdRef.current
+                (c) => c.id === heldCardIdRef.current
               );
               const dist = fanStackIndex - activeFanIndex;
               const radius = 7;
@@ -601,7 +531,8 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
               isPointerInsideRef.current &&
               !suppressAllHoverUntilMoveRef.current &&
               totalUnselected > 1 &&
-              (fanTransitionStartTimeRef.current === null || now - fanTransitionStartTimeRef.current >= 2200)
+              (fanTransitionStartTimeRef.current === null ||
+                now - fanTransitionStartTimeRef.current >= 2200)
             ) {
               // Smoothly separate fanned cards around the cursor with a pronounced, dramatic split
               const px = prevPointerPosRef.current.x;
@@ -631,10 +562,9 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
                 // Pronounced split: cards part cleanly to the left and right
                 if (absDist < 8.5) {
                   const sigma = 3.2;
-                  const wave =
-                    (dist / sigma) * Math.exp(0.5 - (dist * dist) / (2 * sigma * sigma));
+                  const wave = (dist / sigma) * Math.exp(0.5 - (dist * dist) / (2 * sigma * sigma));
                   // Pronounced split separation
-                  const spreadStrength = dist > 0 ? (isMobile ? 32 : 46) : (isMobile ? 18 : 26);
+                  const spreadStrength = dist > 0 ? (isMobile ? 32 : 46) : isMobile ? 18 : 26;
                   targetX += wave * spreadStrength * hoverWeight;
                 }
 
@@ -683,7 +613,7 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
               const t = fanElapsed / FAN_TRANSITION_DURATION;
               const easeCurve = 0.5 - 0.5 * Math.cos(t * Math.PI);
               posEase = lerp(0.016, 0.065, easeCurve);
-              rotEase = lerp(0.020, ROTATION_SLERP_SPEED, easeCurve);
+              rotEase = lerp(0.02, ROTATION_SLERP_SPEED, easeCurve);
             }
           }
 
@@ -697,11 +627,12 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
           body.scale = lerp(body.scale, targetScale, 0.08);
         }
 
-        const isTappedInOrbit = currentPhase === 'intro' && tappedOrbitCardIdRef.current === card.id;
+        const isTappedInOrbit =
+          currentPhase === 'intro' && tappedOrbitCardIdRef.current === card.id;
 
         let companionZIndex = 175000;
         if (isInspecting && !isFocusedCard) {
-          const focusedSlotIndex = currentSelected.findIndex(c => c.card.id === inspectedId);
+          const focusedSlotIndex = currentSelected.findIndex((c) => c.card.id === inspectedId);
           let companionOrder = 1;
           if (focusedSlotIndex === 0) {
             // When inspecting PAST (0): PRESENT (1) sits on top of FUTURE (2)
@@ -719,16 +650,16 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
         const zIndex = isBeingHeld
           ? 200000
           : isTappedInOrbit
-          ? 180000
-          : isSelected
-          ? isInspecting
-            ? isFocusedCard
-              ? 200000
-              : companionZIndex
-            : 150000 + selectedIndex
-          : currentPhase === 'fan' || currentPhase === 'place'
-          ? 10000 + fanStackIndex
-          : orbitZIndex;
+            ? 180000
+            : isSelected
+              ? isInspecting
+                ? isFocusedCard
+                  ? 200000
+                  : companionZIndex
+                : 150000 + selectedIndex
+              : currentPhase === 'fan' || currentPhase === 'place'
+                ? 10000 + fanStackIndex
+                : orbitZIndex;
 
         const renderX = body.x + (isTappedInOrbit ? 0 : tuckX);
         const renderY = body.y + (isTappedInOrbit ? 0 : tuckY);
@@ -740,8 +671,8 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
           blurPx > 0.15
             ? `blur(${blurPx.toFixed(2)}px) brightness(${brightness.toFixed(2)})`
             : Math.abs(brightness - 1) > 0.02
-            ? `brightness(${brightness.toFixed(2)})`
-            : 'none';
+              ? `brightness(${brightness.toFixed(2)})`
+              : 'none';
 
         el.style.transform = transformStr;
         el.style.zIndex = String(zIndex);
@@ -761,7 +692,7 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
   const getReducedMotionStyle = (cardId: string, originalIndex: number): React.CSSProperties => {
     if (!prefersReducedMotion) return {};
 
-    const selectedIndex = selectedCards.findIndex(c => c.card.id === cardId);
+    const selectedIndex = selectedCards.findIndex((c) => c.card.id === cardId);
     const isSelected = selectedIndex !== -1;
 
     if (isSelected) {
@@ -769,29 +700,29 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
       if (lightboxCardId) {
         if (cardId === lightboxCardId) {
           const isHovered = hoveredId === cardId;
-          const scale = isHovered ? (isMobile ? 1.395 : 1.565) : (isMobile ? 1.35 : 1.52);
-          const y = isHovered ? (isMobile ? -81 : -103) : (isMobile ? -78 : -100);
+          const scale = isHovered ? (isMobile ? 1.395 : 1.565) : isMobile ? 1.35 : 1.52;
+          const y = isHovered ? (isMobile ? -81 : -103) : isMobile ? -78 : -100;
           return {
             transform: `translate(0px, ${y}px) scale(${scale})`,
             zIndex: 200000,
           };
         } else {
-          const focusedSlotIndex = selectedCards.findIndex(c => c.card.id === lightboxCardId);
+          const focusedSlotIndex = selectedCards.findIndex((c) => c.card.id === lightboxCardId);
           let fx = 0;
-          let fy = isMobile ? -88 : -112;
+          const fy = isMobile ? -88 : -112;
           let frot = 0;
-          let fscale = isMobile ? 1.05 : 1.16;
+          const fscale = isMobile ? 1.05 : 1.16;
           let companionOrder = 1;
           if (focusedSlotIndex === 0) {
-            fx = selectedIndex === 1 ? (isMobile ? 52 : 68) : (isMobile ? 98 : 130);
+            fx = selectedIndex === 1 ? (isMobile ? 52 : 68) : isMobile ? 98 : 130;
             frot = selectedIndex === 1 ? 7.5 : 14;
             companionOrder = selectedIndex === 1 ? 2 : 1;
           } else if (focusedSlotIndex === 1) {
-            fx = selectedIndex === 0 ? (isMobile ? -56 : -74) : (isMobile ? 56 : 74);
+            fx = selectedIndex === 0 ? (isMobile ? -56 : -74) : isMobile ? 56 : 74;
             frot = selectedIndex === 0 ? -8.5 : 8.5;
             companionOrder = 1;
           } else {
-            fx = selectedIndex === 1 ? (isMobile ? -52 : -68) : (isMobile ? -98 : -130);
+            fx = selectedIndex === 1 ? (isMobile ? -52 : -68) : isMobile ? -98 : -130;
             frot = selectedIndex === 1 ? -7.5 : -14;
             companionOrder = selectedIndex === 1 ? 2 : 1;
           }
@@ -803,16 +734,10 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
         }
       }
 
-      const cardWidth = isMobile ? 96 : 128;
-      const spacing = isMobile ? 14 : 38;
-      const totalWidth = cardWidth * 3 + spacing * 2;
-      const startX = -(totalWidth / 2) + cardWidth / 2;
-      const xPos = startX + selectedIndex * (cardWidth + spacing);
-      const yPos = isMobile ? -145 : -170;
-
+      const coord = getSlotCoordinate(selectedIndex, isMobile);
       return {
-        transform: `translate(${xPos}px, ${yPos}px)`,
-        zIndex: 100 + selectedIndex
+        transform: `translate(${coord.x}px, ${coord.y}px)`,
+        zIndex: 100 + selectedIndex,
       };
     }
 
@@ -820,9 +745,9 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
       if (selectedCards.length === 3) {
         return { opacity: 0, pointerEvents: 'none' };
       }
-      const selectedIds = new Set(selectedCards.map(c => c.card.id));
-      const unselectedCards = initialDeckOrder.filter(c => !selectedIds.has(c.id));
-      const fanIndex = unselectedCards.findIndex(c => c.id === cardId);
+      const selectedIds = new Set(selectedCards.map((c) => c.card.id));
+      const unselectedCards = initialDeckOrder.filter((c) => !selectedIds.has(c.id));
+      const fanIndex = unselectedCards.findIndex((c) => c.id === cardId);
       const totalUnselected = Math.max(1, unselectedCards.length);
       const normalized = totalUnselected > 1 ? fanIndex / (totalUnselected - 1) : 0.5;
       const spreadWidth = Math.min(viewportWidth - 40, 800);
@@ -834,13 +759,13 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
 
       return {
         transform: `translate(${xPos}px, ${yPos}px) rotate(${rotate}deg)`,
-        zIndex: originalIndex
+        zIndex: originalIndex,
       };
     }
 
     return {
       transform: `translate(0px, ${-originalIndex * 0.2}px)`,
-      zIndex: originalIndex
+      zIndex: originalIndex,
     };
   };
 
@@ -854,7 +779,7 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
       x: clientX - centerX,
       y: clientY - centerY,
       canvasX: clientX - rect.left,
-      canvasY: clientY - rect.top
+      canvasY: clientY - rect.top,
     };
   };
 
@@ -869,7 +794,7 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
     prevPointerAngleRef.current = Math.atan2(pos.y, pos.x);
 
     if (cardId && (phase === 'intro' || phase === 'fan' || phase === 'place')) {
-      const isSelected = selectedCards.some(c => c.card.id === cardId);
+      const isSelected = selectedCards.some((c) => c.card.id === cardId);
       if (!isSelected) {
         heldCardIdRef.current = cardId;
         hoveredIdRef.current = null;
@@ -923,14 +848,14 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
         const cardWidth = isMobile ? 96 : 128;
         const maxOffset = Math.max(1, spreadWidth / 2 - cardWidth / 2);
 
-        const selectedSet = new Set(selectedCardsRef.current.map(c => c.card.id));
-        const unselected = fanDeckOrderRef.current.filter(c => !selectedSet.has(c.id));
+        const selectedSet = new Set(selectedCardsRef.current.map((c) => c.card.id));
+        const unselected = fanDeckOrderRef.current.filter((c) => !selectedSet.has(c.id));
         const totalUnselected = unselected.length;
 
         if (totalUnselected > 1) {
           const clampedNormalized = Math.max(0, Math.min(1, (pos.x / maxOffset + 1) / 2));
           const targetUnselectedIndex = Math.round(clampedNormalized * (totalUnselected - 1));
-          const currentUnselectedIndex = unselected.findIndex(c => c.id === heldId);
+          const currentUnselectedIndex = unselected.findIndex((c) => c.id === heldId);
 
           if (currentUnselectedIndex !== -1 && currentUnselectedIndex !== targetUnselectedIndex) {
             const heldCardObj = unselected[currentUnselectedIndex];
@@ -938,7 +863,7 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
             reorderedUnselected.splice(currentUnselectedIndex, 1);
             reorderedUnselected.splice(targetUnselectedIndex, 0, heldCardObj);
 
-            const selectedInDeck = fanDeckOrderRef.current.filter(c => selectedSet.has(c.id));
+            const selectedInDeck = fanDeckOrderRef.current.filter((c) => selectedSet.has(c.id));
             fanDeckOrderRef.current = [...reorderedUnselected, ...selectedInDeck];
           }
         }
@@ -965,11 +890,21 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
           swirlAccumulatorRef.current + speed
         );
         const progress = swirlAccumulatorRef.current / SWIPE_DISTANCE_THRESHOLD;
-        setSwirlProgress(progress);
+        if (containerRef.current) {
+          containerRef.current.style.setProperty(
+            '--swirl-progress',
+            `${Math.min(100, Math.round(progress * 100))}%`
+          );
+          containerRef.current.style.setProperty('--swirl-opacity', progress > 0.02 ? '1' : '0');
+        }
 
         if (swirlAccumulatorRef.current >= SWIPE_DISTANCE_THRESHOLD) {
           hasTriggeredShuffleRef.current = true;
           heldCardIdRef.current = null;
+          if (containerRef.current) {
+            containerRef.current.style.setProperty('--swirl-progress', '0%');
+            containerRef.current.style.setProperty('--swirl-opacity', '0');
+          }
           onStartShuffle();
         }
       }
@@ -992,14 +927,14 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
     prevPointerAngleRef.current = null;
   };
 
-  const selectedIds = new Set(selectedCards.map(c => c.card.id));
+  const selectedIds = new Set(selectedCards.map((c) => c.card.id));
 
   const handleCardClick = (cardId: string) => {
     if (dragDistanceRef.current > 18) return;
 
     if (phase === 'intro') {
       ritualAudio.playCardSelect();
-      setTappedOrbitCardId(prev => (prev === cardId ? null : cardId));
+      setTappedOrbitCardId((prev) => (prev === cardId ? null : cardId));
       return;
     }
 
@@ -1011,7 +946,7 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
       }
     } else if (phase === 'place' || phase === 'read') {
       const isSelected = selectedIds.has(cardId);
-      const card = selectedCards.find(c => c.card.id === cardId);
+      const card = selectedCards.find((c) => c.card.id === cardId);
       if (isSelected && card) {
         ritualAudio.playCardSelect();
         if (lightboxCardId) {
@@ -1043,7 +978,7 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
   return (
     <div
       ref={containerRef}
-      onPointerDown={e => handlePointerDown(e)}
+      onPointerDown={(e) => handlePointerDown(e)}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
       onPointerCancel={handlePointerUp}
@@ -1059,7 +994,9 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
       <ReadingGuidance phase={phase} selectedCount={selectedCards.length} />
 
       {/* The 3D Antigravity Deck Container */}
-      <div className={`relative w-24 h-36 md:w-32 md:h-48 perspective-1000 ${lightboxCardId ? 'z-[160000]' : 'z-30'}`}>
+      <div
+        className={`relative w-24 h-36 md:w-32 md:h-48 perspective-1000 ${lightboxCardId ? 'z-[160000]' : 'z-30'}`}
+      >
         {/* Spread Slots matched to absolute math */}
         <ReadingSlots
           phase={phase}
@@ -1070,13 +1007,17 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
         />
 
         {initialDeckOrder.map((card, index) => {
-          const selectedCard = selectedCards.find(c => c.card.id === card.id);
+          const selectedCard = selectedCards.find((c) => c.card.id === card.id);
           const isSelected = !!selectedCard;
 
           let isInteractable = false;
           if (phase === 'intro' && index < VISIBLE_ORBIT_CARDS) {
             isInteractable = true;
-          } else if ((phase === 'fan' || phase === 'place') && !isSelected && selectedCards.length < 3) {
+          } else if (
+            (phase === 'fan' || phase === 'place') &&
+            !isSelected &&
+            selectedCards.length < 3
+          ) {
             isInteractable = true;
           } else if ((phase === 'place' || phase === 'read') && isSelected) {
             isInteractable = true;
@@ -1085,7 +1026,7 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
           return (
             <div
               key={card.id}
-              ref={el => {
+              ref={(el) => {
                 if (el) {
                   cardNodeRefs.current.set(card.id, el);
                 } else {
@@ -1098,16 +1039,20 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
                   ? isSelected
                     ? 'cursor-pointer'
                     : phase === 'intro'
-                    ? 'cursor-pointer'
-                    : 'cursor-grab active:cursor-grabbing'
+                      ? 'cursor-pointer'
+                      : 'cursor-grab active:cursor-grabbing'
                   : ''
               }`}
-              onPointerDown={e => {
+              onPointerDown={(e) => {
                 e.stopPropagation();
                 handlePointerDown(e, card.id);
               }}
               onMouseEnter={() => {
-                if (!isInteractable || isPointerDownRef.current || suppressAllHoverUntilMoveRef.current) {
+                if (
+                  !isInteractable ||
+                  isPointerDownRef.current ||
+                  suppressAllHoverUntilMoveRef.current
+                ) {
                   return;
                 }
                 if (suppressedHoverCardIdRef.current === card.id) {
@@ -1118,7 +1063,10 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
               }}
               onMouseLeave={() => {
                 if (!isInteractable) return;
-                if (!suppressAllHoverUntilMoveRef.current && suppressedHoverCardIdRef.current === card.id) {
+                if (
+                  !suppressAllHoverUntilMoveRef.current &&
+                  suppressedHoverCardIdRef.current === card.id
+                ) {
                   suppressedHoverCardIdRef.current = null;
                 }
                 setHoveredId(null);
@@ -1127,8 +1075,9 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
               onBlur={() => isInteractable && setHoveredId(null)}
               role={isInteractable ? 'button' : 'presentation'}
               tabIndex={isInteractable ? 0 : -1}
+              aria-hidden={!isInteractable ? true : undefined}
               aria-label={isInteractable ? `Select Tarot Card` : undefined}
-              onKeyDown={e => {
+              onKeyDown={(e) => {
                 if (isInteractable && (e.key === 'Enter' || e.key === ' ')) {
                   e.preventDefault();
                   dragDistanceRef.current = 0;
@@ -1151,8 +1100,9 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
                   <div
                     className="absolute -top-1.5 -left-1.5 w-3.5 h-3.5 rounded-full pointer-events-none z-50"
                     style={{
-                      background: 'radial-gradient(circle, #ffffff 0%, rgba(255,225,150,0.8) 40%, transparent 75%)',
-                      boxShadow: '0 0 10px 2px rgba(255, 225, 150, 0.85)'
+                      background:
+                        'radial-gradient(circle, #ffffff 0%, rgba(255,225,150,0.8) 40%, transparent 75%)',
+                      boxShadow: '0 0 10px 2px rgba(255, 225, 150, 0.85)',
                     }}
                   />
                 )}
@@ -1160,8 +1110,18 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
                 card={card}
                 imageUrl={card.imageUrl}
                 orientation={selectedCard?.orientation || 'upright'}
-                isFlipped={(phase === 'intro' && tappedOrbitCardId === card.id) || (selectedCard?.isRevealed || false)}
-                className={isInteractable ? (isSelected ? 'cursor-pointer pointer-events-none' : 'cursor-grab active:cursor-grabbing pointer-events-none') : 'pointer-events-none'}
+                isFlipped={
+                  (phase === 'intro' && tappedOrbitCardId === card.id) ||
+                  selectedCard?.isRevealed ||
+                  false
+                }
+                className={
+                  isInteractable
+                    ? isSelected
+                      ? 'cursor-pointer pointer-events-none'
+                      : 'cursor-grab active:cursor-grabbing pointer-events-none'
+                    : 'pointer-events-none'
+                }
               />
             </div>
           );
@@ -1173,14 +1133,13 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
         phase={phase}
         onStartShuffle={onStartShuffle}
         onResetReading={onResetReading}
-        swirlProgress={swirlProgress}
       />
 
       {/* Lightbox Focus View when a placed card is revealed or clicked */}
       {(() => {
         if (!lightboxCardId) return null;
-        const activeCard = selectedCards.find(c => c.card.id === lightboxCardId);
-        const slotIdx = selectedCards.findIndex(c => c.card.id === lightboxCardId);
+        const activeCard = selectedCards.find((c) => c.card.id === lightboxCardId);
+        const slotIdx = selectedCards.findIndex((c) => c.card.id === lightboxCardId);
         if (!activeCard || slotIdx === -1) return null;
 
         return (
@@ -1188,7 +1147,7 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
             positionedCard={activeCard}
             slotIndex={slotIdx}
             allSelectedCards={selectedCards}
-            onSelectSlot={idx => {
+            onSelectSlot={(idx) => {
               const target = selectedCards[idx];
               if (target) {
                 ritualAudio.playCardSelect();

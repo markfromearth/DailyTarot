@@ -1,6 +1,6 @@
 # Daily Tarot
 
-A quiet, interactive 3-card daily tarot reading ritual (*Past, Present, Future*) built with React 18, TypeScript, Vite, and Tailwind CSS.
+A quiet, interactive 3-card daily tarot reading ritual (_Past, Present, Future_) built with React 18, TypeScript, Vite, and Tailwind CSS.
 
 ## Features
 

@@ -3,7 +3,9 @@ export class RitualAudio {
 
   private getContext(): AudioContext | null {
     if (typeof window === 'undefined') return null;
-    const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+    const AudioCtx =
+      window.AudioContext ||
+      (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
     if (!AudioCtx) return null;
     if (!this.ctx) {
       this.ctx = new AudioCtx();

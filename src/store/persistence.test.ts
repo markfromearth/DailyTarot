@@ -17,10 +17,10 @@ const localStorageMock = (() => {
     },
     clear: () => {
       store = {};
-    }
+    },
   };
 })();
-vi.stubGlobal("localStorage", localStorageMock);
+vi.stubGlobal('localStorage', localStorageMock);
 
 describe('ReadingPersistence', () => {
   beforeEach(() => {
@@ -40,13 +40,13 @@ describe('ReadingPersistence', () => {
     availableCardIds: ['major-0', 'wands-1'],
     drawnCardsData: [],
     initialShuffledDeckIds: ['wands-1', 'major-0'],
-    selectedCardsData: []
+    selectedCardsData: [],
   });
 
   it('New day creates a new reading (returns null)', () => {
     const oldReading = getValidReading('2026-09-26');
     ReadingPersistence.saveReading(oldReading);
-    
+
     // System time is 2026-09-27
     const result = ReadingPersistence.getTodaysReading();
     expect(result).toBeNull();
@@ -58,9 +58,9 @@ describe('ReadingPersistence', () => {
     const today = ReadingPersistence.getTodayDateString();
     const todayReading = getValidReading(today);
     todayReading.phase = 'place';
-    
+
     ReadingPersistence.saveReading(todayReading);
-    
+
     const result = ReadingPersistence.getTodaysReading();
     expect(result).not.toBeNull();
     expect(result?.phase).toBe('place');
@@ -69,7 +69,7 @@ describe('ReadingPersistence', () => {
 
   it('Corrupt persistence does not crash the app and returns null', () => {
     localStorage.setItem('daily_tarot_reading_v2', '{ corrupt json ');
-    
+
     expect(() => {
       const result = ReadingPersistence.getTodaysReading();
       expect(result).toBeNull();
@@ -78,13 +78,51 @@ describe('ReadingPersistence', () => {
 
   it('Invalid schema does not crash the app and clears it', () => {
     // Missing required arrays
-    localStorage.setItem('daily_tarot_reading_v2', JSON.stringify({ version: 1, date: '2026-09-27' }));
-    
+    localStorage.setItem(
+      'daily_tarot_reading_v2',
+      JSON.stringify({ version: 1, date: '2026-09-27' })
+    );
+
     expect(() => {
       const result = ReadingPersistence.getTodaysReading();
       expect(result).toBeNull();
     }).not.toThrow();
-    
+
+    expect(localStorage.getItem('daily_tarot_reading_v2')).toBeNull();
+  });
+
+  it('Rejects invalid date format and clears storage', () => {
+    const invalidDateReading = getValidReading('not-a-date');
+    localStorage.setItem('daily_tarot_reading_v2', JSON.stringify(invalidDateReading));
+
+    const result = ReadingPersistence.getTodaysReading();
+    expect(result).toBeNull();
+    expect(localStorage.getItem('daily_tarot_reading_v2')).toBeNull();
+  });
+
+  it('Rejects invalid orientation in selectedCardsData and clears storage', () => {
+    const invalidOrientationReading = {
+      ...getValidReading('2026-09-27'),
+      selectedCardsData: [
+        { id: 'major-0', orientation: 'sideways', position: 'past', isRevealed: false },
+      ],
+    };
+    localStorage.setItem('daily_tarot_reading_v2', JSON.stringify(invalidOrientationReading));
+
+    const result = ReadingPersistence.getTodaysReading();
+    expect(result).toBeNull();
+    expect(localStorage.getItem('daily_tarot_reading_v2')).toBeNull();
+  });
+
+  it('Rejects unknown phase and clears storage', () => {
+    const invalidPhaseReading = {
+      ...getValidReading('2026-09-27'),
+      phase: 'cosmic-teleport',
+    };
+    localStorage.setItem('daily_tarot_reading_v2', JSON.stringify(invalidPhaseReading));
+
+    const result = ReadingPersistence.getTodaysReading();
+    expect(result).toBeNull();
     expect(localStorage.getItem('daily_tarot_reading_v2')).toBeNull();
   });
 });

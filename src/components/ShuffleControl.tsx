@@ -12,14 +12,9 @@ export const ShuffleControl: React.FC<ShuffleControlProps> = ({
   phase,
   onStartShuffle,
   onResetReading,
-  swirlProgress = 0
+  swirlProgress = 0,
 }) => {
-  if (
-    phase !== 'intro' &&
-    phase !== 'shuffling' &&
-    phase !== 'fan' &&
-    phase !== 'read'
-  ) {
+  if (phase !== 'intro' && phase !== 'shuffling' && phase !== 'fan' && phase !== 'read') {
     return null;
   }
 
@@ -28,10 +23,10 @@ export const ShuffleControl: React.FC<ShuffleControlProps> = ({
     phase === 'shuffling'
       ? 'SWIRLING...'
       : phase === 'fan'
-      ? 'RESHUFFLE DECK'
-      : phase === 'read'
-      ? 'CLEAR & RESTART'
-      : 'SWIRL TO SHUFFLE';
+        ? 'RESHUFFLE DECK'
+        : phase === 'read'
+          ? 'CLEAR & RESTART'
+          : 'SWIRL TO SHUFFLE';
 
   const handleClick = () => {
     if ((phase === 'fan' || phase === 'read') && onResetReading) {
@@ -51,8 +46,8 @@ export const ShuffleControl: React.FC<ShuffleControlProps> = ({
           phase === 'fan'
             ? 'Reshuffle the deck'
             : phase === 'read'
-            ? 'Clear and restart'
-            : 'Shuffle the deck'
+              ? 'Clear and restart'
+              : 'Shuffle the deck'
         }
         className="group bg-transparent border-none outline-none cursor-pointer disabled:cursor-default text-right transition-opacity duration-500 flex items-center gap-2.5"
       >
@@ -76,7 +71,7 @@ export const ShuffleControl: React.FC<ShuffleControlProps> = ({
           className="block text-[#f1f5f9] group-hover:text-[#f6c863] tracking-[0.18em] uppercase text-sm md:text-xl font-light transition-all duration-300"
           style={{
             fontFamily: "'Optima', 'Cinzel', 'Didot', 'Bodoni MT', 'Times New Roman', serif",
-            textShadow: '0 0 18px rgba(255, 255, 255, 0.35), 0 2px 10px rgba(0, 0, 0, 0.9)'
+            textShadow: '0 0 18px rgba(255, 255, 255, 0.35), 0 2px 10px rgba(0, 0, 0, 0.9)',
           }}
         >
           {label}
@@ -84,11 +79,18 @@ export const ShuffleControl: React.FC<ShuffleControlProps> = ({
       </button>
 
       {/* Subtle Golden Comet Progress Underline when Swirling */}
-      {phase === 'intro' && swirlProgress > 0.02 && (
-        <div className="w-40 md:w-52 h-[1.5px] bg-white/10 rounded-full overflow-hidden mt-2">
+      {phase === 'intro' && (
+        <div
+          className="w-40 md:w-52 h-[1.5px] bg-white/10 rounded-full overflow-hidden mt-2 transition-opacity duration-200 pointer-events-none"
+          style={{
+            opacity: swirlProgress > 0.02 ? '1' : 'var(--swirl-opacity, 0)',
+          }}
+        >
           <div
-            className="h-full bg-gradient-to-r from-transparent via-[#f6c863] to-white transition-all duration-100"
-            style={{ width: `${progressPercent}%` }}
+            className="h-full bg-gradient-to-r from-transparent via-[#f6c863] to-white transition-all duration-75"
+            style={{
+              width: swirlProgress > 0 ? `${progressPercent}%` : 'var(--swirl-progress, 0%)',
+            }}
           />
         </div>
       )}

@@ -22,7 +22,7 @@ export class DeckEngine {
       [deck[i], deck[j]] = [deck[j], deck[i]];
     }
     this.availableCards = deck;
-    this.initialShuffledDeck = [...deck, ...this.drawnCards.map(d => d.card)];
+    this.initialShuffledDeck = [...deck, ...this.drawnCards.map((d) => d.card)];
   }
 
   /**
@@ -46,19 +46,19 @@ export class DeckEngine {
    */
   public draw(count: number): DrawnCard[] {
     if (count > this.availableCards.length) {
-      throw new Error("Not enough cards left in the deck.");
+      throw new Error('Not enough cards left in the deck.');
     }
 
     const newlyDrawn: DrawnCard[] = [];
     for (let i = 0; i < count; i++) {
       // Pop removes from the end (top) of the deck
       const card = this.availableCards.pop()!;
-      
+
       const drawnCard: DrawnCard = {
         card,
-        orientation: this.getRandomOrientation()
+        orientation: this.getRandomOrientation(),
       };
-      
+
       this.drawnCards.push(drawnCard);
       newlyDrawn.push(drawnCard);
     }
@@ -69,24 +69,24 @@ export class DeckEngine {
    * Selects a specific card by ID from the available deck.
    */
   public selectCardById(id: string): DrawnCard {
-    const isAlreadyDrawn = this.drawnCards.some(d => d.card.id === id);
+    const isAlreadyDrawn = this.drawnCards.some((d) => d.card.id === id);
     if (isAlreadyDrawn) {
       throw new Error(`Card ${id} has already been drawn.`);
     }
 
-    const index = this.availableCards.findIndex(c => c.id === id);
+    const index = this.availableCards.findIndex((c) => c.id === id);
     if (index === -1) {
       throw new Error(`Card ${id} not found in available deck.`);
     }
 
     // Remove the card from the available deck
     const [card] = this.availableCards.splice(index, 1);
-    
+
     const drawnCard: DrawnCard = {
       card,
-      orientation: this.getRandomOrientation()
+      orientation: this.getRandomOrientation(),
     };
-    
+
     this.drawnCards.push(drawnCard);
 
     return drawnCard;
@@ -104,7 +104,7 @@ export class DeckEngine {
   public getInitialDeckOrder(): TarotCard[] {
     return this.initialShuffledDeck ? [...this.initialShuffledDeck] : [...this.availableCards];
   }
-  
+
   private initialShuffledDeck: TarotCard[] | null = null;
 
   public getDrawnCards(): DrawnCard[] {
@@ -115,25 +115,25 @@ export class DeckEngine {
    * Restores the engine to a previously saved state.
    */
   public restoreState(
-    availableCardIds: string[], 
+    availableCardIds: string[],
     drawnCardsData: { id: string; orientation: Orientation }[],
     initialShuffledDeckIds: string[]
   ): void {
     // Re-map IDs to actual cards to ensure data freshness
     this.availableCards = availableCardIds
-      .map(id => TAROT_DECK.find(c => c.id === id))
+      .map((id) => TAROT_DECK.find((c) => c.id === id))
       .filter((c): c is TarotCard => c !== undefined);
 
     this.drawnCards = drawnCardsData
-      .map(data => {
-        const card = TAROT_DECK.find(c => c.id === data.id);
+      .map((data) => {
+        const card = TAROT_DECK.find((c) => c.id === data.id);
         if (!card) return null;
         return { card, orientation: data.orientation };
       })
       .filter((d): d is DrawnCard => d !== null);
 
     this.initialShuffledDeck = initialShuffledDeckIds
-      .map(id => TAROT_DECK.find(c => c.id === id))
+      .map((id) => TAROT_DECK.find((c) => c.id === id))
       .filter((c): c is TarotCard => c !== undefined);
   }
 }

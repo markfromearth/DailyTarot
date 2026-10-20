@@ -1,4 +1,5 @@
 import { PersistedReading } from '../types/tarot';
+import { PersistedReadingSchema } from './persistence.schema';
 
 const STORAGE_KEY = 'daily_tarot_reading_v2';
 
@@ -12,7 +13,7 @@ export const ReadingPersistence = {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(reading));
     } catch (e) {
-      console.error("Failed to save reading to local storage", e);
+      console.error('Failed to save reading to local storage', e);
     }
   },
 
@@ -20,25 +21,29 @@ export const ReadingPersistence = {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (!stored) return null;
-      
-      const parsed = JSON.parse(stored);
-      
-      // Basic schema validation
-      if (
-        !parsed || 
-        parsed.version !== 1 || 
-        !parsed.date || 
-        !Array.isArray(parsed.availableCardIds) ||
-        !Array.isArray(parsed.drawnCardsData) ||
-        !Array.isArray(parsed.initialShuffledDeckIds) ||
-        !Array.isArray(parsed.selectedCardsData)
-      ) {
-        throw new Error("Invalid persistence schema");
+
+      let parsed: unknown;
+      try {
+        parsed = JSON.parse(stored);
+      } catch (parseErr) {
+        console.warn('Failed to parse stored reading JSON. Clearing state.', parseErr);
+        this.clearReading();
+        return null;
       }
-      
-      return parsed as PersistedReading;
+
+      const result = PersistedReadingSchema.safeParse(parsed);
+      if (!result.success) {
+        console.warn(
+          'Failed to validate stored reading against schema. Clearing state.',
+          result.error
+        );
+        this.clearReading();
+        return null;
+      }
+
+      return result.data as PersistedReading;
     } catch (e) {
-      console.warn("Failed to parse or validate stored reading. Clearing state.", e);
+      console.warn('Failed to read stored reading. Clearing state.', e);
       this.clearReading();
       return null;
     }
@@ -59,6 +64,10 @@ export const ReadingPersistence = {
   },
 
   clearReading(): void {
-    localStorage.removeItem(STORAGE_KEY);
-  }
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch (e) {
+      console.error('Failed to clear reading from local storage', e);
+    }
+  },
 };

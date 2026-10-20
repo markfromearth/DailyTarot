@@ -1,7 +1,9 @@
 const fs = require('fs');
 
 async function generate() {
-  const res = await fetch('https://raw.githubusercontent.com/dariusk/corpora/master/data/divination/tarot_interpretations.json');
+  const res = await fetch(
+    'https://raw.githubusercontent.com/dariusk/corpora/master/data/divination/tarot_interpretations.json'
+  );
   const data = await res.json();
   const rawCards = data.tarot_interpretations;
 
@@ -9,11 +11,11 @@ async function generate() {
 
   for (const c of rawCards) {
     const isMajor = c.suit === 'major';
-    
+
     // Process suit
     let suit = null;
     if (!isMajor) {
-      suit = c.suit === "coins" ? "pentacles" : c.suit; // e.g. "swords"
+      suit = c.suit === 'coins' ? 'pentacles' : c.suit; // e.g. "swords"
     }
 
     // Process rank and number
@@ -59,7 +61,7 @@ async function generate() {
       return rawName
         .replace(/\bcoins\b/gi, 'Pentacles')
         .split(' ')
-        .map(word => {
+        .map((word) => {
           const lower = word.toLowerCase();
           if (lower === 'of' || lower === 'the') {
             return lower;
@@ -71,7 +73,10 @@ async function generate() {
     };
 
     const formattedName = formatCardName(c.name);
-    const imageSlug = formattedName.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
+    const imageSlug = formattedName
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '_')
+      .replace(/^_|_$/g, '');
     const imageUrl = `/cards/card_${imageSlug}.jpg`;
 
     cards.push({
@@ -84,7 +89,7 @@ async function generate() {
       uprightMeaning,
       reversedMeaning,
       imageUrl,
-      imageAltText: formattedName
+      imageAltText: formattedName,
     });
   }
 

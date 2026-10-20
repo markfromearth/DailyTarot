@@ -6,20 +6,17 @@ interface CardBackProps {
 
 export const CardBack: React.FC<CardBackProps> = ({ className = '' }) => {
   return (
-    <div className={`w-full h-full bg-[#191817] relative overflow-hidden flex items-center justify-center ${className}`}>
-      <img
-        src="/cards/card_back.png"
-        alt="Tarot Card Back"
-        className="w-full h-full object-fill select-none pointer-events-none"
-        loading="eager"
-        decoding="async"
-      />
+    <div
+      role="presentation"
+      aria-hidden="true"
+      className={`w-full h-full bg-[#191817] bg-[url('/cards/card_back.png')] bg-cover bg-center select-none pointer-events-none relative overflow-hidden flex items-center justify-center ${className}`}
+    >
       {/* Subtle metallic gold/champagne sheen on hover/tilt */}
       <div
         className="absolute inset-0 pointer-events-none opacity-20"
         style={{
           background:
-            'linear-gradient(130deg, transparent 32%, rgba(235, 215, 165, 0.55) 49%, rgba(255, 250, 235, 0.4) 51%, transparent 68%)'
+            'linear-gradient(130deg, transparent 32%, rgba(235, 215, 165, 0.55) 49%, rgba(255, 250, 235, 0.4) 51%, transparent 68%)',
         }}
       />
     </div>

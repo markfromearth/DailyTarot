@@ -30,7 +30,7 @@ export const StardustCanvas: React.FC<StardustCanvasProps> = ({ emitterRef }) =>
   const orbitStateRef = useRef<{ angle: number; velocity: number; phase: ReadingPhase }>({
     angle: 0,
     velocity: 0.004,
-    phase: 'intro'
+    phase: 'intro',
   });
 
   useEffect(() => {
@@ -48,7 +48,7 @@ export const StardustCanvas: React.FC<StardustCanvasProps> = ({ emitterRef }) =>
             alpha: Math.random() * 0.5 + 0.35,
             decay: Math.random() * 0.011 + 0.005,
             isGold: Math.random() > 0.25,
-            twinklePhase: Math.random() * Math.PI * 2
+            twinklePhase: Math.random() * Math.PI * 2,
           });
         }
         if (particlesRef.current.length > 420) {
@@ -59,7 +59,7 @@ export const StardustCanvas: React.FC<StardustCanvasProps> = ({ emitterRef }) =>
         orbitStateRef.current.angle = angle;
         orbitStateRef.current.velocity = velocity;
         orbitStateRef.current.phase = phase;
-      }
+      },
     };
   }, [emitterRef]);
 
@@ -95,7 +95,7 @@ export const StardustCanvas: React.FC<StardustCanvasProps> = ({ emitterRef }) =>
       const sinT = Math.sin(tilt);
       return {
         x: cx + (lx * cosT - ly * sinT),
-        y: cy + (lx * sinT + ly * cosT)
+        y: cy + (lx * sinT + ly * cosT),
       };
     };
 
@@ -185,7 +185,7 @@ export const StardustCanvas: React.FC<StardustCanvasProps> = ({ emitterRef }) =>
           alpha: 0.85,
           decay: 0.022,
           isGold: true,
-          twinklePhase: Math.random() * Math.PI * 2
+          twinklePhase: Math.random() * Math.PI * 2,
         });
       }
       ctx.restore();
@@ -226,7 +226,14 @@ export const StardustCanvas: React.FC<StardustCanvasProps> = ({ emitterRef }) =>
         const secDotCount = 65;
         for (let i = 0; i < secDotCount; i++) {
           const theta = -0.55 + (i / secDotCount) * 1.65;
-          const pt = projectOrbitPoint(theta, outerRx, outerRy * 1.25, cx + 25, cy + 30, TILT_ANGLE + 0.32);
+          const pt = projectOrbitPoint(
+            theta,
+            outerRx,
+            outerRy * 1.25,
+            cx + 25,
+            cy + 30,
+            TILT_ANGLE + 0.32
+          );
           ctx.fillStyle = 'rgba(190, 220, 255, 0.45)';
           ctx.beginPath();
           ctx.arc(pt.x, pt.y, 1.1, 0, Math.PI * 2);
@@ -235,7 +242,7 @@ export const StardustCanvas: React.FC<StardustCanvasProps> = ({ emitterRef }) =>
 
         // 3. Directional Arrowheads along the Dotted Track
         const arrowAngles = [-1.85, -1.25, -0.35, 0.25];
-        arrowAngles.forEach(a => {
+        arrowAngles.forEach((a) => {
           const theta = a + angle * 0.35;
           const pTip = projectOrbitPoint(theta, rx, ry, cx, cy);
           const pPrev = projectOrbitPoint(theta - 0.04, rx, ry, cx, cy);
@@ -264,10 +271,10 @@ export const StardustCanvas: React.FC<StardustCanvasProps> = ({ emitterRef }) =>
         const nodePositions = [
           projectOrbitPoint(2.88 + angle * 0.2, outerRx * 1.04, outerRy * 0.95, cx, cy), // Far Left Node
           projectOrbitPoint(1.52 + angle * 0.2, outerRx * 1.05, outerRy * 1.08, cx, cy), // Bottom Center Node
-          projectOrbitPoint(0.72 + angle * 0.2, rx * 0.76, ry * 0.72, cx, cy),           // Inner Right Node
-          projectOrbitPoint(0.08 + angle * 0.2, outerRx * 0.95, outerRy * 0.95, cx, cy)  // Far Right Node
+          projectOrbitPoint(0.72 + angle * 0.2, rx * 0.76, ry * 0.72, cx, cy), // Inner Right Node
+          projectOrbitPoint(0.08 + angle * 0.2, outerRx * 0.95, outerRy * 0.95, cx, cy), // Far Right Node
         ];
-        nodePositions.forEach(np => drawTargetNode(np.x, np.y, pulse));
+        nodePositions.forEach((np) => drawTargetNode(np.x, np.y, pulse));
       }
 
       // Render Stardust Particles
@@ -290,9 +297,7 @@ export const StardustCanvas: React.FC<StardustCanvasProps> = ({ emitterRef }) =>
 
         ctx.save();
         ctx.beginPath();
-        ctx.fillStyle = p.isGold
-          ? `rgba(248, 202, 115, ${a})`
-          : `rgba(226, 240, 255, ${a})`;
+        ctx.fillStyle = p.isGold ? `rgba(248, 202, 115, ${a})` : `rgba(226, 240, 255, ${a})`;
         ctx.shadowBlur = p.size * 4;
         ctx.shadowColor = p.isGold ? 'rgba(245, 175, 65, 0.85)' : 'rgba(200, 230, 255, 0.85)';
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
@@ -311,9 +316,6 @@ export const StardustCanvas: React.FC<StardustCanvasProps> = ({ emitterRef }) =>
   }, []);
 
   return (
-    <canvas
-      ref={canvasRef}
-      className="absolute inset-0 w-full h-full pointer-events-none z-20"
-    />
+    <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none z-20" />
   );
 };

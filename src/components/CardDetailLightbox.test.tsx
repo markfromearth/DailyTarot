@@ -56,9 +56,7 @@ describe('CardDetailLightbox', () => {
     expect(screen.getAllByText('The Fool')[0]).toBeDefined();
     expect(screen.getAllByText('PAST')[0]).toBeDefined();
     expect(screen.getByText('Upright')).toBeDefined();
-    expect(
-      screen.getByText('New beginnings, optimism, trust in life.')
-    ).toBeDefined();
+    expect(screen.getByText('New beginnings, optimism, trust in life.')).toBeDefined();
   });
 
   it('renders reversed meaning and badge when card is reversed', () => {
@@ -75,9 +73,7 @@ describe('CardDetailLightbox', () => {
     expect(screen.getAllByText('The Magician')[0]).toBeDefined();
     expect(screen.getAllByText('PRESENT')[0]).toBeDefined();
     expect(screen.getByText('Reversed')).toBeDefined();
-    expect(
-      screen.getByText('Trickery, illusions, out of touch.')
-    ).toBeDefined();
+    expect(screen.getByText('Trickery, illusions, out of touch.')).toBeDefined();
   });
 
   it('triggers onClose when Close button or Escape key is pressed', () => {

@@ -73,7 +73,13 @@ export const CARD_KEYWORDS: Record<string, CardKeywordSet> = {
   },
   'major-16': {
     upright: ['Sudden awakening', 'Shattered illusions', 'Breakthrough', 'Catalyst', 'Revelation'],
-    reversed: ['Avoiding disaster', 'Delayed collapse', 'Fear of suffering', 'Internal crisis', 'Rebuilding'],
+    reversed: [
+      'Avoiding disaster',
+      'Delayed collapse',
+      'Fear of suffering',
+      'Internal crisis',
+      'Rebuilding',
+    ],
   },
   'major-17': {
     upright: ['Hope', 'Faith', 'Divine guidance', 'Inspiration', 'Renewal'],
@@ -81,7 +87,13 @@ export const CARD_KEYWORDS: Record<string, CardKeywordSet> = {
   },
   'major-18': {
     upright: ['Subconscious', 'Dreams', 'Illusion', 'Intuition', 'Hidden truths'],
-    reversed: ['Confusion lifted', 'Fear dispelled', 'Clarity emerging', 'Exposing deceit', 'Paranoia'],
+    reversed: [
+      'Confusion lifted',
+      'Fear dispelled',
+      'Clarity emerging',
+      'Exposing deceit',
+      'Paranoia',
+    ],
   },
   'major-19': {
     upright: ['Joy', 'Success', 'Vitality', 'Celebration', 'Clarity'],
@@ -93,7 +105,13 @@ export const CARD_KEYWORDS: Record<string, CardKeywordSet> = {
   },
   'major-21': {
     upright: ['Completion', 'Wholeness', 'Triumph', 'Cosmic harmony', 'Fulfillment'],
-    reversed: ['Unfinished business', 'Seeking closure', 'Delays', 'Lack of completion', 'Stagnant finale'],
+    reversed: [
+      'Unfinished business',
+      'Seeking closure',
+      'Delays',
+      'Lack of completion',
+      'Stagnant finale',
+    ],
   },
 
   // Suit of Wands
@@ -111,11 +129,23 @@ export const CARD_KEYWORDS: Record<string, CardKeywordSet> = {
   },
   'wands-4': {
     upright: ['Celebration', 'Harmony', 'Homecoming', 'Milestone', 'Joyful community'],
-    reversed: ['Home tension', 'Cancelled gathering', 'Transient joy', 'Lack of support', 'Insecurity'],
+    reversed: [
+      'Home tension',
+      'Cancelled gathering',
+      'Transient joy',
+      'Lack of support',
+      'Insecurity',
+    ],
   },
   'wands-5': {
     upright: ['Rivalry', 'Healthy debate', 'Spirited conflict', 'Competition', 'Adrenaline'],
-    reversed: ['Destructive fighting', 'Avoiding tension', 'Compromise reached', 'Petty bickering', 'Chaos'],
+    reversed: [
+      'Destructive fighting',
+      'Avoiding tension',
+      'Compromise reached',
+      'Petty bickering',
+      'Chaos',
+    ],
   },
   'wands-6': {
     upright: ['Victory', 'Public recognition', 'Progress', 'Self-confidence', 'Acclaim'],
@@ -135,7 +165,13 @@ export const CARD_KEYWORDS: Record<string, CardKeywordSet> = {
   },
   'wands-10': {
     upright: ['Heavy burden', 'Responsibility', 'Overextension', 'Finishing line', 'Duty'],
-    reversed: ['Burnout', 'Dropping the load', 'Delegation', 'Crushing pressure', 'Unnecessary weight'],
+    reversed: [
+      'Burnout',
+      'Dropping the load',
+      'Delegation',
+      'Crushing pressure',
+      'Unnecessary weight',
+    ],
   },
   'wands-11': {
     upright: ['Enthusiasm', 'Exploration', 'Creative spark', 'Free spirit', 'Discovery'],
@@ -151,13 +187,31 @@ export const CARD_KEYWORDS: Record<string, CardKeywordSet> = {
   },
   'wands-14': {
     upright: ['Natural leader', 'Visionary', 'Dynamic strength', 'Honor', 'Inspirational'],
-    reversed: ['Avoiding responsibility', 'Wasted creativity', 'Dictatorial', 'Arrogant boasting', 'Impatience'],
+    reversed: [
+      'Avoiding responsibility',
+      'Wasted creativity',
+      'Dictatorial',
+      'Arrogant boasting',
+      'Impatience',
+    ],
   },
 
   // Suit of Cups
   'cups-1': {
-    upright: ['Love outpouring', 'New feelings', 'Emotional blessing', 'Compassion', 'Spiritual awakening'],
-    reversed: ['Blocked emotion', 'Emptiness', 'Unrequited love', 'Emotional burnout', 'Self-neglect'],
+    upright: [
+      'Love outpouring',
+      'New feelings',
+      'Emotional blessing',
+      'Compassion',
+      'Spiritual awakening',
+    ],
+    reversed: [
+      'Blocked emotion',
+      'Emptiness',
+      'Unrequited love',
+      'Emotional burnout',
+      'Self-neglect',
+    ],
   },
   'cups-2': {
     upright: ['Mutual attraction', 'Soul bond', 'Partnership', 'Equality', 'Harmonious union'],
@@ -169,7 +223,13 @@ export const CARD_KEYWORDS: Record<string, CardKeywordSet> = {
   },
   'cups-4': {
     upright: ['Meditation', 'Apathy', 'Contemplation', 'Disconnection', 'Overlooked gift'],
-    reversed: ['Sudden clarity', 'Seizing opportunities', 'Breaking apathy', 'Renewed curiosity', 'Motivation'],
+    reversed: [
+      'Sudden clarity',
+      'Seizing opportunities',
+      'Breaking apathy',
+      'Renewed curiosity',
+      'Motivation',
+    ],
   },
   'cups-5': {
     upright: ['Grief', 'Regret', 'Spilled emotion', 'Loss', 'Mourning the past'],
@@ -184,32 +244,92 @@ export const CARD_KEYWORDS: Record<string, CardKeywordSet> = {
     reversed: ['Clarity', 'Decisiveness', 'Dispel illusion', 'Grounded goals', 'Sobriety'],
   },
   'cups-8': {
-    upright: ['Walking away', 'Deeper quest', 'Abandoning the shallow', 'Spiritual journey', 'Letting go'],
-    reversed: ['Fear of leaving', 'Lingering too long', 'Aimless drift', 'Unfinished journey', 'Hopeless longing'],
+    upright: [
+      'Walking away',
+      'Deeper quest',
+      'Abandoning the shallow',
+      'Spiritual journey',
+      'Letting go',
+    ],
+    reversed: [
+      'Fear of leaving',
+      'Lingering too long',
+      'Aimless drift',
+      'Unfinished journey',
+      'Hopeless longing',
+    ],
   },
   'cups-9': {
     upright: ['Contentment', 'Wish fulfilled', 'Gratitude', 'Satisfaction', 'Pleasure'],
     reversed: ['Smugness', 'Overindulgence', 'Superficial happiness', 'Inner emptiness', 'Greed'],
   },
   'cups-10': {
-    upright: ['Divine peace', 'Family bliss', 'Emotional wholeness', 'Serenity', 'Lasting happiness'],
-    reversed: ['Domestic strife', 'Shattered peace', 'Broken bonds', 'Misaligned values', 'Disillusionment'],
+    upright: [
+      'Divine peace',
+      'Family bliss',
+      'Emotional wholeness',
+      'Serenity',
+      'Lasting happiness',
+    ],
+    reversed: [
+      'Domestic strife',
+      'Shattered peace',
+      'Broken bonds',
+      'Misaligned values',
+      'Disillusionment',
+    ],
   },
   'cups-11': {
-    upright: ['Creative messenger', 'Intuitive whisper', 'Sweet curiosity', 'Sensitivity', 'Artistic dream'],
-    reversed: ['Emotional immaturity', 'Moody insecurity', 'Creative block', 'Escapism', 'Tantrums'],
+    upright: [
+      'Creative messenger',
+      'Intuitive whisper',
+      'Sweet curiosity',
+      'Sensitivity',
+      'Artistic dream',
+    ],
+    reversed: [
+      'Emotional immaturity',
+      'Moody insecurity',
+      'Creative block',
+      'Escapism',
+      'Tantrums',
+    ],
   },
   'cups-12': {
     upright: ['Romantic idealism', 'Following heart', 'Poetic grace', 'Charm', 'Intuitive quest'],
-    reversed: ['Fanaticism', 'Misguided intuition', 'Uncontrolled emotions', 'Jealousy', 'Moody escapism'],
+    reversed: [
+      'Fanaticism',
+      'Misguided intuition',
+      'Uncontrolled emotions',
+      'Jealousy',
+      'Moody escapism',
+    ],
   },
   'cups-13': {
-    upright: ['Empathetic warmth', 'Emotional healer', 'Compassion', 'Calm harbor', 'Devoted heart'],
-    reversed: ['Codependency', 'Smothering', 'Emotional manipulation', 'Martyr complex', 'Exhausted empathy'],
+    upright: [
+      'Empathetic warmth',
+      'Emotional healer',
+      'Compassion',
+      'Calm harbor',
+      'Devoted heart',
+    ],
+    reversed: [
+      'Codependency',
+      'Smothering',
+      'Emotional manipulation',
+      'Martyr complex',
+      'Exhausted empathy',
+    ],
   },
   'cups-14': {
     upright: ['Emotional mastery', 'Wisdom', 'Compassionate leader', 'Serene balance', 'Diplomacy'],
-    reversed: ['Emotional volatility', 'Cold manipulation', 'Suppressed trauma', 'Mood swings', 'Numbness'],
+    reversed: [
+      'Emotional volatility',
+      'Cold manipulation',
+      'Suppressed trauma',
+      'Mood swings',
+      'Numbness',
+    ],
   },
 
   // Suit of Swords
@@ -219,11 +339,23 @@ export const CARD_KEYWORDS: Record<string, CardKeywordSet> = {
   },
   'swords-2': {
     upright: ['Stalemate', 'Blind decision', 'Weighing truths', 'Guarded peace', 'Truce'],
-    reversed: ['Indecision', 'Lies revealed', 'Information overload', 'Forced resolution', 'Cold shoulder'],
+    reversed: [
+      'Indecision',
+      'Lies revealed',
+      'Information overload',
+      'Forced resolution',
+      'Cold shoulder',
+    ],
   },
   'swords-3': {
     upright: ['Heartbreak', 'Painful truth', 'Grief', 'Rejection', 'Healing storm'],
-    reversed: ['Recovering from sorrow', 'Forgiveness', 'Releasing pain', 'Lingering resentment', 'Optimism'],
+    reversed: [
+      'Recovering from sorrow',
+      'Forgiveness',
+      'Releasing pain',
+      'Lingering resentment',
+      'Optimism',
+    ],
   },
   'swords-4': {
     upright: ['Rest', 'Sanctuary', 'Meditation', 'Recovery', 'Still contemplation'],
@@ -231,53 +363,137 @@ export const CARD_KEYWORDS: Record<string, CardKeywordSet> = {
   },
   'swords-5': {
     upright: ['Hollow victory', 'Conflict', 'Defeat', 'Self-interest', 'Pyrrhic win'],
-    reversed: ['Reconciliation', 'Ending disputes', 'Swallowing pride', 'Past grudges', 'Healing dialogue'],
+    reversed: [
+      'Reconciliation',
+      'Ending disputes',
+      'Swallowing pride',
+      'Past grudges',
+      'Healing dialogue',
+    ],
   },
   'swords-6': {
-    upright: ['Transition', 'Calmer waters', 'Leaving distress', 'Quiet passage', 'Recovery journey'],
-    reversed: ['Trapped baggage', 'Stalled departure', 'Emotional turbulence', 'Unresolved pain', 'Rough crossing'],
+    upright: [
+      'Transition',
+      'Calmer waters',
+      'Leaving distress',
+      'Quiet passage',
+      'Recovery journey',
+    ],
+    reversed: [
+      'Trapped baggage',
+      'Stalled departure',
+      'Emotional turbulence',
+      'Unresolved pain',
+      'Rough crossing',
+    ],
   },
   'swords-7': {
     upright: ['Strategy', 'Stealth', 'Resourceful cunning', 'Sneak move', 'Self-reliance'],
     reversed: ['Confession', 'Caught red-handed', 'Imposter syndrome', 'Overlooked flaw', 'Regret'],
   },
   'swords-8': {
-    upright: ['Self-imposed trap', 'Limiting beliefs', 'Blind helplessness', 'Anxiety', 'Victimhood'],
+    upright: [
+      'Self-imposed trap',
+      'Limiting beliefs',
+      'Blind helplessness',
+      'Anxiety',
+      'Victimhood',
+    ],
     reversed: ['Freedom', 'Open eyes', 'Breaking limits', 'Empowerment', 'Escaping cage'],
   },
   'swords-9': {
     upright: ['Nightmares', 'Severe anxiety', 'Guilt', 'Insomnia', 'Mental anguish'],
-    reversed: ['Hope returning', 'Facing fears', 'Overcoming trauma', 'Reaching out', 'Mental recovery'],
+    reversed: [
+      'Hope returning',
+      'Facing fears',
+      'Overcoming trauma',
+      'Reaching out',
+      'Mental recovery',
+    ],
   },
   'swords-10': {
-    upright: ['Rock bottom', 'Definitive ending', 'Painful collapse', 'Betrayal', 'Dawn after dark'],
-    reversed: ['Recovery', 'Surviving worst', 'Rebirth from ashes', 'Lingering pain', 'New beginning'],
+    upright: [
+      'Rock bottom',
+      'Definitive ending',
+      'Painful collapse',
+      'Betrayal',
+      'Dawn after dark',
+    ],
+    reversed: [
+      'Recovery',
+      'Surviving worst',
+      'Rebirth from ashes',
+      'Lingering pain',
+      'New beginning',
+    ],
   },
   'swords-11': {
     upright: ['Curious intellect', 'Truth seeker', 'Sharp observation', 'Agile mind', 'New ideas'],
     reversed: ['Deception', 'Spiteful gossip', 'Paranoia', 'All talk no action', 'Cynicism'],
   },
   'swords-12': {
-    upright: ['Direct action', 'Fierce intellect', 'Ambitious drive', 'No nonsense', 'Fearless charge'],
-    reversed: ['Impulsive fury', 'Tactless cruelty', 'Reckless rush', 'Burnout', 'Destructive logic'],
+    upright: [
+      'Direct action',
+      'Fierce intellect',
+      'Ambitious drive',
+      'No nonsense',
+      'Fearless charge',
+    ],
+    reversed: [
+      'Impulsive fury',
+      'Tactless cruelty',
+      'Reckless rush',
+      'Burnout',
+      'Destructive logic',
+    ],
   },
   'swords-13': {
-    upright: ['Unbiased clarity', 'Sharp wit', 'Perceptive insight', 'Independent truth', 'Boundaries'],
+    upright: [
+      'Unbiased clarity',
+      'Sharp wit',
+      'Perceptive insight',
+      'Independent truth',
+      'Boundaries',
+    ],
     reversed: ['Cold bitterness', 'Cruel judgment', 'Spite', 'Cynical isolation', 'Hypercritical'],
   },
   'swords-14': {
     upright: ['Mental authority', 'Truth & law', 'Strategic mastery', 'Discipline', 'Wise counsel'],
-    reversed: ['Cruel tyranny', 'Manipulative dogma', 'Abuse of power', 'Rigid ruthlessness', 'Dogmatism'],
+    reversed: [
+      'Cruel tyranny',
+      'Manipulative dogma',
+      'Abuse of power',
+      'Rigid ruthlessness',
+      'Dogmatism',
+    ],
   },
 
   // Suit of Pentacles
   'pentacles-1': {
     upright: ['New prosperity', 'Tangible gift', 'Financial seed', 'Abundance', 'Solid footing'],
-    reversed: ['Missed investment', 'Financial greed', 'Poor planning', 'Instability', 'Wasted resource'],
+    reversed: [
+      'Missed investment',
+      'Financial greed',
+      'Poor planning',
+      'Instability',
+      'Wasted resource',
+    ],
   },
   'pentacles-2': {
-    upright: ['Weighing options', 'Comparing values', 'Juggling resources', 'Adaptability', 'Financial balance'],
-    reversed: ['Financial overwhelm', 'Careless budgeting', 'Indecision', 'Dropping the ball', 'Compulsive spending'],
+    upright: [
+      'Weighing options',
+      'Comparing values',
+      'Juggling resources',
+      'Adaptability',
+      'Financial balance',
+    ],
+    reversed: [
+      'Financial overwhelm',
+      'Careless budgeting',
+      'Indecision',
+      'Dropping the ball',
+      'Compulsive spending',
+    ],
   },
   'pentacles-3': {
     upright: ['Master craft', 'Teamwork', 'Collaboration', 'Quality build', 'Shared acclaim'],
@@ -288,7 +504,13 @@ export const CARD_KEYWORDS: Record<string, CardKeywordSet> = {
     reversed: ['Greed', 'Hoarding', 'Fear of poverty', 'Possessiveness', 'Financial insecurity'],
   },
   'pentacles-5': {
-    upright: ['Hard times', 'Isolation in snow', 'Financial worry', 'Seeking shelter', 'Spiritual test'],
+    upright: [
+      'Hard times',
+      'Isolation in snow',
+      'Financial worry',
+      'Seeking shelter',
+      'Spiritual test',
+    ],
     reversed: ['Recovery', 'Help arriving', 'End of hardship', 'Forgiveness', 'Finding warmth'],
   },
   'pentacles-6': {
@@ -297,35 +519,95 @@ export const CARD_KEYWORDS: Record<string, CardKeywordSet> = {
   },
   'pentacles-7': {
     upright: ['Patience', 'Long-term reward', 'Assessing growth', 'Fruitful labor', 'Perseverance'],
-    reversed: ['Impatience', 'Poor return on effort', 'Wasted work', 'Frustration', 'Giving up too soon'],
+    reversed: [
+      'Impatience',
+      'Poor return on effort',
+      'Wasted work',
+      'Frustration',
+      'Giving up too soon',
+    ],
   },
   'pentacles-8': {
     upright: ['Apprenticeship', 'Repetition & mastery', 'Diligent craft', 'Focus', 'Dedication'],
     reversed: ['Perfectionism', 'Careless work', 'Boredom', 'Lack of ambition', 'Drudgery'],
   },
   'pentacles-9': {
-    upright: ['Self-sufficiency', 'Refinement', 'Abundant luxury', 'Solitary reward', 'Peaceful garden'],
-    reversed: ['Overindulgence', 'Superficial pride', 'Financial setback', 'Loneliness', 'Living beyond means'],
+    upright: [
+      'Self-sufficiency',
+      'Refinement',
+      'Abundant luxury',
+      'Solitary reward',
+      'Peaceful garden',
+    ],
+    reversed: [
+      'Overindulgence',
+      'Superficial pride',
+      'Financial setback',
+      'Loneliness',
+      'Living beyond means',
+    ],
   },
   'pentacles-10': {
     upright: ['Legacy', 'Generational wealth', 'Family foundation', 'Security', 'Lasting success'],
-    reversed: ['Family dispute', 'Financial catastrophe', 'Broken inheritance', 'Loss of home', 'Rigid tradition'],
+    reversed: [
+      'Family dispute',
+      'Financial catastrophe',
+      'Broken inheritance',
+      'Loss of home',
+      'Rigid tradition',
+    ],
   },
   'pentacles-11': {
-    upright: ['Practical ambition', 'Student of life', 'Solid opportunity', 'Eager learning', 'Grounding'],
-    reversed: ['Lack of focus', 'Missed chance', 'Lazy habits', 'Short-sightedness', 'Foolish spending'],
+    upright: [
+      'Practical ambition',
+      'Student of life',
+      'Solid opportunity',
+      'Eager learning',
+      'Grounding',
+    ],
+    reversed: [
+      'Lack of focus',
+      'Missed chance',
+      'Lazy habits',
+      'Short-sightedness',
+      'Foolish spending',
+    ],
   },
   'pentacles-12': {
     upright: ['Steadfast duty', 'Routine', 'Unshakable loyalty', 'Hard work', 'Patience'],
     reversed: ['Stubborn grind', 'Boredom', 'Obsessive rigidity', 'Laziness', 'Stagnation'],
   },
   'pentacles-13': {
-    upright: ['Nurturing abundance', 'Practical warmth', 'Generous hearth', 'Down to earth', 'Security'],
-    reversed: ['Financial anxiety', 'Work-life imbalance', 'Smothering', 'Neglected health', 'Materialism'],
+    upright: [
+      'Nurturing abundance',
+      'Practical warmth',
+      'Generous hearth',
+      'Down to earth',
+      'Security',
+    ],
+    reversed: [
+      'Financial anxiety',
+      'Work-life imbalance',
+      'Smothering',
+      'Neglected health',
+      'Materialism',
+    ],
   },
   'pentacles-14': {
-    upright: ['Financial abundance', 'Business acumen', 'Provider', 'Empire builder', 'Reliability'],
-    reversed: ['Greed', 'Stubborn control', 'Corrupt ambition', 'Financial ruin', 'Materialistic arrogance'],
+    upright: [
+      'Financial abundance',
+      'Business acumen',
+      'Provider',
+      'Empire builder',
+      'Reliability',
+    ],
+    reversed: [
+      'Greed',
+      'Stubborn control',
+      'Corrupt ambition',
+      'Financial ruin',
+      'Materialistic arrogance',
+    ],
   },
 };
 
@@ -341,7 +623,7 @@ export function getCardKeywords(card: TarotCard, orientation: Orientation = 'upr
   const raw = orientation === 'reversed' ? card.reversedMeaning : card.uprightMeaning;
   return raw
     .split(/\.\s+/)
-    .map(s => s.replace(/\.$/, '').trim())
+    .map((s) => s.replace(/\.$/, '').trim())
     .filter(Boolean)
     .slice(0, 4);
 }
