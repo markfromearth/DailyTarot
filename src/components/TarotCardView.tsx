@@ -11,6 +11,28 @@ interface TarotCardViewProps {
   imageUrl?: string;
 }
 
+const getRomanNumeral = (num?: number): string => {
+  if (num === 0) return '0';
+  if (!num) return '';
+  const roman = {
+    1: 'I', 2: 'II', 3: 'III', 4: 'IV', 5: 'V', 
+    6: 'VI', 7: 'VII', 8: 'VIII', 9: 'IX', 10: 'X',
+    11: 'XI', 12: 'XII', 13: 'XIII', 14: 'XIV', 15: 'XV',
+    16: 'XVI', 17: 'XVII', 18: 'XVIII', 19: 'XIX', 20: 'XX', 21: 'XXI'
+  };
+  return roman[num as keyof typeof roman] || num.toString();
+};
+
+const getSuitSymbol = (suit?: string | null): string => {
+  switch (suit) {
+    case 'wands': return '✧'; // Spark / energy
+    case 'cups': return '▿'; // Vessel / water
+    case 'swords': return '⌖'; // Focus / air / blade
+    case 'pentacles': return '◇'; // Earth / crystal
+    default: return '✦';
+  }
+};
+
 export const TarotCardView: React.FC<TarotCardViewProps> = ({
   card,
   orientation = 'upright',
@@ -25,6 +47,8 @@ export const TarotCardView: React.FC<TarotCardViewProps> = ({
     <div 
       className={`relative w-full h-full perspective-1000 ${className}`}
       onClick={onClick}
+      role={onClick ? 'button' : 'img'}
+      aria-label={`${card.name}${isReversed ? ' (Reversed)' : ''}`}
     >
       <div 
         className={`w-full h-full relative transition-transform duration-700 transform-style-3d ${isFlipped ? 'rotate-y-180' : ''}`}
@@ -46,15 +70,34 @@ export const TarotCardView: React.FC<TarotCardViewProps> = ({
                 decoding="async"
               />
             ) : (
-              // Clean fallback state when artwork is missing
-              <div className="w-full h-full flex flex-col items-center justify-center p-4 bg-gradient-to-b from-slate-800 to-slate-900">
-                <div className="flex-1 w-full border border-slate-600/50 rounded flex flex-col items-center justify-center relative p-2 text-center">
-                  <div className="text-slate-500/30 text-5xl font-serif absolute opacity-50">
-                    {card.arcana === 'major' ? card.number : card.suit?.charAt(0).toUpperCase()}
+              // Refined Fallback System
+              <div className="w-full h-full p-3 bg-gradient-to-b from-[#111827] to-[#0f172a] flex flex-col">
+                <div className="flex-1 w-full border border-[#334155] rounded-lg flex flex-col items-center justify-between p-3 relative overflow-hidden">
+                  
+                  {/* Subtle Background Motif */}
+                  <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none">
+                    <span className="text-8xl font-serif">
+                      {card.arcana === 'major' ? '✦' : getSuitSymbol(card.suit)}
+                    </span>
                   </div>
-                  <h3 className="text-amber-500/80 text-[10px] md:text-xs font-serif tracking-widest z-10 drop-shadow-md leading-tight">
-                    {card.name.toUpperCase()}
-                  </h3>
+
+                  {/* Top: Number / Arcana Indicator */}
+                  <div className="text-[#64748b] text-[10px] font-serif tracking-widest uppercase">
+                    {card.arcana === 'major' ? getRomanNumeral(card.number) : getSuitSymbol(card.suit)}
+                  </div>
+
+                  {/* Middle: Title */}
+                  <div className="flex flex-col items-center justify-center z-10 text-center w-full">
+                    <h3 className="text-[#fbbf24] text-xs md:text-sm font-serif tracking-[0.2em] leading-snug drop-shadow-md">
+                      {card.name.toUpperCase()}
+                    </h3>
+                  </div>
+
+                  {/* Bottom: Rank / Arcana Indicator */}
+                  <div className="text-[#64748b] text-[10px] font-serif tracking-widest uppercase transform rotate-180">
+                    {card.arcana === 'major' ? getRomanNumeral(card.number) : getSuitSymbol(card.suit)}
+                  </div>
+                  
                 </div>
               </div>
             )}

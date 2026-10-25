@@ -1,0 +1,486 @@
+[
+  {
+    "id": "major-0",
+    "name": "The Fool",
+    "upright": {
+      "keywords": ["new beginnings", "innocence", "spontaneity"],
+      "meaning": "A sudden leap of faith into the unknown, unburdened by past expectations.",
+      "reflection": {
+        "past": "The Fool may point toward an earlier leap into unfamiliar territory that shaped where you are.",
+        "present": "The Fool may invite openness and curiosity to what is beginning right now.",
+        "future": "The Fool may suggest approaching what comes next with an unburdened, beginner's mind."
+      }
+    },
+    "reversed": {
+      "keywords": ["naivety", "recklessness", "hesitation"],
+      "meaning": "Holding back out of fear, or rushing in without observing the ground beneath you.",
+      "reflection": {
+        "past": "The Fool reversed may hint at a past misstep or a risk taken without foresight.",
+        "present": "The Fool reversed may ask if you are hesitating on the edge of a necessary leap.",
+        "future": "The Fool reversed cautions against ignoring red flags in upcoming decisions."
+      }
+    }
+  },
+  {
+    "id": "major-1",
+    "name": "The Magician",
+    "upright": {
+      "keywords": ["manifestation", "resourcefulness", "power"],
+      "meaning": "Having the tools, focus, and energy to turn concepts into reality.",
+      "reflection": {
+        "past": "The Magician recalls a time when you successfully aligned your will and resources.",
+        "present": "The Magician suggests you currently hold all the tools needed to manifest your intent.",
+        "future": "The Magician indicates an upcoming opportunity to turn your vision into tangible reality."
+      }
+    },
+    "reversed": {
+      "keywords": ["manipulation", "poor planning", "untapped talents"],
+      "meaning": "Experiencing a block in creative energy or feeling disconnected from your abilities.",
+      "reflection": {
+        "past": "The Magician reversed may point to past hesitation where potential was left untapped.",
+        "present": "The Magician reversed asks if you are doubting your capabilities or misdirecting your energy.",
+        "future": "The Magician reversed suggests ensuring your plans are grounded before taking future action."
+      }
+    }
+  },
+  {
+    "id": "major-2",
+    "name": "The High Priestess",
+    "upright": {
+      "keywords": ["intuition", "mystery", "inner voice"],
+      "meaning": "A call to retreat inward and trust the quiet knowledge beneath the surface.",
+      "reflection": {
+        "past": "The High Priestess points to a previous moment where trusting your gut was crucial.",
+        "present": "The High Priestess invites you to pause and listen closely to your inner voice today.",
+        "future": "The High Priestess suggests that a forthcoming answer will arrive through quiet reflection."
+      }
+    },
+    "reversed": {
+      "keywords": ["secrets", "disconnected intuition", "surface level"],
+      "meaning": "Ignoring your inner compass or feeling overwhelmed by hidden variables.",
+      "reflection": {
+        "past": "The High Priestess reversed may recall a time you ignored a deep intuitive warning.",
+        "present": "The High Priestess reversed asks if you are seeking external validation instead of internal truth.",
+        "future": "The High Priestess reversed cautions against proceeding before uncovering hidden information."
+      }
+    }
+  },
+  {
+    "id": "major-3",
+    "name": "The Empress",
+    "upright": {
+      "keywords": ["abundance", "nurturing", "creation"],
+      "meaning": "A period of flourishing growth, deep comfort, and connection to nature.",
+      "reflection": {
+        "past": "The Empress reflects a period of profound growth or nurturing that grounded you.",
+        "present": "The Empress invites you to embrace comfort, creativity, and the beauty around you.",
+        "future": "The Empress suggests a future phase of abundance and creative fulfillment."
+      }
+    },
+    "reversed": {
+      "keywords": ["smothering", "creative block", "dependence"],
+      "meaning": "Neglecting one's own needs or feeling creatively stifled and disconnected.",
+      "reflection": {
+        "past": "The Empress reversed may point to a time you overextended yourself caring for others.",
+        "present": "The Empress reversed asks if you are currently neglecting your own fundamental well-being.",
+        "future": "The Empress reversed suggests a need to establish boundaries before giving more of yourself."
+      }
+    }
+  },
+  {
+    "id": "major-4",
+    "name": "The Emperor",
+    "upright": {
+      "keywords": ["structure", "stability", "authority"],
+      "meaning": "Establishing order, clear boundaries, and reliable foundations.",
+      "reflection": {
+        "past": "The Emperor points to a foundation of discipline or authority that shaped your path.",
+        "present": "The Emperor suggests that structure and logical boundaries will serve you well right now.",
+        "future": "The Emperor indicates a coming phase where taking charge and organizing will be necessary."
+      }
+    },
+    "reversed": {
+      "keywords": ["rigidity", "domination", "lack of discipline"],
+      "meaning": "Being overly controlling or conversely, struggling with a complete lack of structure.",
+      "reflection": {
+        "past": "The Emperor reversed may recall a time of overbearing control or chaotic instability.",
+        "present": "The Emperor reversed asks if you are currently being too rigid with yourself or others.",
+        "future": "The Emperor reversed cautions against forcing outcomes through sheer stubbornness."
+      }
+    }
+  },
+  {
+    "id": "major-5",
+    "name": "The Hierophant",
+    "upright": {
+      "keywords": ["tradition", "beliefs", "guidance"],
+      "meaning": "Honoring established traditions, seeking mentorship, or engaging in formal learning.",
+      "reflection": {
+        "past": "The Hierophant reflects a period of traditional learning or adherence to a belief system.",
+        "present": "The Hierophant invites you to seek wisdom from established structures or mentors.",
+        "future": "The Hierophant suggests that leaning on shared traditions will provide future clarity."
+      }
+    },
+    "reversed": {
+      "keywords": ["rebellion", "unconventionality", "new paradigms"],
+      "meaning": "Challenging the status quo and questioning dogmatic rules.",
+      "reflection": {
+        "past": "The Hierophant reversed points to a past moment of breaking away from expectation.",
+        "present": "The Hierophant reversed suggests it may be time to forge your own unconventional path.",
+        "future": "The Hierophant reversed indicates a future need to challenge the rules you inherit."
+      }
+    }
+  },
+  {
+    "id": "major-6",
+    "name": "The Lovers",
+    "upright": {
+      "keywords": ["harmony", "relationships", "choices"],
+      "meaning": "A deep alignment of values, harmonious connections, and conscious choices.",
+      "reflection": {
+        "past": "The Lovers recalls a significant choice or a deeply harmonizing relationship in your history.",
+        "present": "The Lovers invites you to ensure your current choices align closely with your core values.",
+        "future": "The Lovers suggests an upcoming crossroads where harmony and honesty must guide you."
+      }
+    },
+    "reversed": {
+      "keywords": ["disharmony", "imbalance", "misalignment"],
+      "meaning": "Experiencing friction in relationships or struggling with a divided heart.",
+      "reflection": {
+        "past": "The Lovers reversed may point to a past compromise that sacrificed your inner alignment.",
+        "present": "The Lovers reversed asks if there is a disconnect between your actions and your values.",
+        "future": "The Lovers reversed cautions against making choices based purely on external pressures."
+      }
+    }
+  },
+  {
+    "id": "major-7",
+    "name": "The Chariot",
+    "upright": {
+      "keywords": ["willpower", "direction", "overcoming"],
+      "meaning": "Harnessing opposing forces through focus and determination to move forward.",
+      "reflection": {
+        "past": "The Chariot points to a past victory achieved through intense focus and willpower.",
+        "present": "The Chariot suggests that maintaining clear direction will carry you through current obstacles.",
+        "future": "The Chariot indicates that focused momentum will be required for the road ahead."
+      }
+    },
+    "reversed": {
+      "keywords": ["loss of control", "opposition", "lack of direction"],
+      "meaning": "Feeling scattered, powerless, or encountering aggressive resistance.",
+      "reflection": {
+        "past": "The Chariot reversed recalls a time when pushing too hard resulted in a loss of control.",
+        "present": "The Chariot reversed asks if you are currently trying to force something that won't yield.",
+        "future": "The Chariot reversed cautions against charging forward before securing the reins."
+      }
+    }
+  },
+  {
+    "id": "major-8",
+    "name": "Strength",
+    "upright": {
+      "keywords": ["courage", "compassion", "inner power"],
+      "meaning": "Soft, enduring power rooted in compassion and emotional resilience.",
+      "reflection": {
+        "past": "Strength reflects a time when gentle endurance carried you through a hardship.",
+        "present": "Strength invites you to approach current challenges with compassion rather than force.",
+        "future": "Strength suggests that patience and emotional fortitude will conquer upcoming hurdles."
+      }
+    },
+    "reversed": {
+      "keywords": ["self-doubt", "weakness", "insecurity"],
+      "meaning": "Feeling emotionally depleted or struggling to tame inner anxieties.",
+      "reflection": {
+        "past": "Strength reversed may point to a past moment where fear overpowered your resilience.",
+        "present": "Strength reversed asks if you are currently letting self-doubt diminish your fire.",
+        "future": "Strength reversed cautions against letting temporary exhaustion dictate your path."
+      }
+    }
+  },
+  {
+    "id": "major-9",
+    "name": "The Hermit",
+    "upright": {
+      "keywords": ["introspection", "solitude", "inner guidance"],
+      "meaning": "Withdrawing from the noise of the world to seek answers within.",
+      "reflection": {
+        "past": "The Hermit points to a past period of isolation that brought profound clarity.",
+        "present": "The Hermit suggests that stepping back from external voices is necessary right now.",
+        "future": "The Hermit indicates an upcoming need for solitary reflection to find your truth."
+      }
+    },
+    "reversed": {
+      "keywords": ["isolation", "loneliness", "withdrawal"],
+      "meaning": "Isolating oneself excessively or ignoring the wisdom of the outside world.",
+      "reflection": {
+        "past": "The Hermit reversed recalls a time when solitude turned into unhelpful isolation.",
+        "present": "The Hermit reversed asks if you are hiding from the world to avoid confronting it.",
+        "future": "The Hermit reversed cautions against closing yourself off to necessary connections."
+      }
+    }
+  },
+  {
+    "id": "major-10",
+    "name": "Wheel of Fortune",
+    "upright": {
+      "keywords": ["cycles", "change", "destiny"],
+      "meaning": "The inevitable turning of fate, reminding us that all things are temporary.",
+      "reflection": {
+        "past": "The Wheel of Fortune points to a sudden shift in circumstances that altered your trajectory.",
+        "present": "The Wheel of Fortune invites you to embrace the current turning point in your life.",
+        "future": "The Wheel of Fortune suggests an upcoming shift that is largely out of your control."
+      }
+    },
+    "reversed": {
+      "keywords": ["bad luck", "resistance", "breaking cycles"],
+      "meaning": "Experiencing an unwelcome shift or struggling to break free from a repeating loop.",
+      "reflection": {
+        "past": "The Wheel of Fortune reversed recalls a time you fought desperately against inevitable change.",
+        "present": "The Wheel of Fortune reversed asks if you are clinging to a phase that is naturally ending.",
+        "future": "The Wheel of Fortune reversed suggests you may need to actively break a negative cycle soon."
+      }
+    }
+  },
+  {
+    "id": "major-11",
+    "name": "Justice",
+    "upright": {
+      "keywords": ["fairness", "truth", "cause and effect"],
+      "meaning": "Weighing choices objectively and understanding the consequences of past actions.",
+      "reflection": {
+        "past": "Justice points to a past decision where honesty and fairness restored balance.",
+        "present": "Justice invites you to evaluate your current situation with cold, objective truth.",
+        "future": "Justice suggests that future outcomes will be determined entirely by your integrity now."
+      }
+    },
+    "reversed": {
+      "keywords": ["unfairness", "dishonesty", "lack of accountability"],
+      "meaning": "Avoiding responsibility or experiencing a situation that feels deeply unbalanced.",
+      "reflection": {
+        "past": "Justice reversed may point to a past injustice or a truth that was buried.",
+        "present": "Justice reversed asks if you are ignoring your own accountability in this situation.",
+        "future": "Justice reversed cautions against making choices based on bias or hidden motives."
+      }
+    }
+  },
+  {
+    "id": "major-12",
+    "name": "The Hanged Man",
+    "upright": {
+      "keywords": ["pause", "surrender", "new perspectives"],
+      "meaning": "A voluntary suspension of action that allows for a profound shift in perspective.",
+      "reflection": {
+        "past": "The Hanged Man recalls a time when letting go of control opened your eyes to a new truth.",
+        "present": "The Hanged Man invites you to pause and look at your current situation upside-down.",
+        "future": "The Hanged Man suggests an upcoming period where waiting will serve you better than acting."
+      }
+    },
+    "reversed": {
+      "keywords": ["delays", "resistance", "stalling"],
+      "meaning": "Feeling painfully stuck or refusing to accept a necessary pause.",
+      "reflection": {
+        "past": "The Hanged Man reversed points to a time you stubbornly forced progress despite clear delays.",
+        "present": "The Hanged Man reversed asks if you are sacrificing your time without gaining any insight.",
+        "future": "The Hanged Man reversed cautions against needlessly delaying an inevitable decision."
+      }
+    }
+  },
+  {
+    "id": "major-13",
+    "name": "Death",
+    "upright": {
+      "keywords": ["endings", "transformation", "transition"],
+      "meaning": "The necessary and natural clearing away of the old to make way for the new.",
+      "reflection": {
+        "past": "Death points to a profound ending that fundamentally transformed who you are.",
+        "present": "Death invites you to gracefully release what is no longer alive in your life.",
+        "future": "Death suggests a coming transition that will clear the ground for new growth."
+      }
+    },
+    "reversed": {
+      "keywords": ["resistance to change", "stagnation", "holding on"],
+      "meaning": "Clinging to the past and refusing to let a natural cycle conclude.",
+      "reflection": {
+        "past": "Death reversed recalls a painful period where you refused to let go of what was ending.",
+        "present": "Death reversed asks what outdated attachments you are currently keeping on life support.",
+        "future": "Death reversed cautions that fighting an upcoming transformation will only prolong stagnation."
+      }
+    }
+  },
+  {
+    "id": "major-14",
+    "name": "Temperance",
+    "upright": {
+      "keywords": ["balance", "moderation", "alchemy"],
+      "meaning": "Blending opposing elements together to create a harmonious and sustainable middle path.",
+      "reflection": {
+        "past": "Temperance points to a past moment where patience and compromise created lasting peace.",
+        "present": "Temperance invites you to find the calm center and avoid extremes right now.",
+        "future": "Temperance suggests that careful moderation will be the key to your upcoming success."
+      }
+    },
+    "reversed": {
+      "keywords": ["imbalance", "excess", "hastiness"],
+      "meaning": "Experiencing friction due to extremes, impulsivity, or a lack of moderation.",
+      "reflection": {
+        "past": "Temperance reversed recalls a time when swinging to extremes threw you off balance.",
+        "present": "Temperance reversed asks where in your life you are currently overindulging or rushing.",
+        "future": "Temperance reversed cautions against forcing opposing forces together without care."
+      }
+    }
+  },
+  {
+    "id": "major-15",
+    "name": "The Devil",
+    "upright": {
+      "keywords": ["shadow", "attachment", "restriction"],
+      "meaning": "Facing the illusions, unhealthy attachments, or material desires that keep us bound.",
+      "reflection": {
+        "past": "The Devil points to a past period where you were entangled in an unhealthy dynamic.",
+        "present": "The Devil invites you to examine the self-imposed chains holding you back today.",
+        "future": "The Devil suggests you may soon be tempted by short-term comfort over long-term freedom."
+      }
+    },
+    "reversed": {
+      "keywords": ["release", "reclaiming power", "breaking chains"],
+      "meaning": "Shedding toxic dependencies and walking away from what diminishes your spirit.",
+      "reflection": {
+        "past": "The Devil reversed recalls the powerful moment you broke free from a heavy restriction.",
+        "present": "The Devil reversed suggests you are currently in the process of reclaiming your autonomy.",
+        "future": "The Devil reversed indicates an upcoming liberation from a long-standing fear."
+      }
+    }
+  },
+  {
+    "id": "major-16",
+    "name": "The Tower",
+    "upright": {
+      "keywords": ["upheaval", "sudden change", "revelation"],
+      "meaning": "A sudden, foundational collapse that clears away structures built on falsehoods.",
+      "reflection": {
+        "past": "The Tower points to a past shock that abruptly cleared away a false sense of security.",
+        "present": "The Tower suggests you are currently experiencing a radical shift in your reality.",
+        "future": "The Tower indicates that unstable foundations will soon be removed to make way for truth."
+      }
+    },
+    "reversed": {
+      "keywords": ["avoiding disaster", "delayed inevitable", "fear of change"],
+      "meaning": "Clinging to a collapsing structure or narrowly avoiding a massive upheaval.",
+      "reflection": {
+        "past": "The Tower reversed recalls a time you delayed an inevitable crisis by ignoring the cracks.",
+        "present": "The Tower reversed asks if you are currently ignoring structural damage to avoid conflict.",
+        "future": "The Tower reversed cautions against rebuilding on foundations you know are compromised."
+      }
+    }
+  },
+  {
+    "id": "major-17",
+    "name": "The Star",
+    "upright": {
+      "keywords": ["hope", "healing", "inspiration"],
+      "meaning": "A period of quiet renewal, gentle inspiration, and trusting the universe after a storm.",
+      "reflection": {
+        "past": "The Star points to a past moment of deep healing and renewed faith that sustained you.",
+        "present": "The Star invites you to embrace vulnerability and allow yourself to hope again.",
+        "future": "The Star suggests a coming phase of serenity and spiritual rejuvenation."
+      }
+    },
+    "reversed": {
+      "keywords": ["despair", "lack of faith", "discouragement"],
+      "meaning": "Feeling disconnected from inspiration, or struggling to see the light in the dark.",
+      "reflection": {
+        "past": "The Star reversed recalls a period where cynicism temporarily clouded your vision.",
+        "present": "The Star reversed asks if you are currently rejecting optimism as a defense mechanism.",
+        "future": "The Star reversed cautions against letting temporary setbacks extinguish your inner light."
+      }
+    }
+  },
+  {
+    "id": "major-18",
+    "name": "The Moon",
+    "upright": {
+      "keywords": ["illusion", "intuition", "subconscious"],
+      "meaning": "Navigating through uncertainty where things are not as they seem, guided only by intuition.",
+      "reflection": {
+        "past": "The Moon points to a past period of confusion where you had to trust your deepest instincts.",
+        "present": "The Moon suggests that your current reality is layered in illusions or unexpressed fears.",
+        "future": "The Moon indicates a coming phase where logic will fail and intuition must guide you."
+      }
+    },
+    "reversed": {
+      "keywords": ["clarity", "repressed fears", "truths revealed"],
+      "meaning": "The lifting of confusion as hidden anxieties or secrets are finally brought to light.",
+      "reflection": {
+        "past": "The Moon reversed recalls a time when a long-held deception was finally exposed.",
+        "present": "The Moon reversed suggests the fog is currently lifting, revealing the truth beneath.",
+        "future": "The Moon reversed indicates that an upcoming revelation will banish your current fears."
+      }
+    }
+  },
+  {
+    "id": "major-19",
+    "name": "The Sun",
+    "upright": {
+      "keywords": ["joy", "success", "vitality"],
+      "meaning": "A time of brilliant clarity, uncontainable joy, and total alignment with the self.",
+      "reflection": {
+        "past": "The Sun points to a past period of radiant success that warmed and energized you.",
+        "present": "The Sun invites you to bask in the genuine joy and clarity of your current moment.",
+        "future": "The Sun suggests a brilliant upcoming phase where your efforts will bear golden fruit."
+      }
+    },
+    "reversed": {
+      "keywords": ["inner child", "temporary depression", "overly optimistic"],
+      "meaning": "Struggling to feel the warmth, or experiencing success that feels slightly muted.",
+      "reflection": {
+        "past": "The Sun reversed recalls a time when an achievement didn't bring the joy you expected.",
+        "present": "The Sun reversed asks if you are currently blocking yourself from feeling simple happiness.",
+        "future": "The Sun reversed cautions against forced positivity when acknowledging reality is needed."
+      }
+    }
+  },
+  {
+    "id": "major-20",
+    "name": "Judgement",
+    "upright": {
+      "keywords": ["rebirth", "inner calling", "absolution"],
+      "meaning": "A profound awakening that calls you to rise up and leave the past behind.",
+      "reflection": {
+        "past": "Judgement points to a past awakening where you reinvented yourself and answered a call.",
+        "present": "Judgement suggests you are currently at a crossroads requiring deep, honest self-evaluation.",
+        "future": "Judgement indicates a coming moment of clarity that will demand you rise to a higher purpose."
+      }
+    },
+    "reversed": {
+      "keywords": ["self-doubt", "inner critic", "ignoring the call"],
+      "meaning": "Silencing a higher calling out of fear, or punishing yourself with endless self-criticism.",
+      "reflection": {
+        "past": "Judgement reversed recalls a time you ignored a vital truth to remain comfortable.",
+        "present": "Judgement reversed asks if the inner critic is currently drowning out your true calling.",
+        "future": "Judgement reversed cautions against delaying a necessary transformation out of guilt."
+      }
+    }
+  },
+  {
+    "id": "major-21",
+    "name": "The World",
+    "upright": {
+      "keywords": ["completion", "integration", "accomplishment"],
+      "meaning": "The successful conclusion of a long journey, bringing wholeness and a sense of belonging.",
+      "reflection": {
+        "past": "The World points to a past cycle you successfully completed and integrated into your life.",
+        "present": "The World invites you to celebrate the wholeness of where you currently stand.",
+        "future": "The World suggests an upcoming culmination that will beautifully tie all threads together."
+      }
+    },
+    "reversed": {
+      "keywords": ["incompletion", "lack of closure", "stagnation"],
+      "meaning": "Feeling on the verge of completion but held back by loose ends or a lack of closure.",
+      "reflection": {
+        "past": "The World reversed recalls a significant chapter that ended without proper resolution.",
+        "present": "The World reversed asks what final step you are currently avoiding to complete this cycle.",
+        "future": "The World reversed cautions that you cannot begin the next journey until this one is truly finished."
+      }
+    }
+  }
+]

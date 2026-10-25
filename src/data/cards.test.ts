@@ -41,7 +41,7 @@ describe('Tarot Deck Data Validation', () => {
       expect(validRanks).toContain(card.rank);
 
       // Meanings
-      expect(card.uprightMeaning).toBeTruthy();
+      if (!card.uprightMeaning) console.log("Missing upright:", card.name); expect(card.uprightMeaning).toBeTruthy();
       expect(typeof card.uprightMeaning).toBe('string');
       expect(card.uprightMeaning.length).toBeGreaterThan(10);
       

@@ -1,3 +1,4 @@
+import { ParallaxBackground } from "./components/ParallaxBackground";
 import { useReading } from './hooks/useReading';
 import { DeckExperience } from './components/DeckExperience';
 
@@ -5,8 +6,10 @@ function App() {
   const { phase, beginShuffle, initialDeckOrder, selectedCards, selectCardFromFan, flipCard, resetReading } = useReading();
 
   return (
-    <div className="min-h-screen w-full flex flex-col items-center p-4 pt-12 overflow-y-auto overflow-x-hidden relative">
-      {/* Header */}
+    <>
+      <ParallaxBackground />
+      <div className="min-h-screen w-full flex flex-col items-center p-4 pt-12 overflow-y-auto overflow-x-hidden relative">
+        {/* Header */}
       <div className={`text-center transition-all duration-1000 z-50 ${phase === 'intro' ? 'mb-12' : 'mb-6'}`}>
         <h1 className="text-3xl md:text-4xl font-normal tracking-[0.3em] uppercase text-white/90 font-serif" style={{ textShadow: '0 2px 10px rgba(0,0,0,0.8)' }}>
           Daily Tarot
@@ -46,6 +49,7 @@ function App() {
         Create a sacred space.
       </footer>
     </div>
+    </>
   );
 }
 

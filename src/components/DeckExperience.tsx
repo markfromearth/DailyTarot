@@ -50,11 +50,23 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
     const baseTranslateY = -originalIndex * 0.2; 
     const baseRotate = (originalIndex % 5) * 0.4 - 0.8;
     
-    if (isShuffling && !prefersReducedMotion) {
+    if (isShuffling) {
+      if (prefersReducedMotion) {
+        return {
+          zIndex: originalIndex,
+          transform: `translate(${baseTranslateX}px, ${baseTranslateY}px) rotate(${baseRotate}deg)`,
+        };
+      }
+      
+      const totalCards = initialDeckOrder.length;
+      const angle = (originalIndex / totalCards) * 360;
+      const radius = viewportWidth < 360 ? 110 : (viewportWidth < 768 ? 135 : 190);
+      const ringScale = viewportWidth < 360 ? 0.5 : (viewportWidth < 768 ? 0.6 : 0.7);
+      
       return {
-        transitionDelay: `${(originalIndex % 10) * 0.05}s`,
         zIndex: originalIndex,
-        transform: `translate(${baseTranslateX}px, ${baseTranslateY}px) rotate(${baseRotate}deg)`,
+        transform: `rotate(${angle}deg) translateY(-${radius}px) scale(${ringScale})`,
+        transition: 'transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)',
       };
     }
     
@@ -135,9 +147,8 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
     };
   };
 
-  const getCardClass = (originalIndex: number) => {
-    if (phase !== 'shuffling' || prefersReducedMotion) return '';
-    return originalIndex % 2 === 0 ? 'shuffle-right' : 'shuffle-left';
+  const getCardClass = (_originalIndex: number) => {
+    return '';
   };
 
   const handleCardClick = (cardId: string) => {
@@ -164,6 +175,21 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
       {/* The Deck Container */}
       <div className="relative w-24 h-36 md:w-32 md:h-48 perspective-1000 mt-40">
         
+        {/* Ethereal Ghost Phrase "Amor Fati" floating in the ether */}
+        {phase === 'shuffling' && (
+          <div 
+            className="absolute inset-0 flex items-center justify-center pointer-events-none -z-10 select-none"
+            aria-hidden="true"
+          >
+            <div className="ether-glow absolute -inset-24 md:-inset-36 rounded-full pointer-events-none" />
+            <div className="ether-ghost flex flex-col items-center justify-center">
+              <span className="font-serif text-2xl sm:text-3xl md:text-5xl text-white/85 tracking-[0.35em] uppercase font-light drop-shadow-ether">
+                Amor Fati
+              </span>
+            </div>
+          </div>
+        )}
+
         {/* Spread Slots matched to absolute math */}
         <ReadingSlots 
           phase={phase} 
@@ -171,6 +197,8 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
           viewportWidth={viewportWidth} 
         />
         
+        {/* Card Ring / Deck Wrapper */}
+        <div className={`absolute inset-0 w-full h-full transform-gpu ${phase === 'shuffling' && !prefersReducedMotion ? 'card-ring-spin' : ''}`}>
         {initialDeckOrder.map((card, index) => {
           const selectedCard = selectedCards.find(c => c.card.id === card.id);
           const isSelected = !!selectedCard;
@@ -217,6 +245,7 @@ export const DeckExperience: React.FC<DeckExperienceProps> = ({
             </div>
           );
         })}
+        </div>
       </div>
 
       {/* Controls */}

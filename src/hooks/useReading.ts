@@ -46,14 +46,22 @@ export function useReading() {
       );
       
       const restoredSelection = todaysReading.selectedCardsData.map(data => {
-        const card = TAROT_DECK.find(c => c.id === data.id)!;
+        const card = TAROT_DECK.find(c => c.id === data.id);
+        if (!card) return null;
         return {
           card,
           orientation: data.orientation,
           position: data.position,
           isRevealed: data.isRevealed
         };
-      });
+      }).filter((c): c is PositionedCard => c !== null);
+      
+      if (restoredSelection.length !== todaysReading.selectedCardsData.length) {
+        // Data is corrupt (cards were not found). Reset.
+        ReadingPersistence.clearReading();
+        setPhase('intro');
+        return;
+      }
       
       setSelectedCards(restoredSelection);
       setPhase(todaysReading.phase);
@@ -66,7 +74,7 @@ export function useReading() {
       engine.shuffle();
       setPhase('fan');
       saveState('fan', []);
-    }, 1500);
+    }, 2400);
   }, [engine, saveState]);
 
   const selectCardFromFan = useCallback((cardId: string) => {

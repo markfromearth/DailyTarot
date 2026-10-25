@@ -8,10 +8,10 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": null,
     "rank": null,
     "number": 0,
-    "uprightMeaning": "Freeing yourself from limitation. Expressing joy and youthful vigor. Being open-minded. Taking a leap of faith. Attuning yourself to your instincts. Being eager or curious. Exploring your potential. Embracing innovation and change.",
-    "reversedMeaning": "Being gullible and naive. Taking unnecessary risks. Failing to be serious when required. Being silly or distracted. Lacking experience. Failing to honor well-established traditions and limits. Behaving inappropriately.",
     "imageUrl": "/cards/card_the_fool.jpg",
-    "imageAltText": "The Fool"
+    "imageAltText": "The Fool",
+    "uprightMeaning": "A sudden leap of faith into the unknown, unburdened by past expectations.",
+    "reversedMeaning": "Holding back out of fear, or rushing in without observing the ground beneath you."
   },
   {
     "id": "major-1",
@@ -20,10 +20,10 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": null,
     "rank": null,
     "number": 1,
-    "uprightMeaning": "Taking appropriate action. Receiving guidance from a higher power. Becoming a channel of divine will. Expressing masculine energy in appropriate and constructive ways. Being yourself in every way.",
-    "reversedMeaning": "Inflating your own ego. Abusing talents. Manipulating or deceiving others. Being too aggressive. Using cheap illusions to dazzle others. Refusing to invest the time and effort needed to master your craft. Taking shortcuts.",
     "imageUrl": "/cards/card_the_magician.jpg",
-    "imageAltText": "The Magician"
+    "imageAltText": "The Magician",
+    "uprightMeaning": "Having the tools, focus, and energy to turn concepts into reality.",
+    "reversedMeaning": "Experiencing a block in creative energy or feeling disconnected from your abilities."
   },
   {
     "id": "major-2",
@@ -32,10 +32,10 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": null,
     "rank": null,
     "number": 2,
-    "uprightMeaning": "Listening to your feelings and intuitions. Exploring unconventional spirituality. Keeping secrets. Being receptive. Reflecting instead of acting. Observing others. Preserving purity.",
-    "reversedMeaning": "Being aloof. Obsessing on secrets and conspiracies. Rejecting guidance from spirit or intuition. Revealing all. Ignoring gut feelings. Refusing to become involved, even when involvement is appropriate.",
     "imageUrl": "/cards/card_the_high_priestess.jpg",
-    "imageAltText": "The Papess/High Priestess"
+    "imageAltText": "The Papess/High Priestess",
+    "uprightMeaning": "A call to retreat inward and trust the quiet knowledge beneath the surface.",
+    "reversedMeaning": "Ignoring your inner compass or feeling overwhelmed by hidden variables."
   },
   {
     "id": "major-3",
@@ -44,10 +44,10 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": null,
     "rank": null,
     "number": 3,
-    "uprightMeaning": "Nurturing yourself and others. Bearing fruit. Celebrating your body. Bearing (literal or figurative) children. Reveling in luxury. Mothering those around you in positive ways. Enjoying your sexuality. Getting things done.",
-    "reversedMeaning": "Overindulging. Being greedy. Smothering someone with attention. Debilitating someone by being overprotective. Inhibiting productivity by obsessing on productivity. Being overcome by addictive behavior.",
     "imageUrl": "/cards/card_the_empress.jpg",
-    "imageAltText": "The Empress"
+    "imageAltText": "The Empress",
+    "uprightMeaning": "A period of flourishing growth, deep comfort, and connection to nature.",
+    "reversedMeaning": "Neglecting one's own needs or feeling creatively stifled and disconnected."
   },
   {
     "id": "major-4",
@@ -56,10 +56,10 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": null,
     "rank": null,
     "number": 4,
-    "uprightMeaning": "Exercising authority. Defining limits. Directing the flow of work. Communicating clear guidelines. Being in control of yourself and others. Tempering aggressive masculinity with wisdom and experience.",
-    "reversedMeaning": "Micromanaging. Crushing the creativity of others with a rigid, iron-fisted approach. Insisting on getting your own way. Assuming a dictatorial mindset. Using overt force to achieve your goals and maintain order.",
     "imageUrl": "/cards/card_the_emperor.jpg",
-    "imageAltText": "The Emperor"
+    "imageAltText": "The Emperor",
+    "uprightMeaning": "Establishing order, clear boundaries, and reliable foundations.",
+    "reversedMeaning": "Being overly controlling or conversely, struggling with a complete lack of structure."
   },
   {
     "id": "major-5",
@@ -68,9 +68,9 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": null,
     "rank": null,
     "number": 5,
-    "uprightMeaning": "Teaching or guiding others. Searching for the truth. Asking for guidance from a higher power. Acknowledging the wisdom and experience of others. Taking vows. Engaging in heartfelt rituals. Volunteering.",
-    "reversedMeaning": "Using experience as a means of manipulating or misguiding others. Being dogmatic. Favoring tradition over what is expedient or necessary. Going through the motions of empty rituals. Concealing wisdom. Restricting access to spiritual truths or the gods.",
-    "imageAltText": "The Pope/Hierophant"
+    "imageAltText": "The Pope/Hierophant",
+    "uprightMeaning": "Honoring established traditions, seeking mentorship, or engaging in formal learning.",
+    "reversedMeaning": "Challenging the status quo and questioning dogmatic rules."
   },
   {
     "id": "major-6",
@@ -79,9 +79,9 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": null,
     "rank": null,
     "number": 6,
-    "uprightMeaning": "Being in love. Showing your love to others. Expressing passion or romantic feelings. Aligning yourself with groups or like-minded others. Bringing people together. Making well-informed decisions.",
-    "reversedMeaning": "Debilitating passion. Allowing an unhealthy desire for love to motivate destructive behavior. Disrupting unity. Working against the best interests of those who care about you. Ill-informed decisions.",
-    "imageAltText": "The Lovers"
+    "imageAltText": "The Lovers",
+    "uprightMeaning": "A deep alignment of values, harmonious connections, and conscious choices.",
+    "reversedMeaning": "Experiencing friction in relationships or struggling with a divided heart."
   },
   {
     "id": "major-7",
@@ -90,9 +90,9 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": null,
     "rank": null,
     "number": 7,
-    "uprightMeaning": "Breaking through barriers. Moving forward with confidence and authority. Reaching the pinnacle of success. Basking in the glory of achievement. Guiding an effort to total victory. Establishing yourself as a worthy leader.",
-    "reversedMeaning": "Resting on laurels. Riding roughshod over the feelings or expectations of others. Focusing more on past successes than future opportunities. Failing to rein in impulsive behavior.",
-    "imageAltText": "The Chariot"
+    "imageAltText": "The Chariot",
+    "uprightMeaning": "Harnessing opposing forces through focus and determination to move forward.",
+    "reversedMeaning": "Feeling scattered, powerless, or encountering aggressive resistance."
   },
   {
     "id": "major-8",
@@ -101,9 +101,9 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": null,
     "rank": null,
     "number": 8,
-    "uprightMeaning": "Imposing restrictions on yourself for your own benefit. Bringing your passions under the control of reason. Resisting impulses that work against your best interests. Taking bold action.",
-    "reversedMeaning": "Indulging weakness, even when you know it will damage your health and happiness. Languishing in addiction. Allowing your instincts to tame and conquer you. Failing to take a stand when necessary.",
-    "imageAltText": "Strength"
+    "imageAltText": "Strength",
+    "uprightMeaning": "Soft, enduring power rooted in compassion and emotional resilience.",
+    "reversedMeaning": "Feeling emotionally depleted or struggling to tame inner anxieties."
   },
   {
     "id": "major-9",
@@ -112,9 +112,9 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": null,
     "rank": null,
     "number": 9,
-    "uprightMeaning": "Becoming or seeking out a guru. Going on a retreat. Recharging spiritual or creative batteries. Lighting the way for those with less experience. Stepping back to gain perspective.",
-    "reversedMeaning": "Being a loner. Fearing contact with others. Becoming a know-it-all. Inflating claims of expertise. Hiding your skills and talents out of fear of unworthiness.",
-    "imageAltText": "The Hermit"
+    "imageAltText": "The Hermit",
+    "uprightMeaning": "Withdrawing from the noise of the world to seek answers within.",
+    "reversedMeaning": "Isolating oneself excessively or ignoring the wisdom of the outside world."
   },
   {
     "id": "major-10",
@@ -123,9 +123,9 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": null,
     "rank": null,
     "number": 10,
-    "uprightMeaning": "Allowing events to unfold. Seeing the larger pattern in everyday events. Trusting your luck. Watching for cycles. Believing that \"what goes around, comes around\".",
-    "reversedMeaning": "Losing money gambling. Refusing to do your part to bring a plan to fruition. Taking a fatalistic approach to life. Fighting the natural course of events.",
-    "imageAltText": "The Wheel"
+    "imageAltText": "The Wheel",
+    "uprightMeaning": "The inevitable turning of fate, reminding us that all things are temporary.",
+    "reversedMeaning": "Experiencing an unwelcome shift or struggling to break free from a repeating loop."
   },
   {
     "id": "major-11",
@@ -134,9 +134,9 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": null,
     "rank": null,
     "number": 11,
-    "uprightMeaning": "Making an objective decision. Weighing an issue carefully before taking action. Appropriately scaling your reaction to a situation. Getting all the facts. Considering evidence. Deliberating.",
-    "reversedMeaning": "Delivering harsh criticism. Obsessing on rules and regulations. Playing by the book even when it is destructive or counterproductive to do so. Confusing snap decisions with timely action. Playing favorites.",
-    "imageAltText": "Justice"
+    "imageAltText": "Justice",
+    "uprightMeaning": "Weighing choices objectively and understanding the consequences of past actions.",
+    "reversedMeaning": "Avoiding responsibility or experiencing a situation that feels deeply unbalanced."
   },
   {
     "id": "major-12",
@@ -145,9 +145,9 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": null,
     "rank": null,
     "number": 12,
-    "uprightMeaning": "Seeing growth opportunities in unpleasant events. Experiencing a dramatic change in personal perspective. Making the best of an unforeseen change in your life or work. Suspending disbelief. Making sacrifices.",
-    "reversedMeaning": "Being untrue to yourself and your values. Refusing to make sacrifices when appropriate. Refusing to adapt to new situations. Blaming others. Profiting at the expense of others.",
-    "imageAltText": "The Hanged Man"
+    "imageAltText": "The Hanged Man",
+    "uprightMeaning": "A voluntary suspension of action that allows for a profound shift in perspective.",
+    "reversedMeaning": "Feeling painfully stuck or refusing to accept a necessary pause."
   },
   {
     "id": "major-13",
@@ -156,9 +156,9 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": null,
     "rank": null,
     "number": 13,
-    "uprightMeaning": "Bringing an unpleasant phase of life to an end. Recognizing and celebrating the conclusion of something. Putting bad habits to rest. Becoming a new person. Leaving one person, place, or thing for another. Letting go.",
-    "reversedMeaning": "Obsessing on death and dying. Refusing to give up old habits or unhealthy relationships. Insisting that everything and everyone should stay the same forever. Failing to take good care of yourself.",
-    "imageAltText": "Death"
+    "imageAltText": "Death",
+    "uprightMeaning": "The necessary and natural clearing away of the old to make way for the new.",
+    "reversedMeaning": "Clinging to the past and refusing to let a natural cycle conclude."
   },
   {
     "id": "major-14",
@@ -167,9 +167,9 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": null,
     "rank": null,
     "number": 14,
-    "uprightMeaning": "Bringing opposites together. Moderating your actions or emotions. Finding middle ground. Reaching compromises. Synthesizing solutions that please everyone involved. Using the old to make something new.",
-    "reversedMeaning": "Going to extremes. Disrupting group efforts. Ignoring healthy approaches to life. Becoming an addict. Practicing gluttony. Tearing something or someone apart. Breaking alliances.",
-    "imageAltText": "Temperance"
+    "imageAltText": "Temperance",
+    "uprightMeaning": "Blending opposing elements together to create a harmonious and sustainable middle path.",
+    "reversedMeaning": "Experiencing friction due to extremes, impulsivity, or a lack of moderation."
   },
   {
     "id": "major-15",
@@ -178,9 +178,9 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": null,
     "rank": null,
     "number": 15,
-    "uprightMeaning": "Appreciating the luxuries that life has to offer. Being comfortable in your own skin. Enjoying your sexuality. Splurging on an expensive personal item. Embracing the fact that everyone has a darker side. Dealing with unhealthy impulses in healthy ways.",
-    "reversedMeaning": "Putting excessive emphasis on appearances. Always wanting more. Valuing possessions more than people or relationships. Allowing base instincts to govern your life. Being selfish. Attributing your own dark impulses to outside forces or other people.",
-    "imageAltText": "The Devil"
+    "imageAltText": "The Devil",
+    "uprightMeaning": "Facing the illusions, unhealthy attachments, or material desires that keep us bound.",
+    "reversedMeaning": "Shedding toxic dependencies and walking away from what diminishes your spirit."
   },
   {
     "id": "major-16",
@@ -189,10 +189,10 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": null,
     "rank": null,
     "number": 16,
-    "uprightMeaning": "Breaking out of old, confining habits and mindsets. Clearing the way for new growth. Dispelling the influence of an inflated ego. Getting back to basics. Stripping away harmful illusions. Receiving sudden insight.",
-    "reversedMeaning": "Clinging to traditions that repress growth. Engaging in willful blindness. Rejecting evidence that change is needed. Ignoring guidance from a higher power. Maliciously engaging in destructive behavior.",
     "imageUrl": "/cards/card_the_tower.jpg",
-    "imageAltText": "The Tower"
+    "imageAltText": "The Tower",
+    "uprightMeaning": "A sudden, foundational collapse that clears away structures built on falsehoods.",
+    "reversedMeaning": "Clinging to a collapsing structure or narrowly avoiding a massive upheaval."
   },
   {
     "id": "major-17",
@@ -201,10 +201,10 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": null,
     "rank": null,
     "number": 17,
-    "uprightMeaning": "Hoping for the best. Believing good things happen to good people. Seeing events in the best possible light. Adopting a generous spirit. Seeking guidance from above. Embracing possibility over probability.",
-    "reversedMeaning": "Denying unpleasant truths. Denying personal accountability and saying, \"Things just happen!\". Ignoring signs and omens. Preferring illusion to reality. Spreading pessimism and stinginess of spirit.",
     "imageUrl": "/cards/card_the_star.jpg",
-    "imageAltText": "The Star"
+    "imageAltText": "The Star",
+    "uprightMeaning": "A period of quiet renewal, gentle inspiration, and trusting the universe after a storm.",
+    "reversedMeaning": "Feeling disconnected from inspiration, or struggling to see the light in the dark."
   },
   {
     "id": "major-18",
@@ -213,10 +213,10 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": null,
     "rank": null,
     "number": 18,
-    "uprightMeaning": "Enjoying healthy fantasies and daydreams. Using your imagination. Practicing magic or celebrating the magic of everyday life. Attuning yourself to the cycles of nature. Embracing the unknown.",
-    "reversedMeaning": "Becoming unable to separate fantasy from reality. Suffering from delusions. Losing your appreciation for the fantastic or magical. Adopting a ruthlessly logical mindset. Failing to appreciate life's mysteries.",
     "imageUrl": "/cards/card_the_moon.jpg",
-    "imageAltText": "The Moon"
+    "imageAltText": "The Moon",
+    "uprightMeaning": "Navigating through uncertainty where things are not as they seem, guided only by intuition.",
+    "reversedMeaning": "The lifting of confusion as hidden anxieties or secrets are finally brought to light."
   },
   {
     "id": "major-19",
@@ -225,10 +225,10 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": null,
     "rank": null,
     "number": 19,
-    "uprightMeaning": "Seeing things clearly. Experiencing intense joy. Celebrating your own successes. Knowing you're good at what you do. Gaining recognition for your personal genius.",
-    "reversedMeaning": "Being dazzled by your own accomplishments. Becoming absorbed in your own self-image. Feeling rushed and distracted. Exerting yourself to the point of exhaustion. Overstating your abilities or misrepresenting your achievements.",
     "imageUrl": "/cards/card_the_sun.jpg",
-    "imageAltText": "The Sun"
+    "imageAltText": "The Sun",
+    "uprightMeaning": "A time of brilliant clarity, uncontainable joy, and total alignment with the self.",
+    "reversedMeaning": "Struggling to feel the warmth, or experiencing success that feels slightly muted."
   },
   {
     "id": "major-20",
@@ -237,9 +237,9 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": null,
     "rank": null,
     "number": 20,
-    "uprightMeaning": "Receiving a wake-up call. Discovering a new purpose in life. Becoming totally and completely yourself. Receiving a well-deserved reward. Passing an evaluation or examination. Welcoming the start of a new phase of life.",
-    "reversedMeaning": "Being weighed in the balances and found wanting. Failing to measure up to a well-defined standard. Being caught goofing off or misbehaving. Failing to prepare for an examination you know is coming. Rejecting an opportunity to reinvent yourself.",
-    "imageAltText": "Judgement"
+    "imageAltText": "Judgement",
+    "uprightMeaning": "A profound awakening that calls you to rise up and leave the past behind.",
+    "reversedMeaning": "Silencing a higher calling out of fear, or punishing yourself with endless self-criticism."
   },
   {
     "id": "major-21",
@@ -248,10 +248,10 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": null,
     "rank": null,
     "number": 21,
-    "uprightMeaning": "Having it all. Knowing and loving yourself as completely as possible. Seeing the interconnection of all things and people. Enhancing your perspective. Living life to its fullest. Understanding the meaning of life.",
-    "reversedMeaning": "Allowing greed and envy to prevent you from enjoying what you do possess. Failing to see the larger design in ordinary events. Believing that everything that exists can be touched, counted, or measured. Failing to see the divine reflected in those around you.",
     "imageUrl": "/cards/card_the_world.jpg",
-    "imageAltText": "The World"
+    "imageAltText": "The World",
+    "uprightMeaning": "The successful conclusion of a long journey, bringing wholeness and a sense of belonging.",
+    "reversedMeaning": "Feeling on the verge of completion but held back by loose ends or a lack of closure."
   },
   {
     "id": "wands-1",
@@ -260,10 +260,10 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": "wands",
     "rank": "ace",
     "number": 1,
-    "uprightMeaning": "Being inspired. Identifying an important goal. Being given the opportunity to do whatever you want to do. Giving or receiving direction. Seeing a solution. Creating something new. Being aroused, sexually or creatively.",
-    "reversedMeaning": "Failing to take advantage of a great opportunity. Being ineffectual or lazy. Making an inadequate effort. Working toward a goal, but lacking the resources or initiative to achieve success. Setting inappropriate goals. Failing to take a stand.",
     "imageUrl": "/cards/card_ace_of_wands.jpg",
-    "imageAltText": "ace of wands"
+    "imageAltText": "ace of wands",
+    "uprightMeaning": "Being inspired. Identifying an important goal. Being given the opportunity to do whatever you want to do. Giving or receiving direction. Seeing a solution. Creating something new. Being aroused, sexually or creatively.",
+    "reversedMeaning": "Failing to take advantage of a great opportunity. Being ineffectual or lazy. Making an inadequate effort. Working toward a goal, but lacking the resources or initiative to achieve success. Setting inappropriate goals. Failing to take a stand."
   },
   {
     "id": "wands-2",
@@ -272,9 +272,9 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": "wands",
     "rank": "2",
     "number": 2,
+    "imageAltText": "two of wands",
     "uprightMeaning": "Having a choice. Offering or being offered an option. Seeing the value of another person's approach. Understanding there's more than one way to \"skin a cat\". Successfully doing more than one thing at a time. Being empowered to make a choice.",
-    "reversedMeaning": "Misrepresenting your intentions. Doing one thing while desiring another. Changing course mid-stream for no good reason. Refusing to change your goal even when pursuing it no longer makes sense. Disregarding the input of others.",
-    "imageAltText": "two of wands"
+    "reversedMeaning": "Misrepresenting your intentions. Doing one thing while desiring another. Changing course mid-stream for no good reason. Refusing to change your goal even when pursuing it no longer makes sense. Disregarding the input of others."
   },
   {
     "id": "wands-3",
@@ -283,9 +283,9 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": "wands",
     "rank": "3",
     "number": 3,
+    "imageAltText": "three of wands",
     "uprightMeaning": "Putting a plan into motion. Taking that critical first step. Making good things happen. Going beyond your limits. Blazing new trails. Hitting the ground running. Seeing your plans come to fruition.",
-    "reversedMeaning": "Procrastinating. Knowing what to do, but refusing to do it. Launching a project without a clear definition of who should do what. Rejecting an opportunity to try something new. Failing to finish what you start.",
-    "imageAltText": "three of wands"
+    "reversedMeaning": "Procrastinating. Knowing what to do, but refusing to do it. Launching a project without a clear definition of who should do what. Rejecting an opportunity to try something new. Failing to finish what you start."
   },
   {
     "id": "wands-4",
@@ -294,9 +294,9 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": "wands",
     "rank": "4",
     "number": 4,
+    "imageAltText": "four of wands",
     "uprightMeaning": "Sharing in a great celebration. Sharing in a communal sense of achievement and success. Preparing for a party. Working together toward a common goal. Giving or winning awards.",
-    "reversedMeaning": "Keeping your nose to the grindstone. Recognizing good work by demanding more work. Failing to share in a group celebration. Allowing sour grapes to poison your moment in the sun. Refusing to do your part.",
-    "imageAltText": "four of wands"
+    "reversedMeaning": "Keeping your nose to the grindstone. Recognizing good work by demanding more work. Failing to share in a group celebration. Allowing sour grapes to poison your moment in the sun. Refusing to do your part."
   },
   {
     "id": "wands-5",
@@ -305,9 +305,9 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": "wands",
     "rank": "5",
     "number": 5,
+    "imageAltText": "five of wands",
     "uprightMeaning": "Calmly expressing a dissenting opinion. Allowing someone to use his or her own methods to get a job done. Opening the floor for discussion or debate. Comparing progress made so far to standards set earlier.",
-    "reversedMeaning": "Berating others for their ridiculous opinions. Picking fights. Offering destructive criticism. Baiting people with barbed remarks. Disrupting progress with an endless stream of pointless objections.",
-    "imageAltText": "five of wands"
+    "reversedMeaning": "Berating others for their ridiculous opinions. Picking fights. Offering destructive criticism. Baiting people with barbed remarks. Disrupting progress with an endless stream of pointless objections."
   },
   {
     "id": "wands-6",
@@ -316,9 +316,9 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": "wands",
     "rank": "6",
     "number": 6,
+    "imageAltText": "six of wands",
     "uprightMeaning": "Outperforming your peers. Winning a competition. Being recognized as a capable person. Having your \"moment in the spotlight\". Being cheered on by the crowd. Getting an award. Earning the admiration of others. Telling someone, \"Good job!\".",
-    "reversedMeaning": "Being a bad winner. Allowing your achievements to inflate your ego. Looking down on people who seem less capable. Craving to be the center of attention. Giving or receiving insincere praise. Envying the achievements of others.",
-    "imageAltText": "six of wands"
+    "reversedMeaning": "Being a bad winner. Allowing your achievements to inflate your ego. Looking down on people who seem less capable. Craving to be the center of attention. Giving or receiving insincere praise. Envying the achievements of others."
   },
   {
     "id": "wands-7",
@@ -327,9 +327,9 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": "wands",
     "rank": "7",
     "number": 7,
+    "imageAltText": "seven of wands",
     "uprightMeaning": "Refusing to be silenced through fear or intimidation. Continuing a fight against all odds. Being fierce. Defending yourself against physical and emotional attacks. Refusing to put up with abuse. Clinging to your values despite all pressure to abandon them.",
-    "reversedMeaning": "Having a chip on your shoulder. Taking unnecessary risks as a means of proving your fearlessness. Looking for an opportunity to take offense. Responding to constructive criticism with defensiveness. Refusing to stand up for yourself and your beliefs.",
-    "imageAltText": "seven of wands"
+    "reversedMeaning": "Having a chip on your shoulder. Taking unnecessary risks as a means of proving your fearlessness. Looking for an opportunity to take offense. Responding to constructive criticism with defensiveness. Refusing to stand up for yourself and your beliefs."
   },
   {
     "id": "wands-8",
@@ -338,9 +338,9 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": "wands",
     "rank": "8",
     "number": 8,
+    "imageAltText": "eight of wands",
     "uprightMeaning": "Taking swift action. Moving forward with a plan as quickly as possible. Energizing yourself. Adapting to sudden changes. Taking setbacks in stride. Embracing the idea that nothing stays the same forever. Reacting quickly and appropriately to unforeseen problems.",
-    "reversedMeaning": "Giving in to panic. Running in circles and screaming. Insisting things must always stay the same. Stirring the pot just to see what will happen. Rushing others. Refusing to re-evaluate a schedule or program, even when it's clearly no longer appropriate.",
-    "imageAltText": "eight of wands"
+    "reversedMeaning": "Giving in to panic. Running in circles and screaming. Insisting things must always stay the same. Stirring the pot just to see what will happen. Rushing others. Refusing to re-evaluate a schedule or program, even when it's clearly no longer appropriate."
   },
   {
     "id": "wands-9",
@@ -349,9 +349,9 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": "wands",
     "rank": "9",
     "number": 9,
+    "imageAltText": "nine of wands",
     "uprightMeaning": "Sticking with it for the duration. Fulfilling your promises and obligations. Bearing up under incredible duress. Dragging yourself across the finish line. Picking yourself up by your own bootstraps. Refusing to quit. Going as far as you can go and being satisfied with your performance.",
-    "reversedMeaning": "Making yourself a martyr. Abandoning your post. Giving up at the first sign of opposition. Being prevented from fulfilling an obligation. Failing to be dependable. Refusing to let something go that needs to be released. Beating a dead horse.",
-    "imageAltText": "nine of wands"
+    "reversedMeaning": "Making yourself a martyr. Abandoning your post. Giving up at the first sign of opposition. Being prevented from fulfilling an obligation. Failing to be dependable. Refusing to let something go that needs to be released. Beating a dead horse."
   },
   {
     "id": "wands-10",
@@ -360,9 +360,9 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": "wands",
     "rank": "10",
     "number": 10,
+    "imageAltText": "ten of wands",
     "uprightMeaning": "Holding your own in extreme circumstances. Helping others carry their burdens. Coming to the aid of the oppressed. Knowing and being honest about your own limits. Recognizing when you are not well-suited for a particular task.",
-    "reversedMeaning": "Taking on more work than you know you can handle. Refusing to say \"No\" when you're already overloaded. Making a habit of working overtime. Shielding others from facing the consequences of their own poor judgment. Over-extending yourself on a regular basis.",
-    "imageAltText": "ten of wands"
+    "reversedMeaning": "Taking on more work than you know you can handle. Refusing to say \"No\" when you're already overloaded. Making a habit of working overtime. Shielding others from facing the consequences of their own poor judgment. Over-extending yourself on a regular basis."
   },
   {
     "id": "wands-11",
@@ -371,9 +371,9 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": "wands",
     "rank": "page",
     "number": 11,
+    "imageAltText": "page of wands",
     "uprightMeaning": "Leaping at a new opportunity. Being a cheerleader or ardent advocate for your cause. Being a True Believer. Taking first steps toward independence. Trusting in your own abilities. Asking for feedback.",
-    "reversedMeaning": "Basing your entire self-image on what others think. Seizing every new idea that comes your way without question. Habitually discounting input or feedback from others. Being so eager to \"do it yourself\" that you hinder your own progress.",
-    "imageAltText": "page of wands"
+    "reversedMeaning": "Basing your entire self-image on what others think. Seizing every new idea that comes your way without question. Habitually discounting input or feedback from others. Being so eager to \"do it yourself\" that you hinder your own progress."
   },
   {
     "id": "wands-12",
@@ -382,9 +382,9 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": "wands",
     "rank": "knight",
     "number": 12,
+    "imageAltText": "knight of wands",
     "uprightMeaning": "Charging ahead. Making rapid progress. Refusing limits. Dazzling those around you with your wit and charm. Convincing others of your right to leadership. Convincing others to follow you. Being a catalyst for change.",
-    "reversedMeaning": "Blundering forward with inadequate skill or information. Running roughshod over the feelings of others. Using sex appeal to manipulate others. Forcing your leadership or ideology on others. Beginning many projects without finishing any.",
-    "imageAltText": "knight of wands"
+    "reversedMeaning": "Blundering forward with inadequate skill or information. Running roughshod over the feelings of others. Using sex appeal to manipulate others. Forcing your leadership or ideology on others. Beginning many projects without finishing any."
   },
   {
     "id": "wands-13",
@@ -393,9 +393,9 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": "wands",
     "rank": "queen",
     "number": 13,
+    "imageAltText": "queen of wands",
     "uprightMeaning": "Paying close attention. Helping others focus on the issue at hand. Getting everyone to work together. Identifying common ground. Bringing people together, despite their differences. Using reverse psychology.",
-    "reversedMeaning": "Being distracted, or using your charms or skills to distract others from the goal. Calling attention to yourself with negative or unhealthy behaviors. Disrupting group activities as a means of feeding your own ego.",
-    "imageAltText": "queen of wands"
+    "reversedMeaning": "Being distracted, or using your charms or skills to distract others from the goal. Calling attention to yourself with negative or unhealthy behaviors. Disrupting group activities as a means of feeding your own ego."
   },
   {
     "id": "wands-14",
@@ -404,9 +404,9 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": "wands",
     "rank": "king",
     "number": 14,
+    "imageAltText": "king of wands",
     "uprightMeaning": "Putting old things together in new and exciting ways. Coming up with unexpected solutions. Using your experience to solve puzzles and problems. Doing what you set out to do. Directing the efforts of others.",
-    "reversedMeaning": "Using your creativity to get out of honest work. Investing great energy in avoiding responsibility. Boasting about achievements without putting your expertise to practical use. Lording it over others.",
-    "imageAltText": "king of wands"
+    "reversedMeaning": "Using your creativity to get out of honest work. Investing great energy in avoiding responsibility. Boasting about achievements without putting your expertise to practical use. Lording it over others."
   },
   {
     "id": "cups-1",
@@ -415,9 +415,9 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": "cups",
     "rank": "ace",
     "number": 1,
+    "imageAltText": "ace of cups",
     "uprightMeaning": "Trusting your feelings. Opening yourself to spirit. Accepting and returning affection. Getting in touch with what motivates you. Taking advantage of an opportunity to express love to others. Listening to the still, small voice.",
-    "reversedMeaning": "Hiding your feelings. Spurning an opportunity to love or be loved. Numbing yourself to spiritual yearnings. Rejecting the counsel of your heart. Becoming a puppet of your own emotions. Indulging in hysteria or obsession.",
-    "imageAltText": "ace of cups"
+    "reversedMeaning": "Hiding your feelings. Spurning an opportunity to love or be loved. Numbing yourself to spiritual yearnings. Rejecting the counsel of your heart. Becoming a puppet of your own emotions. Indulging in hysteria or obsession."
   },
   {
     "id": "cups-2",
@@ -426,9 +426,9 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": "cups",
     "rank": "2",
     "number": 2,
+    "imageAltText": "two of cups",
     "uprightMeaning": "Being drawn to someone. Longing for someone or something. Acting on your desires. Discovering a feeling is mutual. Doing what makes you feel good. Merging. Healing broken ties. Admitting two people feel differently about each other and moving on.",
-    "reversedMeaning": "Burning bridges. Becoming caught up in unhealthy codependency. Shutting out anyone but your chosen few. Obsessing on someone who does not return your affections. Despairing over finding \"The One\". Deceiving yourself about your true orientation.",
-    "imageAltText": "two of cups"
+    "reversedMeaning": "Burning bridges. Becoming caught up in unhealthy codependency. Shutting out anyone but your chosen few. Obsessing on someone who does not return your affections. Despairing over finding \"The One\". Deceiving yourself about your true orientation."
   },
   {
     "id": "cups-3",
@@ -437,9 +437,9 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": "cups",
     "rank": "3",
     "number": 3,
+    "imageAltText": "three of cups",
     "uprightMeaning": "Celebrating your feelings or connections with others. Expressing joy through song, dance, or physical affection. Working together with others who share your feelings. Performing acts of service as a way of saying, \"I love you\". Embracing unconventional romantic arrangements.",
-    "reversedMeaning": "Mistaking giddiness for true affection. Being dominated by manic emotions. Expecting everyone to always feel the same way you do. Demanding unreasonable support from friends or family. Partying to a dangerous or unhealthy extent.",
-    "imageAltText": "three of cups"
+    "reversedMeaning": "Mistaking giddiness for true affection. Being dominated by manic emotions. Expecting everyone to always feel the same way you do. Demanding unreasonable support from friends or family. Partying to a dangerous or unhealthy extent."
   },
   {
     "id": "cups-4",
@@ -448,9 +448,9 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": "cups",
     "rank": "4",
     "number": 4,
+    "imageAltText": "four of cups",
     "uprightMeaning": "Maintaining your emotional stability. Refusing to give in to overwhelming emotions. Appreciating what you have and refusing to take it for granted. Seeing the value of long-term commitments.",
-    "reversedMeaning": "Being bored. Daydreaming at the expense of your work. Refusing to be engaged by opportunity. Taking people and relationships for granted. Ignoring romantic or spiritual opportunities. Spurning inspiration. Feeling everything should stay \"just like it is\".",
-    "imageAltText": "four of cups"
+    "reversedMeaning": "Being bored. Daydreaming at the expense of your work. Refusing to be engaged by opportunity. Taking people and relationships for granted. Ignoring romantic or spiritual opportunities. Spurning inspiration. Feeling everything should stay \"just like it is\"."
   },
   {
     "id": "cups-5",
@@ -459,9 +459,9 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": "cups",
     "rank": "5",
     "number": 5,
+    "imageAltText": "five of cups",
     "uprightMeaning": "Acknowledging loss and moving on. Focusing on how the glass remains \"half-full\". Finding the silver lining in a dark cloud. Recognizing that loss is a natural part of life. Embracing healthy grief. Learning lessons from harsh consequences.",
-    "reversedMeaning": "Wallowing in unhealthy grief or self-pity. Refusing to move on and let go. Clinging to the past. Obsessing on past lives and past loves. Failing to live in the present. Beating yourself up over past mistakes. Allowing fear of failure to limit your efforts.",
-    "imageAltText": "five of cups"
+    "reversedMeaning": "Wallowing in unhealthy grief or self-pity. Refusing to move on and let go. Clinging to the past. Obsessing on past lives and past loves. Failing to live in the present. Beating yourself up over past mistakes. Allowing fear of failure to limit your efforts."
   },
   {
     "id": "cups-6",
@@ -470,9 +470,9 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": "cups",
     "rank": "6",
     "number": 6,
+    "imageAltText": "six of cups",
     "uprightMeaning": "Donating your time and talents to others. Taking satisfaction in knowing how your efforts will aid others. Creating a \"win-win\" scenario. Giving even when you know repayment is not possible. Being motivated to do a good deed.",
-    "reversedMeaning": "Linking your sense of self-worth to the appraisals of others. Striving to appear more needy than you really are. Taking undeserved or unmerited charity. Bragging about your charitable efforts. Profiteering in times of distress. Refusing to share a burden.",
-    "imageAltText": "six of cups"
+    "reversedMeaning": "Linking your sense of self-worth to the appraisals of others. Striving to appear more needy than you really are. Taking undeserved or unmerited charity. Bragging about your charitable efforts. Profiteering in times of distress. Refusing to share a burden."
   },
   {
     "id": "cups-7",
@@ -481,9 +481,9 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": "cups",
     "rank": "7",
     "number": 7,
+    "imageAltText": "seven of cups",
     "uprightMeaning": "Motivating yourself with images of future success. Using visualization to encourage progress. Taking an imaginative or creative approach to problem solving. Making dreams come true. Gleaning insight from personal visions.",
-    "reversedMeaning": "Obsessing on imaginary fears or uncertain consequences. Giving in to emotional or political terrorism. Spending more time dreaming than working. Failing to envision the possible repercussions of your choices. Being controlled by fear.",
-    "imageAltText": "seven of cups"
+    "reversedMeaning": "Obsessing on imaginary fears or uncertain consequences. Giving in to emotional or political terrorism. Spending more time dreaming than working. Failing to envision the possible repercussions of your choices. Being controlled by fear."
   },
   {
     "id": "cups-8",
@@ -492,9 +492,9 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": "cups",
     "rank": "8",
     "number": 8,
+    "imageAltText": "eight of cups",
     "uprightMeaning": "Wanting something better. Blazing your own trail. Realizing there must be more to life. Leaving an unhealthy situation behind. Starting your own business. Going on a retreat. Seeking the \"still, small voice\".",
-    "reversedMeaning": "Being implacable. Finding fault. Nitpicking. Refusing to settle down. Running away from problems or confrontations. Saying, \"It's my way or the highway!\". Harping on past mistakes and disappointments. Threatening to quit as a strategy to get your way.",
-    "imageAltText": "eight of cups"
+    "reversedMeaning": "Being implacable. Finding fault. Nitpicking. Refusing to settle down. Running away from problems or confrontations. Saying, \"It's my way or the highway!\". Harping on past mistakes and disappointments. Threatening to quit as a strategy to get your way."
   },
   {
     "id": "cups-9",
@@ -503,9 +503,9 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": "cups",
     "rank": "9",
     "number": 9,
+    "imageAltText": "nine of cups",
     "uprightMeaning": "Being delighted with your own achievements. Recognizing your own talents and abilities. Reveling in the good things life has to offer. Indulging yourself. Relaxing and unwinding. Having everything you need in order to feel complete.",
-    "reversedMeaning": "Being smug. Satisfying yourself at the expense of others. Being selfish. Over-indulging. Avoiding work that needs to be done. Claiming achievements or skills you do not possess. Never being satisfied, no matter how much you have.",
-    "imageAltText": "nine of cups"
+    "reversedMeaning": "Being smug. Satisfying yourself at the expense of others. Being selfish. Over-indulging. Avoiding work that needs to be done. Claiming achievements or skills you do not possess. Never being satisfied, no matter how much you have."
   },
   {
     "id": "cups-10",
@@ -514,9 +514,9 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": "cups",
     "rank": "10",
     "number": 10,
+    "imageAltText": "ten of cups",
     "uprightMeaning": "Having more than you ever dreamed. Being deeply thankful for all you've been given. Recognizing the Hand of God in the gifts the Universe brings your way. Experiencing transcendent joy. Achieving domestic bliss.",
-    "reversedMeaning": "Comparing your achievements or relationships to unrealistic fantasy standards. Experiencing emotions so intense they blunt your ability to cope with reality. Feeling overwhelmed. Envying the achievements and happiness of others.",
-    "imageAltText": "ten of cups"
+    "reversedMeaning": "Comparing your achievements or relationships to unrealistic fantasy standards. Experiencing emotions so intense they blunt your ability to cope with reality. Feeling overwhelmed. Envying the achievements and happiness of others."
   },
   {
     "id": "cups-11",
@@ -525,9 +525,9 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": "cups",
     "rank": "page",
     "number": 11,
+    "imageAltText": "page of cups",
     "uprightMeaning": "Showing your emotions freely. Throwing yourself into romance. Nursing a secret crush. Indulging in romantic fantasy. Starting a new relationship. Recalling your first love. Experiencing love for the first time. Converting to a new religion.",
-    "reversedMeaning": "Mistaking a crush for true love. Reading romantic intention into innocent action. Frantically trying to impress others. Indulging in overly-sweet sentimentality. Pretending to more romantic or spiritual experience than you possess.",
-    "imageAltText": "page of cups"
+    "reversedMeaning": "Mistaking a crush for true love. Reading romantic intention into innocent action. Frantically trying to impress others. Indulging in overly-sweet sentimentality. Pretending to more romantic or spiritual experience than you possess."
   },
   {
     "id": "cups-12",
@@ -536,9 +536,9 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": "cups",
     "rank": "knight",
     "number": 12,
+    "imageAltText": "knight of cups",
     "uprightMeaning": "Being deeply committed to a cause. Giving in to strong emotions, from excitement to depression. Acting on intuition alone. Solving problems intuitively. Believing in and basing decisions on ideals instead of realities. Bringing intuition or passion to the table.",
-    "reversedMeaning": "Becoming a fanatic. Rejecting information that suggests your intuitions are misguided. Allowing your emotions to control you. Giving in to jealousy, confrontation, and peer pressure. Hiding or ignoring intuitive insights.",
-    "imageAltText": "knight of cups"
+    "reversedMeaning": "Becoming a fanatic. Rejecting information that suggests your intuitions are misguided. Allowing your emotions to control you. Giving in to jealousy, confrontation, and peer pressure. Hiding or ignoring intuitive insights."
   },
   {
     "id": "cups-13",
@@ -547,9 +547,9 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": "cups",
     "rank": "queen",
     "number": 13,
+    "imageAltText": "queen of cups",
     "uprightMeaning": "Allowing yourself to be moved by the plight of others. Feeling strong emotions. Possessing unusual sympathy or empathy. Trusting your feelings to guide you. Calling on psychic abilities. Achieving unity with Spirit.",
-    "reversedMeaning": "Becoming so caught up in matters of Spirit, you become detached from the world. Allowing empathy to disable you (instead of inspire action). Using psychic abilities to wield covert influence. Wallowing in emotionalism, sentiment, or self-pity.",
-    "imageAltText": "queen of cups"
+    "reversedMeaning": "Becoming so caught up in matters of Spirit, you become detached from the world. Allowing empathy to disable you (instead of inspire action). Using psychic abilities to wield covert influence. Wallowing in emotionalism, sentiment, or self-pity."
   },
   {
     "id": "cups-14",
@@ -558,9 +558,9 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": "cups",
     "rank": "king",
     "number": 14,
+    "imageAltText": "king of cups",
     "uprightMeaning": "Keeping a stiff upper lip. Being brave and clear in the face of adverse circumstances. Sharing experience as a way of comforting others. Making fair and empathetic decisions. Honoring the spirit, not just the letter, of the law.",
-    "reversedMeaning": "Allowing yourself to become rigid and unemotional. Making unfair decisions based on a hidden agenda. Making decisions without regard for their emotional impact on others. Abusing spiritual authority. Using emotional or spiritual leverage to exercise unhealthy control over others.",
-    "imageAltText": "king of cups"
+    "reversedMeaning": "Allowing yourself to become rigid and unemotional. Making unfair decisions based on a hidden agenda. Making decisions without regard for their emotional impact on others. Abusing spiritual authority. Using emotional or spiritual leverage to exercise unhealthy control over others."
   },
   {
     "id": "swords-1",
@@ -569,9 +569,9 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": "swords",
     "rank": "ace",
     "number": 1,
+    "imageAltText": "ace of swords",
     "uprightMeaning": "Making objective decisions. Applying logic. Reasoning your way out of a difficult situation. Solving puzzles. Thinking things through. Emphasizing the facts. Clearing your mind. Seeking clarity.",
-    "reversedMeaning": "Applying ruthless or twisted logic. Gloating over your own superior intellect. Using quick thinking to deceive or confuse others. Confusing snap judgments with quick thinking. Making decisions without thinking through consequences.",
-    "imageAltText": "ace of swords"
+    "reversedMeaning": "Applying ruthless or twisted logic. Gloating over your own superior intellect. Using quick thinking to deceive or confuse others. Confusing snap judgments with quick thinking. Making decisions without thinking through consequences."
   },
   {
     "id": "swords-2",
@@ -580,9 +580,9 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": "swords",
     "rank": "2",
     "number": 2,
+    "imageAltText": "two of swords",
     "uprightMeaning": "Refusing to make a decision without getting the facts. Exploring both sides of an argument. Arguing passionately for what you believe in. Weighing the issues. Encouraging the open exchange of ideas. Discussing political or religious issues without getting \"hot under the collar\".",
-    "reversedMeaning": "Rejecting evidence that conflicts with dearly-held beliefs. Arguing with others just for the sake of doing so. Nit-picking. Putting off a decision because you're afraid to face the consequences. Preventing others from getting the information they need to make good decisions.",
-    "imageAltText": "two of swords"
+    "reversedMeaning": "Rejecting evidence that conflicts with dearly-held beliefs. Arguing with others just for the sake of doing so. Nit-picking. Putting off a decision because you're afraid to face the consequences. Preventing others from getting the information they need to make good decisions."
   },
   {
     "id": "swords-3",
@@ -591,9 +591,9 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": "swords",
     "rank": "3",
     "number": 3,
+    "imageAltText": "three of swords",
     "uprightMeaning": "Being brave enough to see things as they really are. Exercising your critical eye. Being your own best critic. Acknowledging that things don't always turn out as planned. Moving past heartbreak to embrace a painful truth.",
-    "reversedMeaning": "Wallowing in despair. Allowing yourself to be completely crushed by the thoughts, words, or deeds of another. Judging yourself too harshly. Holding yourself to an unrealistic standard of excellence. Wearing your heart on your sleeve while carrying a chip on your shoulder.",
-    "imageAltText": "three of swords"
+    "reversedMeaning": "Wallowing in despair. Allowing yourself to be completely crushed by the thoughts, words, or deeds of another. Judging yourself too harshly. Holding yourself to an unrealistic standard of excellence. Wearing your heart on your sleeve while carrying a chip on your shoulder."
   },
   {
     "id": "swords-4",
@@ -602,9 +602,9 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": "swords",
     "rank": "4",
     "number": 4,
+    "imageAltText": "four of swords",
     "uprightMeaning": "Thinking over your plans before putting them into action. Pausing to meditate or clear your mind. Taking time to understand someone or something before criticizing it. Resting. Occupying your thoughts with a healthy distraction.",
-    "reversedMeaning": "Failing to think things through. Mistaking procrastination for thoughtfulness. Adopting a point of view and refusing to reconsider your conclusions, even when presented with refuting evidence. Allowing chaos and whimsy to dominate your thoughts.",
-    "imageAltText": "four of swords"
+    "reversedMeaning": "Failing to think things through. Mistaking procrastination for thoughtfulness. Adopting a point of view and refusing to reconsider your conclusions, even when presented with refuting evidence. Allowing chaos and whimsy to dominate your thoughts."
   },
   {
     "id": "swords-5",
@@ -613,9 +613,9 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": "swords",
     "rank": "5",
     "number": 5,
+    "imageAltText": "five of swords",
     "uprightMeaning": "Acting in your own best interest. Choosing to stand up for yourself. Not backing down from disagreement and discord. Taking a stand. Refusing to go along with an unethical plan. Knowing when to bend the rules.",
-    "reversedMeaning": "Taking advantage of others. Intimidating others. Acting in an unethical manner. Picking fights. Using words to goad others into violence and irrationality. Ignoring rules you've agreed to abide by. Looking out for yourself while allowing harm to come to others. Gloating over victory.",
-    "imageAltText": "five of swords"
+    "reversedMeaning": "Taking advantage of others. Intimidating others. Acting in an unethical manner. Picking fights. Using words to goad others into violence and irrationality. Ignoring rules you've agreed to abide by. Looking out for yourself while allowing harm to come to others. Gloating over victory."
   },
   {
     "id": "swords-6",
@@ -624,9 +624,9 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": "swords",
     "rank": "6",
     "number": 6,
+    "imageAltText": "six of swords",
     "uprightMeaning": "Making the best of a bad situation. Recovering from defeat. Resetting expectations. Making allowances for unexpected circumstances. Helping others who find themselves in dire circumstances. Changing the way you see the world. Broadening your perspective through study or travel.",
-    "reversedMeaning": "Refusing to accept that things have changed. Playing the victim. Rejecting the idea that your actions have consequences. Applying scientific criteria to matters of faith, or confusing faith with science. Believing the whole world should be like your small corner of it.",
-    "imageAltText": "six of swords"
+    "reversedMeaning": "Refusing to accept that things have changed. Playing the victim. Rejecting the idea that your actions have consequences. Applying scientific criteria to matters of faith, or confusing faith with science. Believing the whole world should be like your small corner of it."
   },
   {
     "id": "swords-7",
@@ -635,9 +635,9 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": "swords",
     "rank": "7",
     "number": 7,
+    "imageAltText": "seven of swords",
     "uprightMeaning": "Refusing to do something dishonest, even when there's no chance of ever being caught. Handling a difficult situation with finesse. Pointing out assumptions. Acting ethically in public and in private. Living a life that is beyond reproach.",
-    "reversedMeaning": "Stealing or lying. Doing whatever you can get away with, simply because you can. Looking for a way around consequences. Justifying wicked behavior by focusing on the wickedness of others. Failing to examine your own motives and prejudices.",
-    "imageAltText": "seven of swords"
+    "reversedMeaning": "Stealing or lying. Doing whatever you can get away with, simply because you can. Looking for a way around consequences. Justifying wicked behavior by focusing on the wickedness of others. Failing to examine your own motives and prejudices."
   },
   {
     "id": "swords-8",
@@ -646,9 +646,9 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": "swords",
     "rank": "8",
     "number": 8,
+    "imageAltText": "eight of swords",
     "uprightMeaning": "Honoring limits. Respecting the rules. Deciding to go on a diet for your health's sake. Recognizing you cannot always be in control. Identifying obstacles to further progress. Refusing to think about unhealthy or unethical options. Asking for assistance.",
-    "reversedMeaning": "Feeling trapped. Being lost in a maze of rules and regulations. Giving in to despair. Playing the victim. Allowing others to dictate what you can and cannot do. Being rendered helpless. Having very few options. Failing to look for a way out.",
-    "imageAltText": "eight of swords"
+    "reversedMeaning": "Feeling trapped. Being lost in a maze of rules and regulations. Giving in to despair. Playing the victim. Allowing others to dictate what you can and cannot do. Being rendered helpless. Having very few options. Failing to look for a way out."
   },
   {
     "id": "swords-9",
@@ -657,9 +657,9 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": "swords",
     "rank": "9",
     "number": 9,
+    "imageAltText": "nine of swords",
     "uprightMeaning": "Refusing to worry about what you cannot control. Rejecting anxiety. Judging your own performance with kindness and gentleness. Using meditation to quiet a troubled mind. Confronting nightmares and fears. Drawing a conclusion and putting an issue out of your mind.",
-    "reversedMeaning": "Torturing yourself with regrets. Second-guessing your every move. Beating yourself up for your mistakes. Depression. Obsessing on errors and overlooked details. Refusing to handle stress in healthy ways. Ruining your ability to appreciate the present by dwelling on the past. Debating irreversible decisions.",
-    "imageAltText": "nine of swords"
+    "reversedMeaning": "Torturing yourself with regrets. Second-guessing your every move. Beating yourself up for your mistakes. Depression. Obsessing on errors and overlooked details. Refusing to handle stress in healthy ways. Ruining your ability to appreciate the present by dwelling on the past. Debating irreversible decisions."
   },
   {
     "id": "swords-10",
@@ -668,9 +668,9 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": "swords",
     "rank": "10",
     "number": 10,
+    "imageAltText": "ten of swords",
     "uprightMeaning": "Seeing the signs that you've reached your limits. Paying attention to what your body is trying to tell you. Giving in to the need for rest and renewal. Acknowledging that you've hit bottom. Committing to a turnaround. Knowing the worst is over.",
-    "reversedMeaning": "Accepting defeat prematurely. Driving yourself to total exhaustion, especially mentally. Experiencing a mental breakdown. Obsessing on a problem to the breaking point. Giving up. Refusing to move from thought to action. Deeply unhealthy thoughts.",
-    "imageAltText": "ten of swords"
+    "reversedMeaning": "Accepting defeat prematurely. Driving yourself to total exhaustion, especially mentally. Experiencing a mental breakdown. Obsessing on a problem to the breaking point. Giving up. Refusing to move from thought to action. Deeply unhealthy thoughts."
   },
   {
     "id": "swords-11",
@@ -679,9 +679,9 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": "swords",
     "rank": "page",
     "number": 11,
+    "imageAltText": "page of swords",
     "uprightMeaning": "Pursuing a course of study. Asking good questions. Investing time in study and practice. Doing research. Making a habit of learning new things. Starting an investigation. Outlining what you need to know. Finding a mentor or teacher.",
-    "reversedMeaning": "Pretending to knowledge or sophistication you do not possess. Cheating on an exam. Feigning interest as a way of gaining favor. Considering only the evidence that supports conclusions you've already drawn. Rejecting the wise counsel of experienced teachers.",
-    "imageAltText": "page of swords"
+    "reversedMeaning": "Pretending to knowledge or sophistication you do not possess. Cheating on an exam. Feigning interest as a way of gaining favor. Considering only the evidence that supports conclusions you've already drawn. Rejecting the wise counsel of experienced teachers."
   },
   {
     "id": "swords-12",
@@ -690,9 +690,9 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": "swords",
     "rank": "knight",
     "number": 12,
+    "imageAltText": "knight of swords",
     "uprightMeaning": "Speaking your mind. Making your opinions known. Offering constructive criticism. Sharing your knowledge. Making insightful observations. Pinpointing the problem. Clarifying what others have said. Giving clear direction to others. Uncovering the truth.",
-    "reversedMeaning": "Stating your opinions as fact. Picking fights. Starting arguments. Using clever insults to undermine the confidence of others. Tossing reason out the window. Speaking without taking the feelings of others into account. Going on a witch hunt. Distorting evidence.",
-    "imageAltText": "knight of swords"
+    "reversedMeaning": "Stating your opinions as fact. Picking fights. Starting arguments. Using clever insults to undermine the confidence of others. Tossing reason out the window. Speaking without taking the feelings of others into account. Going on a witch hunt. Distorting evidence."
   },
   {
     "id": "swords-13",
@@ -701,9 +701,9 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": "swords",
     "rank": "queen",
     "number": 13,
+    "imageAltText": "queen of swords",
     "uprightMeaning": "Exercising tact or using diplomacy. Defusing a tense situation. Knowing what to say and how to say it. Making others feel comfortable and confident. Bringing out the best in everyone. Having a way with words. Telling jokes. Possessing a knack for music, math, art, or science.",
-    "reversedMeaning": "Knowing exactly what to say to destroy another person. Withholding critical information. Using a barbed tongue to upset others. Employing sarcasm. Mimicking others unkindly. Making light of the less fortunate. Being disrespectful. Failing to use the talent you've been given.",
-    "imageAltText": "queen of swords"
+    "reversedMeaning": "Knowing exactly what to say to destroy another person. Withholding critical information. Using a barbed tongue to upset others. Employing sarcasm. Mimicking others unkindly. Making light of the less fortunate. Being disrespectful. Failing to use the talent you've been given."
   },
   {
     "id": "swords-14",
@@ -712,9 +712,9 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": "swords",
     "rank": "king",
     "number": 14,
+    "imageAltText": "king of swords",
     "uprightMeaning": "Expressing yourself with firmness and authority. Rendering a final decision. Consulting an expert. Calling in advisors and consultants. Coming to a final conclusion. Reaching a beneficial agreement based on sound information.",
-    "reversedMeaning": "Insisting on having the last word. Flaunting your intellectual capability. Talking \"over the heads\" of others. Waffling on an important decision. Constantly changing your mind. Refusing to make choices that are in your own best interest. Wishing in vain you could take back what's been said.",
-    "imageAltText": "king of swords"
+    "reversedMeaning": "Insisting on having the last word. Flaunting your intellectual capability. Talking \"over the heads\" of others. Waffling on an important decision. Constantly changing your mind. Refusing to make choices that are in your own best interest. Wishing in vain you could take back what's been said."
   },
   {
     "id": "pentacles-1",
@@ -723,9 +723,9 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": "pentacles",
     "rank": "ace",
     "number": 1,
+    "imageAltText": "ace of coins",
     "uprightMeaning": "Outlining a plan for achieving prosperity. Becoming aware of opportunities to improve income or health. Realizing you have everything you need. Appreciating everything the Universe has given you. Receiving the perfect gift at the perfect time.",
-    "reversedMeaning": "Indulging in relentless consumerism. Wanting more, no matter how much you have. Obsessing on your account balance. Suffering from hypochondria. Consuming blessings without expressing gratitude. Taking what you want without concern for the needs of others.",
-    "imageAltText": "ace of coins"
+    "reversedMeaning": "Indulging in relentless consumerism. Wanting more, no matter how much you have. Obsessing on your account balance. Suffering from hypochondria. Consuming blessings without expressing gratitude. Taking what you want without concern for the needs of others."
   },
   {
     "id": "pentacles-2",
@@ -734,9 +734,9 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": "pentacles",
     "rank": "2",
     "number": 2,
+    "imageAltText": "two of coins",
     "uprightMeaning": "Weighing options. Comparing prices. Determining the value of one option over another. Juggling resources to make ends meet. Making difficult choices based on what's best for your body or your bankbook. Looking at the bottom line. Asking for a second opinion on health issues.",
-    "reversedMeaning": "Engaging in endless price comparison. Putting off a buying decision for fear of finding a slightly better value later on. Buying something without regard for value. Breaking your budget with unnecessary expenses. Engaging in behavior with no regard for how your body or bankbook will be impacted.",
-    "imageAltText": "two of coins"
+    "reversedMeaning": "Engaging in endless price comparison. Putting off a buying decision for fear of finding a slightly better value later on. Buying something without regard for value. Breaking your budget with unnecessary expenses. Engaging in behavior with no regard for how your body or bankbook will be impacted."
   },
   {
     "id": "pentacles-3",
@@ -745,9 +745,9 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": "pentacles",
     "rank": "3",
     "number": 3,
+    "imageAltText": "three of coins",
     "uprightMeaning": "Finishing a project. Setting and meeting standards. Performing according to specifications. Making something others value. Creating something new. Doing your part in a group project. Delivering exactly what others have asked for.",
-    "reversedMeaning": "Pandering to the tastes of others. Failing to deliver what you've promised. Not delivering your best work unless closely supervised. Ignoring or breaking agreements with those who have invested in you. Refusing to do your part. Failing to abide by a clearly-outlined agreement with yourself or others.",
-    "imageAltText": "three of coins"
+    "reversedMeaning": "Pandering to the tastes of others. Failing to deliver what you've promised. Not delivering your best work unless closely supervised. Ignoring or breaking agreements with those who have invested in you. Refusing to do your part. Failing to abide by a clearly-outlined agreement with yourself or others."
   },
   {
     "id": "pentacles-4",
@@ -756,9 +756,9 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": "pentacles",
     "rank": "4",
     "number": 4,
+    "imageAltText": "four of coins",
     "uprightMeaning": "Saving for a rainy day. Fasting as part of a spiritual practice. Dieting in an effort to improve your body. Abstaining from sex as a way of honoring a spiritual tradition or personal promise. Being financially conservative. Establishing a trust fund. Opening a savings account.",
-    "reversedMeaning": "Being stingy. Refusing to spend money that needs to be spent. Withholding sex from your partner. Taking care of your own needs exclusively, without regard for the needs of others. Spending a dollar to save a penny. Failing to be a good manager of the blessings you've been given.",
-    "imageAltText": "four of coins"
+    "reversedMeaning": "Being stingy. Refusing to spend money that needs to be spent. Withholding sex from your partner. Taking care of your own needs exclusively, without regard for the needs of others. Spending a dollar to save a penny. Failing to be a good manager of the blessings you've been given."
   },
   {
     "id": "pentacles-5",
@@ -767,9 +767,9 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": "pentacles",
     "rank": "5",
     "number": 5,
+    "imageAltText": "five of coins",
     "uprightMeaning": "Recognizing your needs and taking action to fulfill them. Doing as much as you can do with what little you have. Admitting you need help. Embracing the aid that comes your way. Focusing on what you have versus what you don't. Looking for the light at the end of the tunnel.",
-    "reversedMeaning": "Exaggerating your financial or physical needs. Adopting a poverty mentality. Refusing to support yourself. Refusing offers of support. Playing the martyr. Turning down opportunities to improve your health or finances. Wallowing in misery.",
-    "imageAltText": "five of coins"
+    "reversedMeaning": "Exaggerating your financial or physical needs. Adopting a poverty mentality. Refusing to support yourself. Refusing offers of support. Playing the martyr. Turning down opportunities to improve your health or finances. Wallowing in misery."
   },
   {
     "id": "pentacles-6",
@@ -778,9 +778,9 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": "pentacles",
     "rank": "6",
     "number": 6,
+    "imageAltText": "six of coins",
     "uprightMeaning": "Giving time, money, or effort to a charity. Taking part in a group effort. Lending your resources to others without expecting anything in return. Making sure everyone is treated equally. Working together toward a common goal. Redistributing wealth, time, or attention. Tithing. Sharing credit for your success.",
-    "reversedMeaning": "Making a loan as a means of gaining control over someone. Using charitable acts to draw attention to yourself. Dividing work or resources unfairly. Failing to do your part in a group effort. Ignoring obligations and commitments.",
-    "imageAltText": "six of coins"
+    "reversedMeaning": "Making a loan as a means of gaining control over someone. Using charitable acts to draw attention to yourself. Dividing work or resources unfairly. Failing to do your part in a group effort. Ignoring obligations and commitments."
   },
   {
     "id": "pentacles-7",
@@ -789,9 +789,9 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": "pentacles",
     "rank": "7",
     "number": 7,
+    "imageAltText": "seven of coins",
     "uprightMeaning": "Measuring progress toward your goal. Looking at results with an eye toward improving performance. Asking, \"How happy am I?\". Coming up with ideas for improving your health or prosperity. Deciding it's time for a change. Expressing an honest opinion.",
-    "reversedMeaning": "Becoming distracted by melancholy thoughts. Longing for \"the good old days\". Beating yourself up over lost opportunities. Judging your own work harshly. Holding others to inappropriate standards. Refusing to take part in a project, then whining about the quality of the outcome.",
-    "imageAltText": "seven of coins"
+    "reversedMeaning": "Becoming distracted by melancholy thoughts. Longing for \"the good old days\". Beating yourself up over lost opportunities. Judging your own work harshly. Holding others to inappropriate standards. Refusing to take part in a project, then whining about the quality of the outcome."
   },
   {
     "id": "pentacles-8",
@@ -800,9 +800,9 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": "pentacles",
     "rank": "8",
     "number": 8,
+    "imageAltText": "eight of coins",
     "uprightMeaning": "Doing your best. Bringing enthusiasm and zeal to your work. Making an effort to be the best you can be. Finding the work that is right for you. Taking care of the small details. Becoming a finely skilled craftsperson. Building something with your hands. Making a handmade gift.",
-    "reversedMeaning": "Working yourself to death. Doing a half-hearted or sloppy job. Continuing in a job you hate. Buying thoughtless gifts. Producing work with shoddy craftsmanship. Rushing through your work. Rejecting opportunities to learn more about your craft.",
-    "imageAltText": "eight of coins"
+    "reversedMeaning": "Working yourself to death. Doing a half-hearted or sloppy job. Continuing in a job you hate. Buying thoughtless gifts. Producing work with shoddy craftsmanship. Rushing through your work. Rejecting opportunities to learn more about your craft."
   },
   {
     "id": "pentacles-9",
@@ -811,9 +811,9 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": "pentacles",
     "rank": "9",
     "number": 9,
+    "imageAltText": "nine of coins",
     "uprightMeaning": "Investing time in learning or teaching a difficult task. Restraining yourself from physical or financial extremes. Making sacrifices as a way of achieving larger goals. Breaking a complex task down into simple steps. Wanting what you have. Knowing the difference between needs and wants.",
-    "reversedMeaning": "Being assigned to a task without being trained to perform it. Pursuing a position for which you are not qualified. Disregarding requirements. Refusing to dedicate adequate time or attention when learning about something or someone new. Always craving more.",
-    "imageAltText": "nine of coins"
+    "reversedMeaning": "Being assigned to a task without being trained to perform it. Pursuing a position for which you are not qualified. Disregarding requirements. Refusing to dedicate adequate time or attention when learning about something or someone new. Always craving more."
   },
   {
     "id": "pentacles-10",
@@ -822,9 +822,9 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": "pentacles",
     "rank": "10",
     "number": 10,
+    "imageAltText": "ten of coins",
     "uprightMeaning": "Celebrating your physical and financial blessings. Realizing how lucky or how blessed you are. Being satisfied with your physical and financial achievements. Taking best advantage of \"times of plenty\". Enjoying a feast. Showering friends or family with gifts.",
-    "reversedMeaning": "Spending all of your money on extravagant gifts and possessions. Trying too hard to impress others with your wealth or physique. Giving an inappropriately expensive gift as a means of currying favor. Obsessing on matters of weight, health, or finance. Always asking, \"What's in it for me?\".",
-    "imageAltText": "ten of coins"
+    "reversedMeaning": "Spending all of your money on extravagant gifts and possessions. Trying too hard to impress others with your wealth or physique. Giving an inappropriately expensive gift as a means of currying favor. Obsessing on matters of weight, health, or finance. Always asking, \"What's in it for me?\"."
   },
   {
     "id": "pentacles-11",
@@ -833,9 +833,9 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": "pentacles",
     "rank": "page",
     "number": 11,
+    "imageAltText": "page of coins",
     "uprightMeaning": "Learning the value of a dollar. Starting a savings plan. Taking the first steps toward getting out of debt. Learning new physical tasks. Discovering your sexuality. Launching a diet, a weight-lifting program, or a health-related effort. Learning by doing.",
-    "reversedMeaning": "Trying to appear healthier or wealthier than you really are. Spending money carelessly. Living strictly for today, with no thought of tomorrow. Possessing immature attitudes toward sex and sexuality. Using wealth or beauty as an excuse for not having to learn and grow.",
-    "imageAltText": "page of coins"
+    "reversedMeaning": "Trying to appear healthier or wealthier than you really are. Spending money carelessly. Living strictly for today, with no thought of tomorrow. Possessing immature attitudes toward sex and sexuality. Using wealth or beauty as an excuse for not having to learn and grow."
   },
   {
     "id": "pentacles-12",
@@ -844,9 +844,9 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": "pentacles",
     "rank": "knight",
     "number": 12,
+    "imageAltText": "knight of coins",
     "uprightMeaning": "Spending money wisely. Saving for a rainy day. Paying close attention to physical or financial details. Knowing where every dollar goes. Having safe sex. Preferring facts to \"good feelings\". Finding creative ways to \"make do\" with resources on hand. Completing a new invention.",
-    "reversedMeaning": "Throwing caution to the four winds. Spending without regard for consequence. Spending on luxury when necessities are lacking. Escaping stress by spending money. Obsessing on tiny physical or financial details. Perpetually chasing after some new bauble. Copying another's work and claiming it as your own.",
-    "imageAltText": "knight of coins"
+    "reversedMeaning": "Throwing caution to the four winds. Spending without regard for consequence. Spending on luxury when necessities are lacking. Escaping stress by spending money. Obsessing on tiny physical or financial details. Perpetually chasing after some new bauble. Copying another's work and claiming it as your own."
   },
   {
     "id": "pentacles-13",
@@ -855,9 +855,9 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": "pentacles",
     "rank": "queen",
     "number": 13,
+    "imageAltText": "queen of coins",
     "uprightMeaning": "Appreciating fine food, fine wine, beautiful art, beautiful bodies, or any of the better things in life. Reveling in healthy sexuality. Treating yourself. Splurging on the occasional \"nice to have\" item. Rewarding someone with compensation above and beyond expectations. Having it all.",
-    "reversedMeaning": "Indulging in gluttony or greediness. Becoming insatiable. Blunting the impact of treats by indulging in them too often. Providing physical comfort without providing for emotional needs. Allowing a feeling of entitlement to distort your gratitude for what you're given.",
-    "imageAltText": "queen of coins"
+    "reversedMeaning": "Indulging in gluttony or greediness. Becoming insatiable. Blunting the impact of treats by indulging in them too often. Providing physical comfort without providing for emotional needs. Allowing a feeling of entitlement to distort your gratitude for what you're given."
   },
   {
     "id": "pentacles-14",
@@ -866,8 +866,8 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": "pentacles",
     "rank": "king",
     "number": 14,
+    "imageAltText": "king of coins",
     "uprightMeaning": "Becoming debt-free. Having more than enough to get by. Making contributions to a savings plan. Taking a new job with an eye toward advancing your career. Buying life or health insurance. Being confident in the bedroom. Taking on the role of enforcer when called upon to do so.",
-    "reversedMeaning": "Becoming so conservative you resist all change on principle alone. Ignoring innovations in the name of preserving tradition. Being smug or cocky. Becoming ruthlessly dedicated to profit or pleasure. Being sexually selfish. Bossing others around, especially when you're not empowered to do so.",
-    "imageAltText": "king of coins"
+    "reversedMeaning": "Becoming so conservative you resist all change on principle alone. Ignoring innovations in the name of preserving tradition. Being smug or cocky. Becoming ruthlessly dedicated to profit or pleasure. Being sexually selfish. Bossing others around, especially when you're not empowered to do so."
   }
 ];
