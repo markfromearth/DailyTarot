@@ -68,6 +68,7 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": null,
     "rank": null,
     "number": 5,
+    "imageUrl": "/cards/card_the_hierophant.jpg",
     "imageAltText": "The Pope/Hierophant",
     "uprightMeaning": "Honoring established traditions, seeking mentorship, or engaging in formal learning.",
     "reversedMeaning": "Challenging the status quo and questioning dogmatic rules."
@@ -79,6 +80,7 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": null,
     "rank": null,
     "number": 6,
+    "imageUrl": "/cards/card_the_lovers.jpg",
     "imageAltText": "The Lovers",
     "uprightMeaning": "A deep alignment of values, harmonious connections, and conscious choices.",
     "reversedMeaning": "Experiencing friction in relationships or struggling with a divided heart."
@@ -90,6 +92,7 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": null,
     "rank": null,
     "number": 7,
+    "imageUrl": "/cards/card_the_chariot.jpg",
     "imageAltText": "The Chariot",
     "uprightMeaning": "Harnessing opposing forces through focus and determination to move forward.",
     "reversedMeaning": "Feeling scattered, powerless, or encountering aggressive resistance."
@@ -101,6 +104,7 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": null,
     "rank": null,
     "number": 8,
+    "imageUrl": "/cards/card_strength.jpg",
     "imageAltText": "Strength",
     "uprightMeaning": "Soft, enduring power rooted in compassion and emotional resilience.",
     "reversedMeaning": "Feeling emotionally depleted or struggling to tame inner anxieties."
@@ -112,6 +116,7 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": null,
     "rank": null,
     "number": 9,
+    "imageUrl": "/cards/card_the_hermit.jpg",
     "imageAltText": "The Hermit",
     "uprightMeaning": "Withdrawing from the noise of the world to seek answers within.",
     "reversedMeaning": "Isolating oneself excessively or ignoring the wisdom of the outside world."
@@ -123,6 +128,7 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": null,
     "rank": null,
     "number": 10,
+    "imageUrl": "/cards/card_wheel_of_fortune.jpg",
     "imageAltText": "The Wheel",
     "uprightMeaning": "The inevitable turning of fate, reminding us that all things are temporary.",
     "reversedMeaning": "Experiencing an unwelcome shift or struggling to break free from a repeating loop."
@@ -134,6 +140,7 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": null,
     "rank": null,
     "number": 11,
+    "imageUrl": "/cards/card_justice.jpg",
     "imageAltText": "Justice",
     "uprightMeaning": "Weighing choices objectively and understanding the consequences of past actions.",
     "reversedMeaning": "Avoiding responsibility or experiencing a situation that feels deeply unbalanced."
@@ -145,6 +152,7 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": null,
     "rank": null,
     "number": 12,
+    "imageUrl": "/cards/card_the_hanged_man.jpg",
     "imageAltText": "The Hanged Man",
     "uprightMeaning": "A voluntary suspension of action that allows for a profound shift in perspective.",
     "reversedMeaning": "Feeling painfully stuck or refusing to accept a necessary pause."
@@ -156,6 +164,7 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": null,
     "rank": null,
     "number": 13,
+    "imageUrl": "/cards/card_death.jpg",
     "imageAltText": "Death",
     "uprightMeaning": "The necessary and natural clearing away of the old to make way for the new.",
     "reversedMeaning": "Clinging to the past and refusing to let a natural cycle conclude."
@@ -167,6 +176,7 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": null,
     "rank": null,
     "number": 14,
+    "imageUrl": "/cards/card_temperance.jpg",
     "imageAltText": "Temperance",
     "uprightMeaning": "Blending opposing elements together to create a harmonious and sustainable middle path.",
     "reversedMeaning": "Experiencing friction due to extremes, impulsivity, or a lack of moderation."
@@ -178,6 +188,7 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": null,
     "rank": null,
     "number": 15,
+    "imageUrl": "/cards/card_the_devil.jpg",
     "imageAltText": "The Devil",
     "uprightMeaning": "Facing the illusions, unhealthy attachments, or material desires that keep us bound.",
     "reversedMeaning": "Shedding toxic dependencies and walking away from what diminishes your spirit."
@@ -237,6 +248,7 @@ export const TAROT_DECK: TarotCard[] = [
     "suit": null,
     "rank": null,
     "number": 20,
+    "imageUrl": "/cards/card_judgement.jpg",
     "imageAltText": "Judgement",
     "uprightMeaning": "A profound awakening that calls you to rise up and leave the past behind.",
     "reversedMeaning": "Silencing a higher calling out of fear, or punishing yourself with endless self-criticism."
